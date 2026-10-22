@@ -29,12 +29,106 @@ Wiring:
 
 Example, k = 4: 4 pods, 2 edge + 2 aggregation switches per pod, 4 core switches, 16 hosts, 20 switches.
 
+Edge switches are `w0`–`w7`, aggregation switches `w8`–`w15`, core switches `c1`–`c4`, and servers `S0`–`S15`. Pod *p* holds edge switches `w2p`, `w2p+1` and aggregation switches `w8+2p`, `w9+2p`. The first aggregation switch of every pod connects to `c1`, `c2`; the second to `c3`, `c4`.
+
+```mermaid
+flowchart TB
+  c1["c1"]:::core
+  c2["c2"]:::core
+  c3["c3"]:::core
+  c4["c4"]:::core
+  w8["w8"]:::agg
+  w9["w9"]:::agg
+  w10["w10"]:::agg
+  w11["w11"]:::agg
+  w12["w12"]:::agg
+  w13["w13"]:::agg
+  w14["w14"]:::agg
+  w15["w15"]:::agg
+  w0["w0"]:::edge
+  w1["w1"]:::edge
+  w2["w2"]:::edge
+  w3["w3"]:::edge
+  w4["w4"]:::edge
+  w5["w5"]:::edge
+  w6["w6"]:::edge
+  w7["w7"]:::edge
+  S0(["S0"]):::host
+  S1(["S1"]):::host
+  S2(["S2"]):::host
+  S3(["S3"]):::host
+  S4(["S4"]):::host
+  S5(["S5"]):::host
+  S6(["S6"]):::host
+  S7(["S7"]):::host
+  S8(["S8"]):::host
+  S9(["S9"]):::host
+  S10(["S10"]):::host
+  S11(["S11"]):::host
+  S12(["S12"]):::host
+  S13(["S13"]):::host
+  S14(["S14"]):::host
+  S15(["S15"]):::host
+  c1 --- w8
+  c2 --- w8
+  c3 --- w9
+  c4 --- w9
+  c1 --- w10
+  c2 --- w10
+  c3 --- w11
+  c4 --- w11
+  c1 --- w12
+  c2 --- w12
+  c3 --- w13
+  c4 --- w13
+  c1 --- w14
+  c2 --- w14
+  c3 --- w15
+  c4 --- w15
+  w8 --- w0
+  w8 --- w1
+  w9 --- w0
+  w9 --- w1
+  w10 --- w2
+  w10 --- w3
+  w11 --- w2
+  w11 --- w3
+  w12 --- w4
+  w12 --- w5
+  w13 --- w4
+  w13 --- w5
+  w14 --- w6
+  w14 --- w7
+  w15 --- w6
+  w15 --- w7
+  w0 --- S0
+  w0 --- S1
+  w1 --- S2
+  w1 --- S3
+  w2 --- S4
+  w2 --- S5
+  w3 --- S6
+  w3 --- S7
+  w4 --- S8
+  w4 --- S9
+  w5 --- S10
+  w5 --- S11
+  w6 --- S12
+  w6 --- S13
+  w7 --- S14
+  w7 --- S15
+  classDef core fill:#fde2e2,stroke:#c0392b
+  classDef agg fill:#fdebd0,stroke:#d68910
+  classDef edge fill:#d6eaf8,stroke:#2e86c1
+  classDef host fill:#e8f8f5,stroke:#17a589
+```
+
 ## 2. Install and run
 
 Requires Python 3.9+.
 
 ```bash
-# from the repo root
+# from courses/data-centers-and-ai-networks/
 python -m venv .venv
 .venv\Scripts\activate          # Windows (Linux/macOS: source .venv/bin/activate)
 pip install -r requirements.txt
@@ -44,7 +138,7 @@ cd ex1
 Build a fat-tree and print its node and link counts next to the formulas:
 
 ```
-$ python -m fattree.cli --k 4
+$ python fattree.py --k 4
 Fat-tree k=4
                 actual  formula
 hosts               16       16
@@ -62,10 +156,10 @@ Intended usage *(planned)*:
 
 ```bash
 # fail 5% of links, reproducibly
-python -m fattree.cli --k 8 --failure-rate 5 --seed 42
+python fattree.py --k 8 --failure-rate 5 --seed 42
 
 # export the graph
-python -m fattree.cli --k 4 --output fattree_k4.json
+python fattree.py --k 4 --output fattree_k4.json
 ```
 
 ## 3. Input parameters
@@ -156,28 +250,26 @@ Raw data is in `results/` and figures are in `figures/`.
 
 ## 6. Validation *(planned)*
 
-`tests/test_topology.py` asserts the host, switch and link counts above and that every switch has degree k, for k = 4, 6 and 8. It also checks that odd k is rejected.
+`tests/test_fattree.py` asserts the host, switch and link counts above and that every switch has degree k, for k = 4, 6 and 8. It also checks that odd k is rejected.
 
 ## Planned sub-repo layout
 
 ```
-fattree/
-  topology.py     # build_fattree(k) -> networkx.Graph (attrs: layer, pod, index; nodes named by IP)
-  failures.py     # fail_links(G, pct, seed, scope)
-  metrics.py      # path length, #shortest paths, connectivity
-  cli.py          # argparse entry point
+fattree.py        # build_fattree(k) -> networkx.Graph (attrs: layer, pod, index; nodes named by IP), counts, CLI
+failures.py       # fail_links(G, pct, seed, scope)
+metrics.py        # path length, #shortest paths, connectivity
 experiments/
   exp1_hosts_vs_k.py
   exp2_failure_sweep.py   # writes results/exp2.csv
   plot.py                 # reads results/*.csv -> figures/*.png
 results/                  # CSVs, one per experiment
 figures/                  # PNGs embedded in this README
-tests/test_topology.py
+tests/test_fattree.py
 config.example.yaml
 README.md
 ```
 
-Dependencies are listed in `requirements.txt` at the repo root, shared by all exercises.
+Dependencies are listed in `requirements.txt` in the course folder (one level up), shared by all exercises.
 
 ## Status
 
