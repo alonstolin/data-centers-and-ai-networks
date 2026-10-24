@@ -8,25 +8,25 @@ For the Hebrew overview of the NVIDIA AI-factory podcast, see [notes/topic1-podc
 
 ## Contents
 
-| # | Theme | Paper |
-|---|---|---|
-| 1 | Topologies | [A Scalable, Commodity Data Center Network Architecture](#1-a-scalable-commodity-data-center-network-architecture-fat-tree) |
-| 2 | Topologies | [VL2: A Scalable and Flexible Data Center Network](#2-vl2-a-scalable-and-flexible-data-center-network) |
-| 3 | Topologies | [Jupiter Rising: A Decade of Clos Topologies and Centralized Control in Google's Datacenter Network](#3-jupiter-rising-a-decade-of-clos-topologies-and-centralized-control-in-googles-datacenter-network) |
-| 4 | Topologies | [RNG: Flat Datacenter Networks at Scale](#4-rng-flat-datacenter-networks-at-scale) |
-| 5 | Traffic | [Network Traffic Characteristics of Data Centers in the Wild](#5-network-traffic-characteristics-of-data-centers-in-the-wild) |
-| 6 | Load balancing | [WCMP: Weighted Cost Multipathing for Improved Fairness in Data Centers](#6-wcmp-weighted-cost-multipathing-for-improved-fairness-in-data-centers) |
-| 7 | Load balancing | [FlowBender: Flow-level Adaptive Routing for Improved Latency and Throughput in Datacenter Networks](#7-flowbender-flow-level-adaptive-routing-in-datacenter-networks) |
-| 8 | Load balancing | [CONGA: Distributed Congestion-Aware Load Balancing for Datacenters](#8-conga-distributed-congestion-aware-load-balancing-for-datacenters) |
-| 9 | Load balancing | [Load Balancing for AI Training Workloads](#9-load-balancing-for-ai-training-workloads) |
-| 10 | Congestion control | [Data Center TCP (DCTCP)](#10-dctcp-data-center-tcp) |
-| 11 | Congestion control | [TIMELY: RTT-based Congestion Control for the Datacenter](#11-timely-rtt-based-congestion-control-for-the-datacenter) |
-| 12 | Lossless / RDMA | [Congestion Control for Large-Scale RDMA Deployments (DCQCN)](#12-dcqcn-congestion-control-for-large-scale-rdma-deployments) |
-| 13 | Lossless / RDMA | [Deadlocks in Datacenter Networks: Why Do They Form, and How to Avoid Them](#13-deadlocks-in-datacenter-networks-why-do-they-form-and-how-to-avoid-them) |
-| 14 | Distributed ML | [Collective Operations in Distributed Machine Learning (lecture slides)](#14-collective-operations-in-distributed-machine-learning-lecture-slides) |
-| 15 | Distributed ML | [Efficient Large-Scale Language Model Training on GPU Clusters Using Megatron-LM](#15-efficient-large-scale-language-model-training-on-gpu-clusters-using-megatron-lm) |
-| 16 | AI networks | [RDMA over Ethernet for Distributed AI Training at Meta Scale](#16-rdma-over-ethernet-for-distributed-ai-training-at-meta-scale) |
-| 17 | AI networks | [Alibaba HPN: A Data Center Network for Large Language Model Training](#17-alibaba-hpn-a-data-center-network-for-llm-training) |
+| # | Unit / Topic | Theme | Paper |
+|---|---|---|---|
+| 1 | Unit 1 | Topologies | [A Scalable, Commodity Data Center Network Architecture](#1-a-scalable-commodity-data-center-network-architecture-fat-tree) |
+| 2 | Unit 1 | Topologies | [VL2: A Scalable and Flexible Data Center Network](#2-vl2-a-scalable-and-flexible-data-center-network) |
+| 3 | Unit 3 | Topologies | [Jupiter Rising: A Decade of Clos Topologies and Centralized Control in Google's Datacenter Network](#3-jupiter-rising-a-decade-of-clos-topologies-and-centralized-control-in-googles-datacenter-network) |
+| 4 | Unit 3 | Topologies | [RNG: Flat Datacenter Networks at Scale](#4-rng-flat-datacenter-networks-at-scale) |
+| 5 | Unit 1 | Traffic | [Network Traffic Characteristics of Data Centers in the Wild](#5-network-traffic-characteristics-of-data-centers-in-the-wild) |
+| 6 | Unit 4 | Routing | [WCMP: Weighted Cost Multipathing for Improved Fairness in Data Centers](#6-wcmp-weighted-cost-multipathing-for-improved-fairness-in-data-centers) |
+| 7 | Unit 4 | Routing | [FlowBender: Flow-level Adaptive Routing for Improved Latency and Throughput in Datacenter Networks](#7-flowbender-flow-level-adaptive-routing-in-datacenter-networks) |
+| 8 | Unit 5 | Load balancing | [CONGA: Distributed Congestion-Aware Load Balancing for Datacenters](#8-conga-distributed-congestion-aware-load-balancing-for-datacenters) |
+| 9 | Unit 5 | Load balancing | [Load Balancing for AI Training Workloads](#9-load-balancing-for-ai-training-workloads) |
+| 10 | Unit 6 | Congestion control | [Data Center TCP (DCTCP)](#10-dctcp-data-center-tcp) |
+| 11 | Unit 6 | Congestion control | [TIMELY: RTT-based Congestion Control for the Datacenter](#11-timely-rtt-based-congestion-control-for-the-datacenter) |
+| 12 | Unit 7 | Lossless / RDMA | [Congestion Control for Large-Scale RDMA Deployments (DCQCN)](#12-dcqcn-congestion-control-for-large-scale-rdma-deployments) |
+| 13 | Unit 7 | Lossless / RDMA | [Deadlocks in Datacenter Networks: Why Do They Form, and How to Avoid Them](#13-deadlocks-in-datacenter-networks-why-do-they-form-and-how-to-avoid-them) |
+| 14 | Unit 8 | Collectives | [Collective Operations in Distributed Machine Learning (lecture slides)](#14-collective-operations-in-distributed-machine-learning-lecture-slides) |
+| 15 | Unit 9 | Distributed ML | [Efficient Large-Scale Language Model Training on GPU Clusters Using Megatron-LM](#15-efficient-large-scale-language-model-training-on-gpu-clusters-using-megatron-lm) |
+| 16 | Unit 2 | AI networks | [RDMA over Ethernet for Distributed AI Training at Meta Scale](#16-rdma-over-ethernet-for-distributed-ai-training-at-meta-scale) |
+| 17 | Unit 2 | AI networks | [Alibaba HPN: A Data Center Network for Large Language Model Training](#17-alibaba-hpn-a-data-center-network-for-llm-training) |
 
 [Homework_1-2026.pdf](Homework_1-2026.pdf) is the Ex1 assignment sheet, not an article. Its solution is in [../ex1/](../ex1/README.md).
 
