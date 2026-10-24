@@ -28,15 +28,13 @@ For the Hebrew overview of the NVIDIA AI-factory podcast, see [notes/topic1-podc
 | 16 | Unit 8 | Collectives | [Collective Operations in Distributed Machine Learning (lecture slides)](#16-collective-operations-in-distributed-machine-learning-lecture-slides) |
 | 17 | Unit 9 | Distributed ML | [Efficient Large-Scale Language Model Training on GPU Clusters Using Megatron-LM](#17-efficient-large-scale-language-model-training-on-gpu-clusters-using-megatron-lm) |
 
-[Homework_1-2026.pdf](Homework_1-2026.pdf) is the Ex1 assignment sheet, not an article. Its solution is in [../ex1/](../ex1/README.md).
-
 ---
 
 ## Unit 1: Foundations of Data Center vs. Internet Networking
 
 ### 1. A Scalable, Commodity Data Center Network Architecture (Fat-Tree)
 
-Al-Fares, Loukissas, Vahdat. SIGCOMM 2008. [PDF](A%20Scalable%2C%20Commodity%20Data%20Center%20Network%20Architecture.pdf)
+Al-Fares, Loukissas, Vahdat. SIGCOMM 2008. [PDF](A%20Scalable%2C%20Commodity%20Data%20Center%20Network%20Architecture.pdf) · [MD](A%20Scalable%2C%20Commodity%20Data%20Center%20Network%20Architecture.md)
 
 - **Problem:** Hierarchical data center trees put the most expensive switches at the top and still deliver as little as 50% of the edge bandwidth. Cost grows non-linearly with cluster size.
 - **Idea:** Build a fat-tree from identical commodity k-port switches. It has k pods, each with k/2 edge and k/2 aggregation switches, plus (k/2)² core switches, and supports k³/4 hosts at full bisection bandwidth. Every pair of hosts in different pods has many equal-cost paths. To spread traffic over them, switches use two-level (prefix/suffix) routing tables, and flows are classified and scheduled so that a few large flows do not collide.
@@ -47,7 +45,7 @@ Al-Fares, Loukissas, Vahdat. SIGCOMM 2008. [PDF](A%20Scalable%2C%20Commodity%20D
 
 ### 2. VL2: A Scalable and Flexible Data Center Network
 
-Greenberg et al. (Microsoft Research). SIGCOMM 2009. [PDF](VL2%20-%20A%20Scalable%20and%20Flexible%20Data%20Center%20Network.pdf)
+Greenberg et al. (Microsoft Research). SIGCOMM 2009. [PDF](VL2%20-%20A%20Scalable%20and%20Flexible%20Data%20Center%20Network.pdf) · [MD](VL2%20-%20A%20Scalable%20and%20Flexible%20Data%20Center%20Network.md)
 
 - **Problem:** Oversubscribed trees fragment the server pool, let one service's traffic hurt its neighbours, and tie IP addresses to location, which blocks VM migration. The goal is *agility*: any server can serve any service.
 - **Idea:** Give each service the illusion of one big Layer-2 switch, using three mechanisms: flat addressing (application addresses are separate from location addresses and resolved through a directory service), Valiant Load Balancing over a Clos fabric (each flow takes a random intermediate switch), and address resolution done in the end-host stack instead of in the switches.
@@ -57,7 +55,7 @@ Greenberg et al. (Microsoft Research). SIGCOMM 2009. [PDF](VL2%20-%20A%20Scalabl
 
 ### 3. Network Traffic Characteristics of Data Centers in the Wild
 
-Benson, Akella, Maltz. IMC 2010. [PDF](Network%20Traffic%20Characteristics%20of%20Data%20Centers%20in%20the%20Wild.pdf)
+Benson, Akella, Maltz. IMC 2010. [PDF](Network%20Traffic%20Characteristics%20of%20Data%20Centers%20in%20the%20Wild.pdf) · [MD](Network%20Traffic%20Characteristics%20of%20Data%20Centers%20in%20the%20Wild.md)
 
 - **Study:** SNMP, topology, and packet traces from 10 data centers: 3 university, 2 enterprise, and 5 cloud (some serving web applications, some running MapReduce).
 - **Findings:**
@@ -74,7 +72,7 @@ Benson, Akella, Maltz. IMC 2010. [PDF](Network%20Traffic%20Characteristics%20of%
 
 ### 4. RDMA over Ethernet for Distributed AI Training at Meta Scale
 
-Gangidi et al. (Meta). SIGCOMM 2024. [PDF](RDMA%20over%20Ethernet%20for%20Distributed%20AI%20Training%20at%20Meta%20Scale.pdf)
+Gangidi et al. (Meta). SIGCOMM 2024. [PDF](RDMA%20over%20Ethernet%20for%20Distributed%20AI%20Training%20at%20Meta%20Scale.pdf) · [MD](RDMA%20over%20Ethernet%20for%20Distributed%20AI%20Training%20at%20Meta%20Scale.md)
 
 - **Topology:** A dedicated RoCE "backend" network for GPU training, separate from the rest of the data center, so it can evolve with each GPU generation. Clusters hold up to 24,000–32,000 GPUs (for example, Llama 3 trained on 16,000 GPUs in a 24,000-GPU RoCE cluster). The job scheduler is made topology-aware.
 - **Routing:** The paper tells a sequence of attempts. Default ECMP gave poor and inconsistent link utilization, because training traffic is bursty and has few flows. They tried path pinning, then moved to Enhanced ECMP (hashing on the RoCE destination QP with QP scaling) and a centralized traffic-engineering (TE) controller: TE is primary for ranking AI zones (with E-ECMP as backup on link failure), while E-ECMP is primary at full DC scale. They are now evaluating hardware flowlet switching.
@@ -85,7 +83,7 @@ Gangidi et al. (Meta). SIGCOMM 2024. [PDF](RDMA%20over%20Ethernet%20for%20Distri
 
 ### 5. Alibaba HPN: A Data Center Network for LLM Training
 
-Qian et al. (Alibaba Cloud). SIGCOMM 2024. [PDF](Alibaba%20HPN%20-%20A%20Data%20Center%20Network%20for%20LLM%20Training.pdf)
+Qian et al. (Alibaba Cloud). SIGCOMM 2024. [PDF](Alibaba%20HPN%20-%20A%20Data%20Center%20Network%20for%20LLM%20Training.pdf) · [MD](Alibaba%20HPN%20-%20A%20Data%20Center%20Network%20for%20LLM%20Training.md)
 
 - **Problem:** LLM training produces a few periodic, very bursty flows per host, up to 400 Gbps each, instead of millions of small flows. This low entropy makes ECMP hash polarization likely, which leaves traffic uneven. Training is also synchronous, so a single ToR failure can stall a whole job.
 - **Idea:**
@@ -101,7 +99,7 @@ Qian et al. (Alibaba Cloud). SIGCOMM 2024. [PDF](Alibaba%20HPN%20-%20A%20Data%20
 
 ### 6. Jupiter Rising: A Decade of Clos Topologies and Centralized Control in Google's Datacenter Network
 
-Singh et al. (Google). SIGCOMM 2015 / CACM 2016. [PDF](Jupiter%20Rising%20-%20Decade%20of%20Clos%20Topologies%20in%20Google%20Datacenter%20Network.pdf)
+Singh et al. (Google). SIGCOMM 2015 / CACM 2016. [PDF](Jupiter%20Rising%20-%20Decade%20of%20Clos%20Topologies%20in%20Google%20Datacenter%20Network.pdf) · [MD](Jupiter%20Rising%20-%20Decade%20of%20Clos%20Topologies%20in%20Google%20Datacenter%20Network.md)
 
 - **Problem:** Google's traffic doubled roughly every year (50× since 2008), and no vendor switch could keep up at any price.
 - **Idea:** Three principles across five generations of fabrics: multi-stage Clos topologies built from merchant switch silicon, a centralized control plane that pushes one global configuration to all switches (instead of distributed routing protocols), and modular hardware that is reused for inter-cluster and WAN networks.
@@ -112,7 +110,7 @@ Singh et al. (Google). SIGCOMM 2015 / CACM 2016. [PDF](Jupiter%20Rising%20-%20De
 
 ### 7. RNG: Flat Datacenter Networks at Scale
 
-Bernardi et al. (Amazon Web Services). arXiv 2026. [PDF](RNG%20-%20Flat%20Datacenter%20Networks%20at%20Scale.pdf)
+Bernardi et al. (Amazon Web Services). arXiv 2026. [PDF](RNG%20-%20Flat%20Datacenter%20Networks%20at%20Scale.pdf) · [MD](RNG%20-%20Flat%20Datacenter%20Networks%20at%20Scale.md)
 
 - **Problem:** Fat trees lack capacity fungibility. A subtree can only reach the rest of the network through its few uplinks, so capacity is stranded even under uniform all-to-all traffic. Flat expander graphs fix this, but they have been held back by routing, cabling, and unpredictable performance.
 - **Idea:** RNG wires switches into quasi-random graphs. Its Spraypoint routing algorithm is fully distributed and finds many edge-disjoint paths between endpoints. A passive optical ShuffleBox keeps cabling complexity close to that of a fat tree. Analytical models let operators size a fabric for a performance target.
@@ -124,7 +122,7 @@ Bernardi et al. (Amazon Web Services). arXiv 2026. [PDF](RNG%20-%20Flat%20Datace
 
 ### 8. WCMP: Weighted Cost Multipathing for Improved Fairness in Data Centers
 
-Zhou et al. (Google, UCSD). EuroSys 2014. [PDF](WCMP%20-%20Weighted%20Cost%20Multipathing%20for%20Improved%20Fairness%20in%20Data%20Centers.pdf)
+Zhou et al. (Google, UCSD). EuroSys 2014. [PDF](WCMP%20-%20Weighted%20Cost%20Multipathing%20for%20Improved%20Fairness%20in%20Data%20Centers.pdf) · [MD](WCMP%20-%20Weighted%20Cost%20Multipathing%20for%20Improved%20Fairness%20in%20Data%20Centers.md)
 
 - **Problem:** ECMP splits traffic evenly across next hops. That assumes a symmetric, fault-free topology. With failures or built-in asymmetry, flows of the same size get very different bandwidth.
 - **Idea:** Hash flows over next hops in proportion to the capacity behind each one. This uses information that routing protocols already distribute, and it works on today's switch silicon by replicating next-hop entries within the limited table size.
@@ -134,7 +132,7 @@ Zhou et al. (Google, UCSD). EuroSys 2014. [PDF](WCMP%20-%20Weighted%20Cost%20Mul
 
 ### 9. FlowBender: Flow-level Adaptive Routing in Datacenter Networks
 
-Kabbani, Vamanan, Hasan, Duchene. CoNEXT 2014. [PDF](FlowBender%20-%20Flow-level%20Adaptive%20Routing%20in%20Datacenter%20Networks.pdf)
+Kabbani, Vamanan, Hasan, Duchene. CoNEXT 2014. [PDF](FlowBender%20-%20Flow-level%20Adaptive%20Routing%20in%20Datacenter%20Networks.pdf) · [MD](FlowBender%20-%20Flow-level%20Adaptive%20Routing%20in%20Datacenter%20Networks.md)
 
 - **Problem:** ECMP hashes flows to paths obliviously, so colliding long flows congest one path while others sit idle. The alternatives are costly: MPTCP burdens hosts, Hedera is too slow, and DeTail needs custom hardware.
 - **Idea:** Keep routing at flow granularity, which avoids packet reordering. When a flow sees congestion, the end host triggers a rehash that moves the flow to another path. Link failures are recovered from within one retransmit timeout.
@@ -146,7 +144,7 @@ Kabbani, Vamanan, Hasan, Duchene. CoNEXT 2014. [PDF](FlowBender%20-%20Flow-level
 
 ### 10. CONGA: Distributed Congestion-Aware Load Balancing for Datacenters
 
-Alizadeh et al. (Cisco). SIGCOMM 2014. [PDF](CONGA%20-%20Distributed%20Congestion-Aware%20Load%20Balancing.pdf)
+Alizadeh et al. (Cisco). SIGCOMM 2014. [PDF](CONGA%20-%20Distributed%20Congestion-Aware%20Load%20Balancing.pdf) · [MD](CONGA%20-%20Distributed%20Congestion-Aware%20Load%20Balancing.md)
 
 - **Problem:** Centralized schedulers are too slow, local mechanisms handle asymmetry badly, and host-based schemes are hard to deploy.
 - **Idea:** Do load balancing in the leaf switches of a leaf-spine fabric. Leaf switches split TCP flows into flowlets, measure congestion on each fabric path, and exchange the measurements by piggybacking them on overlay packets. Each new flowlet is sent on the least congested path.
@@ -156,7 +154,7 @@ Alizadeh et al. (Cisco). SIGCOMM 2014. [PDF](CONGA%20-%20Distributed%20Congestio
 
 ### 11. Load Balancing for AI Training Workloads
 
-McClure et al. (Berkeley, Technion, NVIDIA). arXiv 2025. [PDF](Load%20Balancing%20for%20AI%20Training%20Workloads.pdf)
+McClure et al. (Berkeley, Technion, NVIDIA). arXiv 2025. [PDF](Load%20Balancing%20for%20AI%20Training%20Workloads.pdf) · [MD](Load%20Balancing%20for%20AI%20Training%20Workloads.md)
 
 - **Problem:** NVIDIA (Spectrum-X) uses switch-based packet spraying, the Ultra Ethernet Consortium suggests host-based spraying, Google, Meta, and Alibaba each do something different, and nobody has compared them under the same conditions.
 - **Study:** The authors evaluate flow, flowlet, subflow, and packet-spraying schemes, decoupled from any particular congestion-control and loss-recovery stack, on AI collective traffic.
@@ -173,7 +171,7 @@ McClure et al. (Berkeley, Technion, NVIDIA). arXiv 2025. [PDF](Load%20Balancing%
 
 ### 12. DCTCP: Data Center TCP
 
-Alizadeh et al. (Microsoft Research, Stanford). SIGCOMM 2010. [PDF](Data%20Center%20TCP%20%28DCTCP%29.pdf)
+Alizadeh et al. (Microsoft Research, Stanford). SIGCOMM 2010. [PDF](Data%20Center%20TCP%20%28DCTCP%29.pdf) · [MD](Data%20Center%20TCP%20%28DCTCP%29.md)
 
 - **Problem:** Measurements on a 6,000-server production cluster show that long "background" flows fill shallow switch buffers, which delays short latency-sensitive flows and causes incast losses. Standard TCP reacts only to loss, and with a single bit of information.
 - **Idea:** Switches mark packets with ECN once the queue passes a threshold. The sender estimates the fraction of marked packets and cuts its window in proportion to it, instead of halving on any mark. This gives multi-bit feedback from a single-bit signal.
@@ -183,7 +181,7 @@ Alizadeh et al. (Microsoft Research, Stanford). SIGCOMM 2010. [PDF](Data%20Cente
 
 ### 13. TIMELY: RTT-based Congestion Control for the Datacenter
 
-Mittal et al. (Google, Berkeley). SIGCOMM 2015. [PDF](TIMELY%20-%20RTT-based%20Congestion%20Control%20for%20the%20Datacenter.pdf)
+Mittal et al. (Google, Berkeley). SIGCOMM 2015. [PDF](TIMELY%20-%20RTT-based%20Congestion%20Control%20for%20the%20Datacenter.pdf) · [MD](TIMELY%20-%20RTT-based%20Congestion%20Control%20for%20the%20Datacenter.md)
 
 - **Idea:** Modern NICs can timestamp packets with microsecond accuracy, so round-trip time alone is a usable congestion signal with no switch support. TIMELY adjusts the sending rate from the RTT gradient (is delay rising or falling) to keep latency low while delivering high bandwidth. It is implemented in host software over OS-bypass NICs.
 - **Result:** On a Clos testbed with PFC, it lowers 99th-percentile tail latency 9× while keeping near line-rate throughput. It beats DCTCP running in an optimized kernel by 13× on tail latency.
@@ -195,7 +193,7 @@ Mittal et al. (Google, Berkeley). SIGCOMM 2015. [PDF](TIMELY%20-%20RTT-based%20C
 
 ### 14. DCQCN: Congestion Control for Large-Scale RDMA Deployments
 
-Zhu et al. (Microsoft, Mellanox, UCSB). SIGCOMM 2015. [PDF](Congestion%20Control%20for%20Large-Scale%20RDMA%20Deployments.pdf)
+Zhu et al. (Microsoft, Mellanox, UCSB). SIGCOMM 2015. [PDF](Congestion%20Control%20for%20Large-Scale%20RDMA%20Deployments.pdf) · [MD](Congestion%20Control%20for%20Large-Scale%20RDMA%20Deployments.md)
 
 - **Problem:** RDMA over Ethernet (RoCEv2) needs a drop-free network, so it relies on PFC. PFC causes head-of-line blocking and unfairness.
 - **Idea:** DCQCN is an end-to-end, rate-based congestion control scheme for RoCEv2, implemented in the NIC. It reacts to ECN marks, so queues stay short and PFC is rarely triggered. The authors build a fluid model and derive guidelines for tuning switch thresholds and protocol parameters.
@@ -205,7 +203,7 @@ Zhu et al. (Microsoft, Mellanox, UCSB). SIGCOMM 2015. [PDF](Congestion%20Control
 
 ### 15. Deadlocks in Datacenter Networks: Why Do They Form, and How to Avoid Them
 
-Hu et al. (Microsoft, HKUST). HotNets 2016. [PDF](Deadlocks%20in%20Datacenter%20Networks%20-%20Why%20Do%20They%20Form%20and%20How%20to%20Avoid%20Them.pdf)
+Hu et al. (Microsoft, HKUST). HotNets 2016. [PDF](Deadlocks%20in%20Datacenter%20Networks%20-%20Why%20Do%20They%20Form%20and%20How%20to%20Avoid%20Them.pdf) · [MD](Deadlocks%20in%20Datacenter%20Networks%20-%20Why%20Do%20They%20Form%20and%20How%20to%20Avoid%20Them.md)
 
 - **Problem:** PFC can deadlock when paused links form a cycle, a Cyclic Buffer Dependency (CBD). Even Clos networks are not immune: transient routing loops, for example during BGP re-routing after a link failure, can create one, and the deadlock does not clear once the loop is gone.
 - **Argument:** Existing fixes remove CBD altogether through routing restrictions or many buffer classes. They are expensive and waste bandwidth. The authors show that CBD is necessary but not sufficient for deadlock. Whether a deadlock forms also depends on packet TTL, the traffic matrix, and flow rates.
@@ -217,7 +215,7 @@ Hu et al. (Microsoft, HKUST). HotNets 2016. [PDF](Deadlocks%20in%20Datacenter%20
 
 ### 16. Collective Operations in Distributed Machine Learning (lecture slides)
 
-Chen Avin. [PDF](Collectives-plain.pdf)
+Chen Avin. [PDF](Collectives-plain.pdf) · [MD](Collectives-plain.md)
 
 - **Content:** Slides on the communication primitives behind distributed training. They start from a simplified DNN as a chain of matrix multiplications and show sharding for data parallelism and tensor parallelism (row and column). Consecutive layers may need re-sharding, which is done with collectives.
 - **Seven collectives**, each paired with a typical use in LLM training: Reduce, Gather, All-Reduce (gradient sync in data parallelism), All-Gather (sharing activations), Scatter, Reduce-Scatter (reduce plus distribute; All-Reduce = Reduce-Scatter + All-Gather), and All-to-All (matrix transpose, used in tensor and expert parallelism).
@@ -229,7 +227,7 @@ Chen Avin. [PDF](Collectives-plain.pdf)
 
 ### 17. Efficient Large-Scale Language Model Training on GPU Clusters Using Megatron-LM
 
-Narayanan et al. (NVIDIA, Stanford, Microsoft Research). SC 2021. [PDF](Efficient%20Large-Scale%20Language%20Model%20Training%20on%20GPU%20Clusters%20Using%20Megatron-LM.pdf)
+Narayanan et al. (NVIDIA, Stanford, Microsoft Research). SC 2021. [PDF](Efficient%20Large-Scale%20Language%20Model%20Training%20on%20GPU%20Clusters%20Using%20Megatron-LM.pdf) · [MD](Efficient%20Large-Scale%20Language%20Model%20Training%20on%20GPU%20Clusters%20Using%20Megatron-LM.md)
 
 - **Problem:** A model does not fit in one GPU's memory, and training it on one GPU would take years. Naive tensor or pipeline parallelism stops scaling at thousands of GPUs.
 - **Idea:** Compose three forms of parallelism (PTD-P): tensor parallelism inside a server, pipeline parallelism across servers, and data parallelism on top. A new interleaved pipeline schedule improves throughput by over 10% at a similar memory footprint. Key takeaway: use tensor parallelism up to the number of GPUs per server, then pipeline parallelism to scale beyond that.
