@@ -6,7 +6,11 @@ Course 361.2.2460, Semester A 2026.
 
 | Topic | File |
 |---|---|
-| 1 | [AI factory networking overview (Hebrew)](notes/topic1-ai-factory.md) |
+| 1 | [AI factory networking overview (Hebrew)](articles/notes/topic1-podcast-ai-factory.md) |
+
+## Articles
+
+[articles/](articles/README.md) has a short summary of each paper and the lecture slides, grouped by theme.
 
 ## Exercises
 

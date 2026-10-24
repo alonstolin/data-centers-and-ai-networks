@@ -123,17 +123,9 @@ flowchart TB
   classDef host fill:#e8f8f5,stroke:#17a589
 ```
 
-## 2. Install and run
+## 2. Run
 
-Requires Python 3.9+.
-
-```bash
-# from courses/data-centers-and-ai-networks/
-python -m venv .venv
-.venv\Scripts\activate          # Windows (Linux/macOS: source .venv/bin/activate)
-pip install -r requirements.txt
-cd ex1
-```
+Set up the environment once as described in the [course README](../README.md#setup), then run from this folder.
 
 Build a fat-tree and print its node and link counts next to the formulas:
 
