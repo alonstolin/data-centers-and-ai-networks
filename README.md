@@ -10,7 +10,7 @@ Course 361.2.2460, Semester A 2026.
 
 ## Articles
 
-[articles/](articles/README.md) has a short summary of each paper and the lecture slides, grouped by theme.
+[articles/](articles/README.md) has one-paragraph summaries of each paper and the lecture slides, grouped by theme, with direct links to both original PDFs and audited Markdown conversions (`.md`) with embedded high-resolution figures.
 
 ## Exercises
 

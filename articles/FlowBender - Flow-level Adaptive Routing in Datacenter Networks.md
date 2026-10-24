@@ -60,7 +60,7 @@ classroom use is granted without fee provided that copies are not made or distri
 for profit or commercial advantage, and that copies bear this notice and the full citation on the first page. Copyrights for third-party components of this work must be
 honored. For all other uses, contact the owner/author(s). Copyright is held by the
 author/owner(s).
-_CoNEXT’14,_ December 2–5, 2014, Sydney, Australia.
+_CoNEXT'14,_ December 2–5, 2014, Sydney, Australia.
 ACM 978-1-4503-3279-8/14/12.
 http://dx.doi.org/10.1145/2674005.2674985.
 
@@ -129,14 +129,14 @@ there is no consideration for re-routing if it turns out that
 the current path is oversubscribed or even broken. Our solution is to transmit each flow as a single stream, through
 the same commodity ECMP-based network, until the flow
 is congested or disconnected, at which point the flow is _se-_
-_lectively_ _re-routed_ . We base FlowBender’s design on the _key_
+_lectively_ _re-routed_ . We base FlowBender's design on the _key_
 observation that a handful of long flows account for a large
 fraction of network load (bytes) [8], and that addressing
-the load imbalance caused by ECMP’s non-uniform hashing amounts _mainly_ to re-balancing the long flows. Because
+the load imbalance caused by ECMP's non-uniform hashing amounts _mainly_ to re-balancing the long flows. Because
 long flows tend to span several Round-Trip Times (RTTs),
 the problem naturally lends itself to an end-to-end design,
 obviating the need to make hardware changes to switches.
-Also, because we change a flow’s path (route) _selectively_ and
+Also, because we change a flow's path (route) _selectively_ and
 _only_ in response to congestion, we drastically reduce outof-order packet delivery, thereby nearly _eliminating_ packet
 re-ordering effort.
 
@@ -144,7 +144,7 @@ FlowBender requires two components: (1) a mechanism
 to detect congestion or link failures at the host, and (2) a
 means for the end host to reroute a specific flow. For congestion and link failure detection, we improvise on Explicit
 Congestion Notification (ECN) which is commonly used in
-today’s datacenters, in addition to standard TCP Timeouts.
+today's datacenters, in addition to standard TCP Timeouts.
 With ECN, senders monitor the fraction of marked packets
 to decide whether a flow needs to be re-routed. We chose
 end-to-end signals such as ECN and Timeouts as opposed to
@@ -171,7 +171,7 @@ to a different path _selectively_ and _only_ during congestion or
 route failures, thereby avoiding the cost of excessive packet
 re-ordering.
 
-To summarize, the key strengths of FlowBender’s design
+To summarize, the key strengths of FlowBender's design
 are that it:
 
 _•_ Requires no changes to switch hardware (silicon).
@@ -218,7 +218,7 @@ While it is beyond the scope of this paper to cover all of
 them in detail, we present a brief summary of recent work
 in this area.
 
-Equal Cost Multiple Path (ECMP) forwarding is the standard mechanism used in today’s datacenters for load balancing traffic across multiple paths. The switch computes a
+Equal Cost Multiple Path (ECMP) forwarding is the standard mechanism used in today's datacenters for load balancing traffic across multiple paths. The switch computes a
 hash function on the various fields of the packet header that
 identify a flow, and uses the resulting hash value to pick
 a port from the set of eligible ports to forward the packet
@@ -254,7 +254,7 @@ the original data stream. While MPTCP shows improvements over ECMP for flows lar
 significant implementation complexity because of the more
 complex sender-side congestion control algorithm and the
 receiver-side data reassembly logic (more than 10,000 lines of
-kernel code), rendering its performance worse than ECMP’s
+kernel code), rendering its performance worse than ECMP's
 for smaller flows [18]. Moreover, MPTCP suffers from high
 CPU overhead, shooting up to around 40% on every client
 and 10% on every server [17], which is considered to be too
@@ -269,7 +269,7 @@ with the current VLAN fails or at constant intervals in order to shift a long-li
 imbalance. In constrast, FlowBender incurs less overhead
 as it changes routes selectively and only if a flow is congested. Moreover, if a route has a lower capacity than another between two hosts, FlowBender has the natural tendency to send less traffic on the lower-capacity route (Section
 4), whereas SPAIN obliviously uses both paths equally. Unlike SPAIN, FlowBender does not require any routing precomputations and its potential usage of VLANs is merely
-for adding hashing entropy. We elaborate on FlowBender’s
+for adding hashing entropy. We elaborate on FlowBender's
 usage of VLANs in Section 3.
 
 In contrast to MPTCP and SPAIN, Random Packet Spraying (RPS) [13] and DeTail [23] place the burden of load balancing the traffic upon the switches themselves at the packet
@@ -280,7 +280,7 @@ eligible outports _independently_ for _every_ packet. While RPS
 works well for symmetric topologies such as fat-trees (aside
 from the out-of-order packet delivery issues mentioned below), when asymmetries arise in a network due to incremental deployments or link failures, RPS causes severe throughput inefficiencies [23].
 
-DeTail overcomes RPS’s limitations by combining two distinct techniques that work synergistically to improve the
+DeTail overcomes RPS's limitations by combining two distinct techniques that work synergistically to improve the
 tail latency and utilization of the network. First, DeTail
 employs Priority Flow Control (PFC) [1] which guarantees
 lossless packet-forwarding in the network, but is fraught with
@@ -305,7 +305,7 @@ downlink towards the destination). In contrast, FlowBender, being end-to-end and
 broken paths within an RTO (section 3).
 
 Centralized approaches [6, 9, 10] have also been proposed
-to address ECMP’s shortcomings and are motivated by the
+to address ECMP's shortcomings and are motivated by the
 observation that efficiently load balancing datacenter traffic flows entails load balancing the relatively fewer larger
 ones (given the heavy-tailed nature of datacenter flow size
 distributions [8]). While software-based switch controllers
@@ -373,7 +373,7 @@ proceed to discuss the details of FlowBender.
 
 ### 3.3 The Design of FlowBender
 
-In designing FlowBender we resist any temptations to pursue complex optimization and aim for an ultra-simple approach that can work with today’s commodity datacenter
+In designing FlowBender we resist any temptations to pursue complex optimization and aim for an ultra-simple approach that can work with today's commodity datacenter
 switches. We are strictly interested in an approach that
 avoids all of the following: added switch hardware complexity, sustained out of order packet delivery, high overhead due
 to complicated multi-pathing techniques, and very coarse
@@ -387,7 +387,7 @@ ECMP-based network? We address these questions next.
 
 _3.3.1_ _Sensing Congestion_
 
-ECN is a standard congestion notification scheme supported in today’s switches. Our FlowBender approach is not
+ECN is a standard congestion notification scheme supported in today's switches. Our FlowBender approach is not
 strictly tied to one way of triggering and handling this feedback vs another, but we chose to demonstrate it using state
 of the art DCTCP-style marking, where _a_ _congested_ _switch_
 _marks_ _every_ _packet_ _exceeding_ _a_ _desired_ _queue_ _size_ _threshold,_
@@ -408,13 +408,13 @@ the packet as well (e.g. the VLAN ID field from the Ethernet header [2, 3]), and
 on programmable header offsets such as hashing based on
 the TTL value of a packet [2]. Per FlowBender, each TCP
 socket independently keeps track of the value _V_ it should
-consistently insert into such a ”flexible”hashing field (for every outgoing packet), and the socket updates _V_ only once a
+consistently insert into such a "flexible"hashing field (for every outgoing packet), and the socket updates _V_ only once a
 flow is congested, thus effectively triggering sender-initiated
 rerouting then.
 
-Note that from our FlowBender perspective, we are interested in ”hacking” only one such flexible field that (i) does
+Note that from our FlowBender perspective, we are interested in "hacking" only one such flexible field that (i) does
 not require any pre-negotiations between the sender and the
-receiver for setting the value of (i.e. in contrast to MPTCP’s
+receiver for setting the value of (i.e. in contrast to MPTCP's
 port numbers) and (ii) does not cause packet delivery failures at the receiver or within the fabric if changed. An
 example of such a value is the TTL field (as long as its value
 _V_ is large enough for a data center environment): whether
@@ -500,7 +500,7 @@ _nu_ ~~_m_~~ ~~_c_~~ _ongeste_ ~~_d_~~ ~~_r_~~ _tts ←_ 0
 **end** **if**
 **end** **for**
 
-As is clear from its pseudo code and description, FlowBender’s design is simple enough that its complete implementation requires only about 50 lines of kernel code on
+As is clear from its pseudo code and description, FlowBender's design is simple enough that its complete implementation requires only about 50 lines of kernel code on
 the hosts, and 5 lines of configuration code on the switches.
 Such simplicity is in stark contrast to the software complexity of schemes like MPTCP and the hardware complexity of
 DeTail.
@@ -509,7 +509,7 @@ DeTail.
 threshold of 3 and confirming that the CPU overhead does
 not increase due to FlowBender.
 4One might even want to exponentially average _F_ across
-those _N_ RTTs for a smoother reaction, but we don’t think
+those _N_ RTTs for a smoother reaction, but we don't think
 such optimizations are necessary at this stage.
 
 153
@@ -518,7 +518,7 @@ _3.4.2_ _Desynchronizing Flows_
 
 When a link is congested, it could be that two or more long
 flows would be triggered to reroute at the same time, and
-it’s important to ensure that we are avoiding the situation
+it's important to ensure that we are avoiding the situation
 where multiple simultaneous rerouting events would cascade
 into a rerouting wave in the fabric. Reacting at a very early
 congestion onset and having the RTT epochs for calculating
@@ -530,10 +530,10 @@ number to be something like _N_, _N_ + 1, or _N_ _−_ 1 instead.
 
 _3.4.3_ _FlowBender beyond TCP_
 
-Even though our discussion in this paper has been focused on illustrating FlowBender’s potential on top of TCP,
+Even though our discussion in this paper has been focused on illustrating FlowBender's potential on top of TCP,
 the same load balancing principles could be easily applied
 to other transport protocols that sense congestion (whether
-CE-based, drop-based, RTT-based, etc). Moreover, for unreliable transport protocol flows such as UDP, one can argue that packet or burst-level “spraying,” by changing the
+CE-based, drop-based, RTT-based, etc). Moreover, for unreliable transport protocol flows such as UDP, one can argue that packet or burst-level "spraying," by changing the
 _V_ value at the desired pace, would be extremely helpful
 for load-balancing the network traffic more effectively, especially given that applications that use UDP are usually robust or oblivious to packet reordering (of course, Weighted
 instead of Equal Cost Multi-pathing is required anyway to
@@ -541,7 +541,7 @@ handle non-uniform link capacities and topological asymmetries).
 
 _3.4.4_ _Other Optimizations?_
 
-We clearly don’t claim that FlowBender provides the absolutely best performance or would always lead to an optimal
+We clearly don't claim that FlowBender provides the absolutely best performance or would always lead to an optimal
 performance in theory. There are several optimizations that
 can be applied for improving FlowBender, as discussed in
 Section 5. However, at this stage, we are more interested
@@ -582,8 +582,8 @@ Servers
 **Figure** **2:** **Fat-tree** **Datacenter** **Network** **Topology**
 
 to omit such a comparison. That said, even if those artifacts
-were to be adjusted appropriately, MPTCP’s improvement
-relative to FlowBender’s, if any, would be marginal because
+were to be adjusted appropriately, MPTCP's improvement
+relative to FlowBender's, if any, would be marginal because
 both DeTail and FlowBender closely match the performance
 of RPS (Section 4.2.3 and Section 4.2.5), which is optimal
 for the symmetric fat-tree datacenter topologies we evaluate.
@@ -596,20 +596,21 @@ it pre-negotiates multiple routes for every connection it unnecessarily incurs h
 _4.2.1_ _Methodology_
 
 **Topology** : We use ns-3 [4] simulations to evaluate FlowBender on production-like workloads. We model the network topology and the traffic after typical production deployments. We simulate a fat-tree network [15] analogous to
-that depicted in Figure 2. The network has 128 servers, organized into four pods, each having four Top of the Rack (ToR)
-and four aggregation switches, with eight core switches interconnecting the pods (overall oversubscription factor of four
+that depicted in ![Figure 2](images/FlowBender%20-%20Flow-level%20Adaptive%20Routing%20in%20Datacenter%20Networks/fig_2.png)
+
+**Figure 2. The network has 128 servers, organized into four pods, each having four Top of the Rack (ToR)**and four aggregation switches, with eight core switches interconnecting the pods (overall oversubscription factor of four
 from servers to core switches). Because 10 Gbps ethernet is
-typical in today’s datacenters, we use 10 Gbps point-to-point
+typical in today's datacenters, we use 10 Gbps point-to-point
 ethernet links across our entire network. All our switches use
-combined input-output queuing in order to better suit DeTail’s requirements (the switch architecture does not impact
+combined input-output queuing in order to better suit DeTail's requirements (the switch architecture does not impact
 ECMP, FlowBender or RPS). We configure the host delay
 to be 20 _µ_ s and the switch delay to be 1 _µ_ s, and we obtain a _baremetal_ _RTT_ of 2 _×_ 5 _×_ 1 + 4 _×_ 20 = 90 _µ_ s between
-two servers on different pods, which is realistic per today’s
+two servers on different pods, which is realistic per today's
 datacenters RTTs.
 
 **ECMP** : Because DCTCP provides faster congestion response and helps eliminate costly timeouts, we chose DCTCP
 as the base TCP stack upon which we build all the other
-schemes. We start with ns-3’s TCP New Reno protocol,
+schemes. We start with ns-3's TCP New Reno protocol,
 and implement DCTCP [7] on top of it, faithfully capturing
 all its optimizations. We set the parameters of DCTCP to
 match those in [7]: (1) _g_, the factor for exponential weighted
@@ -632,7 +633,7 @@ conjunction with DCTCP instead of the standard DropTail
 TCP. We set the pause and unpause thresholds to 20 KB and
 10KB on the ingress queues respectively, per the guidelines
 in [1]. As suggested by the DeTail paper, we also disable
-TCP’s fast retransmit to handle out-of-order packet delivery. The DeTail paper uses two thresholds of 16 KB and
+TCP's fast retransmit to handle out-of-order packet delivery. The DeTail paper uses two thresholds of 16 KB and
 64 KB to reduce the implementation complexity of determining the least congested output port at the switches, at
 the cost of a small performance loss (due to inaccuracy in
 the determination of the least congested output port). To
@@ -648,7 +649,7 @@ eligible ports.
 
 _4.2.2_ _Functionality Verification_
 
-We start by evaluating FlowBender’s efficiency in load
+We start by evaluating FlowBender's efficiency in load
 balancing large flows to validate its functionality. In this experiment, we simultaneously initiate a small number of 250
 MB flows from hosts on one ToR in a specific pod transmitting to hosts on another specific ToR in a different pod. We
 compare the average and worst completion times of the flows
@@ -660,15 +661,10 @@ of flow completion times i.e., the mean and the tail are close.
 Therefore, we can think of the ratio between the mean and
 the tail as a quantitative measure for quality of load balancing.
 
-**Table** **1:** **FlowBender’s** **flow** **completion** **times** **rela-**
-**tive** **to** **ECMP’s**
+**Table** **1:** **FlowBender's** **flow** **completion** **times** **rela-**
+**tive** **to** **ECMP's**
 
-|Flows|ECMP (ms)|Col3|FlowBender (ms)|Col5|
-|---|---|---|---|---|
-|Flows|Mean|Max|Mean|Max|
-|8|588|1950|294|367|
-|16|1468|5220|580|740|
-|24|2515|9238|897|1144|
+|Flows|ECMP (ms)
 
 In this experiment, we vary the number of flows as 8, 16
 and 24 flows, which translates to an average number of 1, 2
@@ -678,7 +674,7 @@ the best flow completion times to be roughly 200, 400, and
 delay and assuming instantaneous rate convergence to the
 fair share with no slow-start delays). Table 1 shows the
 mean and maximum flow completion times. As expected,
-we see that FlowBender improves ECMP’s mean by 2x and
+we see that FlowBender improves ECMP's mean by 2x and
 maximum flow completion times by 5-8x respectively. Also,
 the ratio of the maximum flow completion time to the mean
 
@@ -732,8 +728,9 @@ mean adjusted to produce the desired load. We vary the
 load (reported relative to the bisectional bandwidth), and
 compare the different schemes in terms of the mean and the
 99 _[th]_ _percentile_ latency.
-We show the means in Figure 3 and the 99 _[th]_ percentile latencies in Figure 4, with each being binned across flow sizes:
-(a) less than or equal to 10KB, (b) greater than 10KB but
+We show the means in ![Figure 3](images/FlowBender%20-%20Flow-level%20Adaptive%20Routing%20in%20Datacenter%20Networks/fig_3.png)
+
+**Figure 3 and the 99 _[th]_ percentile latencies in Figure 4, with each being binned across flow sizes:**(a) less than or equal to 10KB, (b) greater than 10KB but
 less than or equal to 128KB, (c) greater than 128KB but
 less than or equal to 1MB, and (d) greater than 1MB. The
 load is plotted along the X-axis, and we plot the latency of
@@ -741,6 +738,12 @@ RPS, DeTail, and FlowBender normalized to that of ECMP
 along the Y-axis. Across all of these loads, we see that all
 the three schemes i.e., DeTail, FlowBender and RPS _sub-_
 _stantially_ outperform ECMP. The high level takeaway from
+
+![Figure 4](images/FlowBender%20-%20Flow-level%20Adaptive%20Routing%20in%20Datacenter%20Networks/fig_4.png)
+
+**Figure 4: All-to-All workloads: Tail Latency Norm. to ECMP**
+
+**Figure 3: All-to-All workloads: Mean Latency Norm. to ECMP**
 
 our experiments here is that though DeTail, RPS, and FlowBender achieve similar performance in general, FlowBender
 does not require _any_ hardware change at the switches _and_ is
@@ -753,7 +756,7 @@ FlowBender incurs _negligble_ out-of-order packets relative
 to what DeTail and RPS incur. In fact, we monitored the
 number of out-of-order packets in all simulations and found
 that with FlowBender, the probability of a packet arriving
-out of order was about 0.006% higher than ECMP’s. Compared to FlowBender’s performance, DeTail had more than
+out of order was about 0.006% higher than ECMP's. Compared to FlowBender's performance, DeTail had more than
 97.9% the number of out-of-order packet delivery that RPS
 experienced.
 
@@ -763,7 +766,7 @@ failures [23].
 
 _4.2.5_ _Partition Aggregate Workloads_
 
-In this experiment, we evaluate FlowBender’s ability in reducing tail latency under synchronized Partition-Aggregate
+In this experiment, we evaluate FlowBender's ability in reducing tail latency under synchronized Partition-Aggregate
 traffic patterns typical of datacenter applications like Web
 search. We use the same heavy-tailed flow size distribution
 here that is used in the previous all-to-all experiment. We
@@ -774,12 +777,12 @@ corresponds to a 1MB transaction broken evenly across _n_
 workers that are spread randomly in the fabric with all workers responding simultaneously together with their data but
 essentially finishing at different times. In Figure 5, we vary
 _n_ between 4 and 32 along the X-axis and plot the average
-job completion time normalized to ECMP’s i.e., the average of flow completion times of flows that finish last in each
+job completion time normalized to ECMP's i.e., the average of flow completion times of flows that finish last in each
 job, along the Y-axis. As expected, FlowBender performs
 better with smaller fan-in degrees (larger flow sizes) than
-with larger fan-in degrees (smaller flow sizes). FlowBender’s performance, like that of RPS and DeTail, suffers with
+with larger fan-in degrees (smaller flow sizes). FlowBender's performance, like that of RPS and DeTail, suffers with
 a larger fan-in degree due to synchronized packet arrivals
-to the destination ToR with the receiver’s last hop being
+to the destination ToR with the receiver's last hop being
 _the_ bottleneck i.e., multipathing does not help in principle.
 Overall, across different fan-in degrees, FlowBender achieves
 a reduction in the average job completion time by a factor
@@ -787,6 +790,10 @@ of _four_ in the best case (fan-in degree of 4), and by a factor
 of two in the worst case (fan-in degree of 32), and closely
 matches the performance of other expensive schemes such
 as DeTail and RPS.
+
+![Figure 5](images/FlowBender%20-%20Flow-level%20Adaptive%20Routing%20in%20Datacenter%20Networks/fig_5.png)
+
+**Figure 5: Partition Aggregate Workloads: Avg. Job Completion Time**
 
 _4.2.6_ _Sensitivity Analysis_
 
@@ -796,8 +803,12 @@ paths, and _T_, the congestion threshold.
 In Figure 6, we vary _N_ along the X-axis and show the
 mean latency across different flow sizes normalized to the
 default setting i.e., _N_ = 1. As expected, as _N_ increases,
-FlowBender’s performance suffers as its response slows down
+FlowBender's performance suffers as its response slows down
 with higher values of _N_ . Nevertheless, the performance variation to _N_ is _marginal_, and FlowBender exhibits robust performance across a broad range of values.
+
+![Figure 6](images/FlowBender%20-%20Flow-level%20Adaptive%20Routing%20in%20Datacenter%20Networks/fig_6.png)
+
+**Figure 6: Sensitivity to N**
 
 155
 
@@ -840,9 +851,13 @@ In Figure 7, we vary _T_, the congestion threshold, along Xaxis, and show the me
 normalized to the its default setting i.e., _T_ = 5%. For small
 values of _T_ i.e., _T_ = 1%, FlowBender suffers marginal performance degradation as it responds to bursty spikes in the
 fraction of marked packets. We attain the best performance
-for _T_ = 5%. Increasing _T_ beyond 5% slows down FlowBender’s response, causing marginal performance degradation.
-Overall, similar to _N_, we see that FlowBender’s performance
+for _T_ = 5%. Increasing _T_ beyond 5% slows down FlowBender's response, causing marginal performance degradation.
+Overall, similar to _N_, we see that FlowBender's performance
 is relatively robust across a wide range of _T_ values.
+
+![Figure 7](images/FlowBender%20-%20Flow-level%20Adaptive%20Routing%20in%20Datacenter%20Networks/fig_7.png)
+
+**Figure 7: Sensitivity to T**
 
 ### 4.3 Testbed Implementation
 
@@ -863,7 +878,7 @@ Mean 99% 99.9%
 
 **Latency type**
 
-**Figure** **8:** **FlowBender’s** **Latency** **Reduction** **at** **20,**
+**Figure** **8:** **FlowBender's** **Latency** **Reduction** **at** **20,**
 **40,** **and** **60%** **load** **(Bisectional)**
 
 In this experiment servers on one ToR initiate 1 MB flows
@@ -874,13 +889,17 @@ threshold of 3, and monitor the out-of-order delivery numbers to ensure that Flo
 _CPU_ _(processing)_ _overhead_ . To reconfirm that FlowBender
 does not lead to any abnormal packet re-ordering activity,
 we re-ran our experiments with a TCP re-ordering threshold
-of 30, and we didn’t see any noticeable difference in performance.
+of 30, and we didn't see any noticeable difference in performance.
 
 In Figure 8, we show the _mean_, the 99 _[th]_ percentile, and
-the 99 _._ 9 _[th]_ percentile latencies along the X-axis, and FlowBender’s completion time normalized to that of ECMP along
+the 99 _._ 9 _[th]_ percentile latencies along the X-axis, and FlowBender's completion time normalized to that of ECMP along
 the Y-axis. We use default parameter settings for FlowBender i.e., _N_ = 1 and _T_ = 5%. FlowBender improves the 99 _[th]_
 
-and 99 _._ 9 _[th]_ percentiles by 15 _−_ 26% and 34 _−_ 45% respectively, in comparison to ECMP. At 60% load, FlowBender’s
+![Figure 8](images/FlowBender%20-%20Flow-level%20Adaptive%20Routing%20in%20Datacenter%20Networks/fig_8.png)
+
+**Figure 8: FlowBender's Latency Reduction at 20, 40, and 60% load (Bisectional)**
+
+and 99 _._ 9 _[th]_ percentiles by 15 _−_ 26% and 34 _−_ 45% respectively, in comparison to ECMP. At 60% load, FlowBender's
 flows finish more than _twice_ as fast as ECMP on average,
 and 87 _−_ 96% faster at the tail end.
 
@@ -928,7 +947,7 @@ improvement over static schemes like ECMP.
 
 _4.3.2_ _Decongesting HotSpots_
 
-We now evaluate FlowBender’s ability to decongest flows
+We now evaluate FlowBender's ability to decongest flows
 by re-routing them around hotspots. We simplify our traffic
 matrix in this case and initiate an all-to-all random shuffle of 1 _MB_ TCP flows from one ToR to another (all in
 the same direction). The aggregate TCP traffic generates
@@ -946,14 +965,14 @@ routes between the sending and the receiving ToRs amounts
 to 20Gbps. Hence, in an ideal setting, one would wish that
 the 14 _Gbps_ would have been equally split across the three
 paths other than _U_ given that 14 _/_ 3 _Gbps_ is still less than
-UDP’s 6 _Gbps_ that was already routed on _U_ . With ECMP,
+UDP's 6 _Gbps_ that was already routed on _U_ . With ECMP,
 on one hand, _U_ was unsurprisingly getting around quarter
 of the TCP traffic (14 _/_ 4 = 3 _._ 5 _Gbps_ ) obliviously mapped to
 it, thus ending up with around 9 _._ 5 _Gbps_ on average in total,
 driving that link practically unstable. FlowBender, on the
 other hand, succeeded in load balancing the traffic to a great
 extent with only around 1 _._ 5 _Gbps_ of the 14 _Gbps_ going on _U_ .
-This experiment confirms FlowBender’s ability to adaptively
+This experiment confirms FlowBender's ability to adaptively
 re-route around congestive hotspots in the network, and to
 respond to congestion created by non-TCP traffic.
 
@@ -990,7 +1009,7 @@ of each switch is, say, doubled, together with the number of
 servers per ToR, while keeping the over-subscriptions ratios
 the same (i.e. the path diversity quadruples)? The extent
 to which FlowBender helps clearly depends on the number
-of the available paths _P_, but it also depends on the number of those larger flows _L_ that we’re trying to spread out
+of the available paths _P_, but it also depends on the number of those larger flows _L_ that we're trying to spread out
 on those paths. More precisely, and particularly true in the
 limits, the performance improvement depends on the ratio
 _R_ = _L/P_ of the two numbers as we show next, which is
@@ -1001,8 +1020,8 @@ same utilization.
 Considering the micro benchmark basic validation results
 discussed earlier, where FlowBender is shown to do a good
 job in evenly spreading the flows across the different paths,
-FlowBender’s performance improvement amounts to how
-bad ECMP’s flow distribution performance was in the first
+FlowBender's performance improvement amounts to how
+bad ECMP's flow distribution performance was in the first
 place. Given the oblivious nature of ECMP, the distribution of the number of large flows per each route is, in steady
 state, a very straightforward binomial distribution with a
 mean _R_ and a variance _R_ (1 _−_ 1 _/P_ ), which is therefore not
@@ -1040,7 +1059,7 @@ FlowBender can be extended to limit the number of path
 incast situation, the extent to which they occurred in our
 simulations was negligible as is evident from the improvement ratios discussed earlier. We do bring up the feature
 suggested herein, however, so as to add more confidence
-around FlowBender’s ability to handle some of those quite
+around FlowBender's ability to handle some of those quite
 
 changes that could occur when the network is severely congested. More specifically, FlowBender can be constrained to
 switch paths for a maximum of _S_ consecutive times before
@@ -1097,8 +1116,8 @@ cover.
 6This can be done in a periodic manner to avoid CPUintensive computations for generating random numbers (e.g.
 every 10th pkt is sent on a new path).
 
-_F_ corresponding to different _V_ ’s in order to infer, with a
-high probability, how these _V_ ’s map to different paths and
+_F_ corresponding to different _V_ 's in order to infer, with a
+high probability, how these _V_ 's map to different paths and
 avoid choosing a redundant value for rerouting.
 
 ### 5.4 Proactive Probing and Route Caching
@@ -1112,12 +1131,12 @@ By probing we mean that a flow can periodically send a few
 of its packets with different _V_ values, keeping track of their
 sequence numbers ranges, and check once they have been
 acked which of them have experienced congestion. One of
-those _V_ ’s corresponding to probe packets which did not seem
+those _V_ 's corresponding to probe packets which did not seem
 to be congested at all could be proactively selected as the
 basic _V_ once _F_ has exceeded a threshold _T_ _[′]_ smaller than
 _T_ . Alternatively, a flow may attempt to keep track of some
-of those _better_ _V_ ’s to hash upon once congestion occurs, instead of choosing _V_ obliviously, or might simply blacklist
-those highly congested _V_ ’s and avoid revisiting them until
+of those _better_ _V_ 's to hash upon once congestion occurs, instead of choosing _V_ obliviously, or might simply blacklist
+those highly congested _V_ 's and avoid revisiting them until
 sufficient time has elapsed.
 
 ### 5.5 Rerouting and Flow Control
@@ -1146,7 +1165,7 @@ edge of the fabric and/or somewhere else.
 ## 6. CONCLUSION
 
 In this paper, we proposed a new load balancing mechanism called FlowBender. The main motivation for introducing FlowBender is to overcome the limitations of oblivious
-hashing schemes such as ECMP, prominent in today’s datacenters, without suffering from high packet re-ordering or
+hashing schemes such as ECMP, prominent in today's datacenters, without suffering from high packet re-ordering or
 requiring custom hardware changes and complicated host
 mechanisms that could offset any potential benefits. FlowBender is a host-based, congestion-driven scheme that distributively re-routes individual flows around congested hotspots
 only once congestion is experienced, end-to-end, or when
@@ -1154,7 +1173,7 @@ link failures occur. FlowBender relies on ECN and ECMP
 
 158
 
-switch support, which is typical in today’s datacenters, and
+switch support, which is typical in today's datacenters, and
 implements the load-balancing logic at the end-hosts via a
 very straightforward kernel patch. In contrast to centralized flow scheduling schemes, FlowBender recovers from link
 failures after an RTO occurs and reroutes congested flows at
@@ -1167,11 +1186,11 @@ _tially_ reduces the mean and tail latency compared to ECMP,
 while achieving performance very similar to that of other
 expensive or undesirable schemes like DeTail and RPS. In
 particular, our tail latencies are reduced by more than 5x
-to 20x relative to ECMP’s, and our partition-aggregate jobs
+to 20x relative to ECMP's, and our partition-aggregate jobs
 are about 2x to 4x faster on average. We have also evaluated
 FlowBender using a real implentation and found that it cuts
 the flow completion tail latencies by around 40% relative to
-ECMP’s for large flows.
+ECMP's for large flows.
 
 ## 7. REFERENCES
 
@@ -1198,7 +1217,7 @@ technology. `http://www.broadcom.com/collateral/`
 
 commodity data center network architecture. In
 _Proceedings_ _of_ _the_ _ACM_ _SIGCOMM_ _2008_ _conference_
-_on_ _Data_ _communication_, SIGCOMM ’08, pages 63–74,
+_on_ _Data_ _communication_, SIGCOMM '08, pages 63–74,
 New York, NY, USA, 2008. ACM.
 
 [6] M. Al-Fares, S. Radhakrishnan, B. Raghavan,
@@ -1206,7 +1225,7 @@ New York, NY, USA, 2008. ACM.
 N. Huang, and A. Vahdat. Hedera: dynamic flow
 scheduling for data center networks. In _Proceedings_ _of_
 _the_ _7th_ _USENIX_ _conference_ _on_ _Networked_ _systems_
-_design_ _and_ _implementation_, NSDI’10, pages 19–19,
+_design_ _and_ _implementation_, NSDI'10, pages 19–19,
 Berkeley, CA, USA, 2010. USENIX Association.
 
 [7] M. Alizadeh, A. Greenberg, D. A. Maltz, J. Padhye,
@@ -1214,13 +1233,13 @@ Berkeley, CA, USA, 2010. USENIX Association.
 P. Patel, B. Prabhakar, S. Sengupta, and
 M. Sridharan. Data center tcp (dctcp). In _Proceedings_
 _of_ _the_ _ACM_ _SIGCOMM_ _2010_ _conference_, SIGCOMM
-’10, pages 63–74, New York, NY, USA, 2010. ACM.
+'10, pages 63–74, New York, NY, USA, 2010. ACM.
 
 [8] T. Benson, A. Akella, and D. A. Maltz. Network
 
 traffic characteristics of data centers in the wild. In
 _Proceedings_ _of_ _the_ _10th_ _ACM_ _SIGCOMM_ _conference_
-_on_ _Internet_ _measurement_, IMC ’10, pages 267–280,
+_on_ _Internet_ _measurement_, IMC '10, pages 267–280,
 New York, NY, USA, 2010. ACM.
 
 [9] A. R. Curtis, W. Kim, and P. Yalagandula. Mahout:
@@ -1234,7 +1253,7 @@ pages 1629–1637. IEEE.
 P. Yalagandula, P. Sharma, and S. Banerjee.
 Devoflow: scaling flow management for
 high-performance networks. In _Proceedings_ _of_ _the_
-_ACM_ _SIGCOMM_ _2011_ _conference_, SIGCOMM ’11,
+_ACM_ _SIGCOMM_ _2011_ _conference_, SIGCOMM '11,
 pages 254–265, New York, NY, USA, 2011. ACM.
 
 [11] W. J. Dally. Virtual-channel flow control. _IEEE_ _Trans._
@@ -1244,7 +1263,7 @@ _Parallel_ _Distrib._ _Syst._, 3(2):194–205, Mar. 1992.
 [12] D. M. Dias and M. Kumar. Preventing congestion in
 
 multistage networks in the presence of hotspots. In
-_ICPP_ _(1)’89_, pages 9–13, 1989.
+_ICPP_ _(1)'89_, pages 9–13, 1989.
 
 [13] A. Dixit, P. Prakash, Y. Hu, and R. Kompella. On the
 
@@ -1255,7 +1274,7 @@ _INFOCOM,_ _2013_ _Proceedings_ _IEEE_, pages 2130–2138,
 [14] J. Kim, W. J. Dally, and D. Abts. Adaptive routing in
 
 high-radix clos network. In _Proceedings_ _of_ _the_ _2006_
-_ACM/IEEE_ _conference_ _on_ _Supercomputing_, SC ’06,
+_ACM/IEEE_ _conference_ _on_ _Supercomputing_, SC '06,
 New York, NY, USA, 2006. ACM.
 
 [15] C. E. Leiserson. Fat-trees: universal networks for
@@ -1268,14 +1287,14 @@ _Comput._, 34(10):892–901, Oct. 1985.
 Mogul. Spain: Cots data-center ethernet for
 multipathing over arbitrary topologies. In _Proceedings_
 _of_ _the_ _7th_ _USENIX_ _Conference_ _on_ _Networked_ _Systems_
-_Design_ _and_ _Implementation_, NSDI’10, 2010.
+_Design_ _and_ _Implementation_, NSDI'10, 2010.
 
 [17] C. Raiciu, S. Barre, C. Pluntke, A. Greenhalgh,
 
 D. Wischik, and M. Handley. Improving datacenter
 performance and robustness with multipath tcp. In
 _Proceedings_ _of_ _the_ _ACM_ _SIGCOMM_ _2011_ _conference_,
-SIGCOMM ’11, pages 266–277, New York, NY, USA,
+SIGCOMM '11, pages 266–277, New York, NY, USA,
 2011. ACM.
 
 [18] C. Raiciu, C. Paasch, S. BarrE, [`] A. Ford, M. Honda,
@@ -1284,7 +1303,7 @@ F. Duchene, O. Bonaventure, and M. Handley. How
 hard can it be? designing and implementing a
 deployable multipath tcp. In _USENIX_ _Symposium_ _of_
 _Networked_ _Systems_ _Design_ _and_ _Implementation_
-_(NSDI’12),_ _San_ _Jose_ _(CA)_, 2012.
+_(NSDI'12),_ _San_ _Jose_ _(CA)_, 2012.
 
 [19] J. H. Saltzer, D. P. Reed, and D. D. Clark. End-to-end
 
@@ -1302,14 +1321,14 @@ Deadline-aware datacenter tcp (d2tcp). In _Proceedings_
 _of_ _the_ _ACM_ _SIGCOMM_ _2012_ _Conference_ _on_
 _Applications,_ _Technologies,_ _Architectures,_ _and_
 _Protocols_ _for_ _Computer_ _Communication_, SIGCOMM
-’12, 2012.
+'12, 2012.
 
 [22] D. Wischik, C. Raiciu, A. Greenhalgh, and
 
 M. Handley. Design, implementation and evaluation of
 congestion control for multipath tcp. In _Proceedings_ _of_
 _the_ _8th_ _USENIX_ _conference_ _on_ _Networked_ _systems_
-_design_ _and_ _implementation_, NSDI’11, pages 8–8,
+_design_ _and_ _implementation_, NSDI'11, pages 8–8,
 Berkeley, CA, USA, 2011. USENIX Association.
 
 [23] D. Zats, T. Das, P. Mohan, D. Borthakur, and
@@ -1318,7 +1337,7 @@ R. Katz. Detail: reducing the flow completion time
 tail in datacenter networks. In _Proceedings_ _of_ _the_
 _ACM_ _SIGCOMM_ _2012_ _conference_ _on_ _Applications,_
 _technologies,_ _architectures,_ _and_ _protocols_ _for_ _computer_
-_communication_, SIGCOMM ’12, pages 139–150, New
+_communication_, SIGCOMM '12, pages 139–150, New
 York, NY, USA, 2012. ACM.
 
 159

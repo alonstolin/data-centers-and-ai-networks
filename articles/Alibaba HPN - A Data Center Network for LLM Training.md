@@ -10,7 +10,7 @@ _Alibaba Cloud_
 
 ## Abstract
 
-This paper presents HPN, Alibaba Cloud’s data center network
+This paper presents HPN, Alibaba Cloud's data center network
 
 for large language model (LLM) training. Due to the differences
 
@@ -84,7 +84,7 @@ republish, to post on servers or to redistribute to lists, requires prior specif
 
 and/or a fee. Request permissions from permissions@acm.org.
 
-_ACM SIGCOMM ’24, August 4–8, 2024, Sydney, NSW, Australia_
+_ACM SIGCOMM '24, August 4–8, 2024, Sydney, NSW, Australia_
 
 © 2024 Copyright held by the owner/author(s). Publication rights licensed to ACM.
 
@@ -92,7 +92,7 @@ ACM ISBN 979-8-4007-0614-1/24/08
 
 [https://doi.org/10.1145/3651890.3672265](https://doi.org/10.1145/3651890.3672265)
 
-_’24), August 4–8, 2024, Sydney, NSW, Australia._ ACM, New York, NY, USA,
+_'24), August 4–8, 2024, Sydney, NSW, Australia._ ACM, New York, NY, USA,
 
 [16 pages. https://doi.org/10.1145/3651890.3672265](https://doi.org/10.1145/3651890.3672265)
 
@@ -100,7 +100,7 @@ _’24), August 4–8, 2024, Sydney, NSW, Australia._ ACM, New York, NY, USA,
 
 The large language model (or LLM) [13, 15–17, 24] has brought
 
-about tremendous revolutions to today’s AI and cloud services. The
+about tremendous revolutions to today's AI and cloud services. The
 
 training of an LLM, which has hundreds of billions of parameters,
 
@@ -121,7 +121,11 @@ are different from those of general cloud computing in terms of
 cloud computing generates millions of flows, which gives the net
 work high entropy. Each flow is continuous and low-utilization
 
-( _e.g._, typically below 20% of the NIC capacity), as shown in Figure 1.
+( _e.g._, typically below 20% of the NIC capacity), as shown in 
+
+![Figure 1](images/Alibaba%20HPN%20-%20A%20Data%20Center%20Network%20for%20LLM%20Training/fig_1.png)
+
+**Figure 1.**
 
 On the contrary, LLM training generates very few but periodically
 
@@ -142,7 +146,7 @@ work with high-entropy and low-utilization traffic pattern ( _i.e._, the
 
 traditional data center network), but not in the case of LLM training
 
-which is the opposite. As a result of LLM training’s traffic pattern,
+which is the opposite. As a result of LLM training's traffic pattern,
 
 our traditional data center networks have recently encountered
 
@@ -177,7 +181,7 @@ In this paper, we share our new data center network architecture,
 
 691
 
-ACM SIGCOMM ’24, August 4–8, 2024, Sydney, NSW, Australia Kun Qian et al.
+ACM SIGCOMM '24, August 4–8, 2024, Sydney, NSW, Australia Kun Qian et al.
 
 HPN, which is designed for LLM training. [1] Compared to traditional
 
@@ -310,9 +314,12 @@ continuous and steady, which slowly changes on the hourly scale
 
 (as shown in Figure 1). On the contrary, the LLM training generates
 
-very few, but periodically bursty flows, as shown in Figure 2 and
+very few, but periodically bursty flows, as shown in ![Figure 2](images/Alibaba%20HPN%20-%20A%20Data%20Center%20Network%20for%20LLM%20Training/fig_2.png)
 
-Figure 3. More specifically, Figure 2 shows the throughput of a NIC
+**Figure 2 and**
+![Figure 3](images/Alibaba%20HPN%20-%20A%20Data%20Center%20Network%20for%20LLM%20Training/fig_3.png)
+
+**Figure 3. More specifically, Figure 2 shows the throughput of a NIC**
 
 (2×200Gbps) in our in-production LLM training. The NIC periodi
 cally transmits a large amount of data, which instantly fulfills the
@@ -367,33 +374,18 @@ flow is substantial.
 
 1
 
-200
-
-100
-
-0
-
-0
-
 Time (hour)
 
 692
 
-Alibaba HPN: A Data Center Network for Large Language Model Training ACM SIGCOMM ’24, August 4–8, 2024, Sydney, NSW, Australia
+Alibaba HPN: A Data Center Network for Large Language Model Training ACM SIGCOMM '24, August 4–8, 2024, Sydney, NSW, Australia
 
 1.0
 
 0.5
 
 400
-300
-200
-100
-0
-
-|NIC-1 NIC-3 NIC-5 NIC-7<br>NIC-2 NIC-4 NIC-6 NIC-8|Col2|Col3|
-|---|---|---|
-||||
+30|NIC-1 NIC-3 NIC-5 NIC-7<br>NIC-2 NIC-4 NIC-6 NIC-8
 
 0 50 100
 Time (s)
@@ -403,22 +395,16 @@ Time (s)
 #Connections
 
 **Figure 2: NIC egress traffic pattern dur-**
+
 **ing production model training.**
 
 **Figure 3: Number of connections per**
 **host.**
 
-4
-
-3
-
-2
-
-1
-
-0
+![Figure 4](images/Alibaba%20HPN%20-%20A%20Data%20Center%20Network%20for%20LLM%20Training/fig_4.png)
 
 **Figure 4: Checkpoint intervals of rep-**
+
 **resentative LLM jobs.**
 
 1.0
@@ -448,7 +434,7 @@ data center networks, the forwarding of an elephant flow would go
 
 through three times of hashing ( _i.e._, ToR, Aggregation, and Core layers). Since the input for each hashing ( _i.e._, the five-tuple of the flow)
 
-remains the same, the effect of such “cascading” hashing can lead to
+remains the same, the effect of such "cascading" hashing can lead to
 
 an even more severe load imbalance ( _i.e._ hash polarization [18, 72]).
 
@@ -544,7 +530,11 @@ build a new network architecture specifically for LLM training. We
 
 should meet the following goals.
 
-**G1: Scalability.** Figure 6 shows that the number of GPUs required
+**G1: Scalability.** ![Figure 6](images/Alibaba%20HPN%20-%20A%20Data%20Center%20Network%20for%20LLM%20Training/fig_6.png)
+
+**Figure 6 shows that the number of GPUs required**
+
+**Figure 6: #GPUs used in pro- duction training jobs.**
 
 by a single training job in production is less than 3K. To accommo
 date the requirement evolution in the coming future, we set the
@@ -571,7 +561,10 @@ able to support the scale at 100K GPUs.
 
 0.00
 
+![Figure 5](images/Alibaba%20HPN%20-%20A%20Data%20Center%20Network%20for%20LLM%20Training/fig_5.png)
+
 **Figure 5: Monthly link failure**
+
 **ratio.**
 
 **Figure** **6:** **#GPUs** **used** **in** **pro-**
@@ -583,7 +576,7 @@ able to support the scale at 100K GPUs.
 
 693
 
-ACM SIGCOMM ’24, August 4–8, 2024, Sydney, NSW, Australia Kun Qian et al.
+ACM SIGCOMM '24, August 4–8, 2024, Sydney, NSW, Australia Kun Qian et al.
 
 **Backend Network**
 
@@ -667,7 +660,10 @@ ToR2
 
 NIC
 
+![Figure 7](images/Alibaba%20HPN%20-%20A%20Data%20Center%20Network%20for%20LLM%20Training/fig_7.png)
+
 **Figure 7: HPN overview. A solid parallelogram represents a segment (containing 1024 active GPUs and 64 backup GPUs). Two**
+
 **dotted parallelograms represent dual-plane. A cube contains an entire Pod (containing 15K GPUs).**
 
 **G2:** **High** **performance.** The performance is important. To en
@@ -709,7 +705,7 @@ while the frontend network carries the others ( _e.g._, the traffic for
 
 management, inference and storage). For LLM training, we mainly
 
-focus on the backend network of HPN. In HPN’s backend network,
+focus on the backend network of HPN. In HPN's backend network,
 
 each host is equipped with 8 GPUs, each connected through a
 
@@ -735,7 +731,7 @@ of RDMA network throughput, resulting in a total bandwidth of
 
 3.2Tbps. Such a design aims to maximize the utilization of the
 
-GPU’s PCIe capabilities (PCIe Gen5×16), thus pushing the network
+GPU's PCIe capabilities (PCIe Gen5×16), thus pushing the network
 
 send/receive capacity to the limit. The two ports of each NIC are
 
@@ -754,7 +750,7 @@ the rail-optimized design [21], where NICs belong to different rails
 are connect to different set of ToRs. Combined with the abovemen
 tioned dual-ToR design, a host connects to 16 ToRs in the backend
 
-network. By fully utilizing the 51.2Tbps switching chip’s capability,
+network. By fully utilizing the 51.2Tbps switching chip's capability,
 
 HPN enables 1024 GPUs to be interconnected through a single
 layer network, called a segment (§5). Figure 6 quantifies our benefit:
@@ -815,7 +811,7 @@ of LLM training and inference (§8).
 
 694
 
-Alibaba HPN: A Data Center Network for Large Language Model Training ACM SIGCOMM ’24, August 4–8, 2024, Sydney, NSW, Australia
+Alibaba HPN: A Data Center Network for Large Language Model Training ACM SIGCOMM '24, August 4–8, 2024, Sydney, NSW, Australia
 
 Control plane
 BGP
@@ -829,13 +825,12 @@ Host Routes
 
 ARP Proxy
 
-|ToR1 MAC: 1:1:1:1:1:1 IP: 1.0.1.1|Col2|MAC: 1:1:1:1:1:1 IP: 1.0.1.1|Col4|
-|---|---|---|---|
-|Control plane<br>Data plane<br><br>BGP<br>ARP<br>Host Routes<br>ARP Proxy<br>IP: 1.0.1.1|Control plane<br>Data plane<br><br>BGP<br>ARP<br>Host Routes<br>ARP Proxy<br>IP: 1.0.1.1|IP: 1.0.1.1||
-|Control plane<br>Data plane<br><br>BGP<br>ARP<br>Host Routes<br>ARP Proxy<br>IP: 1.0.1.1||||
-|Control plane<br>Data plane<br><br>BGP<br>ARP<br>Host Routes<br>ARP Proxy<br>IP: 1.0.1.1|ARP Proxy|ARP Proxy|ARP Proxy|
+|ToR1 MAC: 1:1:1:1:1:1 IP: 1.0.1.1
 
-**Figure 8: Dual-ToR solutions. In stacked dual-ToR (a), the malfunction of ToR1’s data plane would eventually trigger the offline**
+![Figure 8](images/Alibaba%20HPN%20-%20A%20Data%20Center%20Network%20for%20LLM%20Training/fig_8.png)
+
+**Figure 8: Dual-ToR solutions. In stacked dual-ToR (a), the malfunction of ToR1's data plane would eventually trigger the offline**
+
 **of ToR2. In non-stacked dual-ToR (b), two ToRs run independently.**
 
 ## 4 Access: Non-stacked Dual-ToR
@@ -928,11 +923,11 @@ and ToR2 can no longer synchronize ARP or MAC through the direct
 
 link. Since the out-of-band network is functional, the control planes
 
-of ToR1 and ToR2 still negotiate normally. From ToR1’s perspective,
+of ToR1 and ToR2 still negotiate normally. From ToR1's perspective,
 
 ToR2 is unreachable in the data plane, and ToR1 should continue
 
-working in primary states. From ToR2’s perspective, ToR1’s data
+working in primary states. From ToR2's perspective, ToR1's data
 
 plane is unreachable, which means that the forwarding information
 
@@ -980,7 +975,7 @@ traditional data centers were caused by the abovementioned two
 
 695
 
-ACM SIGCOMM ’24, August 4–8, 2024, Sydney, NSW, Australia Kun Qian et al.
+ACM SIGCOMM '24, August 4–8, 2024, Sydney, NSW, Australia Kun Qian et al.
 
 categories of issues introduced by stacked dual-ToR in the past
 
@@ -1012,13 +1007,13 @@ ToRs, causing them to be independent, this means that they can no
 
 longer use the LACP to negotiate. Therefore, we need to design a
 
-new technology to “disguise” the two ToRs as a virtual single device
+new technology to "disguise" the two ToRs as a virtual single device
 
 through an implicit approach, enabling the host to talk to dual-ToR
 
 via LACP.
 
-The original LACP works as follows. Two ToRs’ LACP modules
+The original LACP works as follows. Two ToRs' LACP modules
 
 receive the LACP Data Unit (LACPDU) from the downstream host
 
@@ -1046,7 +1041,7 @@ LACP negotiation. We deeply cooperate with our switch vendors
 
 to implement a customized LACP module to achieve this goal.
 
-1 **Same** **MAC** **address:** When the ToR’s LACP module re
+1 **Same** **MAC** **address:** When the ToR's LACP module re
 ceives a LACPDU, it generates sysID according to a pre-configured
 
 MAC address. Choosing this pre-configured MAC address is not
@@ -1139,7 +1134,7 @@ solve this problem, we turn off the layer2 broadcast. In addition,
 
 we further implement an ARP proxy in the switch. ARP proxy uses
 
-the switch’s own MAC to respond to all ARP requests from hosts,
+the switch's own MAC to respond to all ARP requests from hosts,
 
 forcing all layer2 forwarding to terminate at the ToR switch and
 
@@ -1188,13 +1183,9 @@ active + 8 backup 200Gbps downstream ports and 60 upstream
 
 ports. We use these ports to connect backup hosts, enabling the
 
-Alibaba HPN: A Data Center Network for Large Language Model Training ACM SIGCOMM ’24, August 4–8, 2024, Sydney, NSW, Australia
+Alibaba HPN: A Data Center Network for Large Language Model Training ACM SIGCOMM '24, August 4–8, 2024, Sydney, NSW, Australia
 
-500
-
-0
-
-Single-Chip Capacity
+50Single-Chip Capacity
 
 1000
 
@@ -1208,31 +1199,12 @@ Single-Chip Capacity
 
 Wicked pillar Cooper pillar
 
-|ToR1 ToR2<br>GP1U1 GP1U1 GP1U1 GP1U1<br>ToR3 ToR4<br>GP2U2 GP2U2 GP2U2 GP2U2<br>ToR15 ToR16<br>GP8U8 GP8U8 GP8U8 GP8U8|Col2|Col3|Col4|
-|---|---|---|---|
-|1<br>GPU1|1<br>GPU1|1<br>GPU1|1<br>GPU1|
-|||||
-|2<br>GPU2|2<br>GPU2|2<br>GPU2|2<br>GPU2|
-|||||
-|8<br>GPU8|8<br>GPU8|8<br>GPU8|8<br>GPU8|
+|ToR1 ToR2<br>GP1U1 GP1U1 GP1U1 GP1U1<br>ToR3 ToR4<br>GP2U2 GP2U2 GP2U2 GP2U2<br>ToR15 ToR16<br>GP8U8 GP8U8 GP8U8 GP8U8
 
-|GP1U1|Col2|
-|---|---|
-|||
-|2<br>GPU2|2<br>GPU2|
-|||
-|8<br>GPU8|8<br>GPU8|
-
-|GP1U1|Col2|
-|---|---|
-|||
-|2<br>GPU2|2<br>GPU2|
-|||
-|8<br>GPU8|8<br>GPU8|
-
-**(c) Optimized VC**
+![Figure 10](images/Alibaba%20HPN%20-%20A%20Data%20Center%20Network%20for%20LLM%20Training/fig_10.png)
 
 **Figure 10: Customized 51.2Tbps single-chip switch. In (b) and**
+
 **(c), wicked pillar works for cooling and cooper pillar works**
 **for load-bearing.**
 
@@ -1248,7 +1220,7 @@ network. There have been multi-chip chassis switches supporting
 
 higher bandwidth capacity [9, 27, 28, 32, 50]. However, Alibaba
 
-Cloud’s long-term experience in operating data center networks
+Cloud's long-term experience in operating data center networks
 
 reveals that multi-chip chassis switches introduce more stability
 
@@ -1277,10 +1249,14 @@ handled per unit area, leading to increased power consumption
 
 in practice. As shown in Figure 9a, the power consumption of the
 
+![Figure 9](images/Alibaba%20HPN%20-%20A%20Data%20Center%20Network%20for%20LLM%20Training/fig_9.png)
+
+**Figure 9: Power consumption of 51.2Tbps single-chip switch and the efficiency of different cooling solutions.**
+
 51.2Tbps switching chip has increased by 45% compared to the
 
-previous generation 25.6Tbps chip. [2] However, the chip’s max junc
-tion temperature ( _𝑇jmax_ ) remains unchanged (105°C). If the chip’s
+previous generation 25.6Tbps chip. [2] However, the chip's max junc
+tion temperature ( _𝑇jmax_ ) remains unchanged (105°C). If the chip's
 
 working temperature exceeds _𝑇jmax_, it will immediately trigger the
 
@@ -1341,6 +1317,10 @@ rails can communicate via a combination of intra-host + inter-host
 
 forwarding. For example, in Figure 11, if GPU1 in host1 wants to
 
+![Figure 11](images/Alibaba%20HPN%20-%20A%20Data%20Center%20Network%20for%20LLM%20Training/fig_11.png)
+
+**Figure 11: Rail-optimized network under dual-ToR.**
+
 talk to GPU2 in host 3, the forwarding path is GPU1 in host1 →
 GPU2 in host1 → ToR3 → GPU2 in host3.
 
@@ -1364,43 +1344,9 @@ traffic crossing the Aggregation layer, lowering the possibility of
 
 load imbalance in the network.
 
-697
+![Figure 13](images/Alibaba%20HPN%20-%20A%20Data%20Center%20Network%20for%20LLM%20Training/fig_13.png)
 
-400
-
-200
-
-400
-
-200
-
-0
-
-Time (min)
-
-**(a) Typical Clos.**
-
-0
-
-Time (min)
-
-**(b) Dual-plane.**
-
-|)|Col2|Col3|Col4|Col5|)|
-|---|---|---|---|---|---|
-|100<br>200<br>ughput (Gbps)|Port 1<br>Port 2|Port 1<br>Port 2|Port 1<br>Port 2|Port 1<br>Port 2|100<br>200<br>ughput (Gbps)<br>Port 1|
-|100<br>200<br>ughput (Gbps)|Port 1<br>Por|Port 1<br>Por|Port 1<br>Por|Port 1<br>Por|Port 1<br>Por|
-|100<br>200<br>ughput (Gbps)||||||
-
-Time (min)
-
-Time (min)
-
-**(b) Dual-plane.**
-
-**(a) Typical Clos.**
-
-**Figure 13: Traffic on ToRs’ ports towards the same NIC.**
+**Figure 13: Traffic on ToRs' ports towards the same NIC.**
 
 ## 6 Tier2: 15K GPUs in one Pod
 
@@ -1413,6 +1359,10 @@ and contains 15K GPUs (§6.2) in one Pod.
 With dual-ToR in tier1 network, if we simply deploy a typical Clos
 
 topology between ToR and Aggregation, as shown in Figure 12a,
+
+![Figure 12](images/Alibaba%20HPN%20-%20A%20Data%20Center%20Network%20for%20LLM%20Training/fig_12.png)
+
+**Figure 12: Tier2 network architecture.**
 
 hash polarization would still exist. In the downstream direction,
 
@@ -1464,6 +1414,8 @@ becomes even and the average queue length is 20KB.
 **Optimized path selection.** Many efforts have been focused on
 
 solving the load imbalance caused by ECMP [54, 56, 57, 60, 61, 64,
+
+![Figure 14](images/Alibaba%20HPN%20-%20A%20Data%20Center%20Network%20for%20LLM%20Training/fig_14.png)
 
 **Figure 14: Queue length at downstream ports of ToR.**
 
@@ -1554,7 +1506,7 @@ rather than hardware-offloaded RDMA.
 
 698
 
-Alibaba HPN: A Data Center Network for Large Language Model Training ACM SIGCOMM ’24, August 4–8, 2024, Sydney, NSW, Australia
+Alibaba HPN: A Data Center Network for Large Language Model Training ACM SIGCOMM '24, August 4–8, 2024, Sydney, NSW, Australia
 
 **Table 1: Complexity of path selection**
 
@@ -1592,9 +1544,9 @@ Fat tree (k=48) [53]
 
 O(48×48)=O(2304)
 
-             - SuperPod is representing the network architecture of many in-production clusters ( _e.g._, NVIDIA DGX Cloud [47], Meta’s AI
+             - SuperPod is representing the network architecture of many in-production clusters ( _e.g._, NVIDIA DGX Cloud [47], Meta's AI
 
-supercomputer [6] and CoreWeave’s cloud platform [10]).
+supercomputer [6] and CoreWeave's cloud platform [10]).
 
 **Table 2: Key mechanisms afecting maximal scale**
 
@@ -1669,7 +1621,7 @@ GPU with 400Gbps network accessing capacity.
 
 Table 2 summarizes key mechanisms in HPN that contribute to
 
-expanding the network scale. First, dual-ToR allows the single NIC’s
+expanding the network scale. First, dual-ToR allows the single NIC's
 
 2×200Gbps bandwidth to be served by two ToR switches, doubling
 
@@ -1797,7 +1749,7 @@ mainstream GPUs for training and inference have been different.
 
 699
 
-ACM SIGCOMM ’24, August 4–8, 2024, Sydney, NSW, Australia Kun Qian et al.
+ACM SIGCOMM '24, August 4–8, 2024, Sydney, NSW, Australia Kun Qian et al.
 
 300
 
@@ -1807,29 +1759,15 @@ ACM SIGCOMM ’24, August 4–8, 2024, Sydney, NSW, Australia Kun Qian et al.
 
 2.5
 
-200
-
-100
-
-200
-
-Time (min)
-
 **(a) End-to-end training performance.**
-
-0
-
-Time (min)
 
 **(b) Aggregation switch ingress traffic**
 **(averaged every 10s).**
 
-0.0
-
-Time (min)
-
-**(c) Queue length in Aggregation switches (max**
+0.**(c) Queue length in Aggregation switches (max**
 **every 10s).**
+
+![Figure 15](images/Alibaba%20HPN%20-%20A%20Data%20Center%20Network%20for%20LLM%20Training/fig_15.png)
 
 **Figure 15: Model training performance on 2300+ GPUs under different network architectures.**
 
@@ -1837,31 +1775,22 @@ Time (min)
 
 500
 
-250
-
-0
-
-**(a) LLaMa-7B.**
+25**(a) LLaMa-7B.**
 
 750
 
 500
 
-250
-
-0
-
-**(b) LLaMa-13B.**
+25**(b) LLaMa-13B.**
 
 20
 
-10
+1**(c) GPT-175B.**
 
-0
-
-**(c) GPT-175B.**
+![Figure 16](images/Alibaba%20HPN%20-%20A%20Data%20Center%20Network%20for%20LLM%20Training/fig_16.png)
 
 **Figure 16: Performance of training representative LLMs on**
+
 **different network architectures.**
 
 For example, NVIDIA V100, A100 and H100 are designed for train
@@ -1886,7 +1815,7 @@ offers good performance. Therefore, such a design ensures that
 
 hosts in HPN can be flexibly used for both training and inference,
 
-building a unified platform supporting users’ various demands.
+building a unified platform supporting users' various demands.
 
 ## 9 Evaluation
 
@@ -1897,7 +1826,7 @@ multiple clusters connecting O(10K) GPUs in Alibaba Cloud, and
 serves thousands of model training jobs from dozens of customers.
 
 We compared HPN with our previous generation of training net
-work architecture (DCN+). DCN+’s backend network is a traditional
+work architecture (DCN+). DCN+'s backend network is a traditional
 
 3-tier Clos Data Center Network with full bisection bandwidth and
 
@@ -1912,7 +1841,7 @@ pared with DCN+ (§9.1). Furthermore, we conduct network layer
 
 monitoring and different collective communication operations to
 
-show HPN’s network layer performance improvement (§9.2). Last
+show HPN's network layer performance improvement (§9.2). Last
 
 but not least, we quantify the reliability improvement (§9.3).
 
@@ -1927,7 +1856,7 @@ NVLINK.
 ### 9.1 LLM Training Performance
 
 **Large-scale training performance in production.** One of Al
-ibaba Cloud’s proprietary LLMs was trained with 2300+ GPUs (288+
+ibaba Cloud's proprietary LLMs was trained with 2300+ GPUs (288+
 
 hosts) for several months. This model was first trained on DCN+,
 
@@ -1958,7 +1887,7 @@ Less cross-segment traffic triggers less congestion in the network.
 
 Figure 15c illustrates the queue length distribution of Aggregation
 
-switches’ downlinks. The high traffic volume and hash collisions
+switches' downlinks. The high traffic volume and hash collisions
 
 constantly build up queues in DCN+. While in HPN, this problem
 
@@ -1983,8 +1912,9 @@ with NCCL 2.18.3 [46].
 
 of typical collective communication operations (AllReduce and All
 Gather) with 448 GPUs (56 hosts), where AllReduce is the predomi
-nant operation in LLM training jobs. Figure 17 lists the results. HPN
+nant operation in LLM training jobs. ![Figure 17](images/Alibaba%20HPN%20-%20A%20Data%20Center%20Network%20for%20LLM%20Training/fig_17.png)
 
+**Figure 17 lists the results. HPN**
 increases the performance of AllReduce by up to 59.3%. Since a seg
 ment in HPN contains 1K GPUs, there is no contention between
 
@@ -1992,9 +1922,7 @@ traffic. The performance of AllGather is similar between HPN and
 
 700
 
-|Alibaba HPN: A Data Center Network for Large Language Model Training ACM SIGCOMM ’24, August 4–8, 2024, Sydney, NSW, Au<br>200 50 (GB/s) (GB/s) (GB/s)<br>DCN+ DCN+ DCN+<br>HPN 100 HPN HPN<br>usBw usBw usBw|Col2|Col3|Col4|Col5|Col6|Col7|Col8|Col9|Col10|
-|---|---|---|---|---|---|---|---|---|---|
-|Alibaba HPN: A Data Center Network for Large Language Model Training<br>ACM SIGCOMM ’24, August 4–8, 2024, Sydney, NSW, Au<br><br>  <br><br><br>200<br>usBw (GB/s)<br>DCN+<br>HPN<br><br>  <br><br><br>100<br>usBw (GB/s)<br>DCN+<br>HPN<br><br>  <br><br><br>50<br>usBw (GB/s)<br>DCN+<br>HPN|<br>|||||||||
+|Alibaba HPN: A Data Center Network for Large Language Model Training ACM SIGCOMM '24, August 4–8, 2024, Sydney, NSW, Au<br>200 50 (GB/s) (GB/s) (GB/s)<br>DCN+ DCN+ DCN+<br>HPN 100 HPN HPN<br>usBw usBw usBw
 
 Size (B)
 
@@ -2005,8 +1933,6 @@ Size (B)
 **(b) AllGather.**
 
 Size (B)
-
-**(c) Multi-AllReduce.**
 
 **Figure 17: Collective communication performance.**
 
@@ -2044,7 +1970,7 @@ GPUs with the same index in the same DP group conduct AllReduce
 
 in parallel. All data is exchanged through the inter-host network
 
-rather than the NVLink. HPN can increase Multi-AllReduce’s per
+rather than the NVLink. HPN can increase Multi-AllReduce's per
 formance by up to 158.2%, as shown in Figure 17c. The root cause
 
 is that HPN balances load better in the inter-host network and
@@ -2064,6 +1990,10 @@ and link flapping) on a NIC-ToR link. We compare dual-ToR with
 typical single-ToR design to validate the reliability improvement.
 
 **Case study1: Link failure and repair.** As shown in Figure 18a,
+
+![Figure 18](images/Alibaba%20HPN%20-%20A%20Data%20Center%20Network%20for%20LLM%20Training/fig_18.png)
+
+**Figure 18: Performance under different types of NIC-ToR link malfunctions.**
 
 a link failure occurs at 10s, and the training halts immediately
 
@@ -2161,7 +2091,7 @@ mistakes before end-to-end testing, we employ INT-based probes
 
 to check that each hop (switchID and PortID) in paths precisely
 
-aligns with HPN’s blueprint definition.
+aligns with HPN's blueprint definition.
 
 **Why not employ the rail-optimized idea on tier2 to support**
 **larger scale?** In HPN, we design a fully interconnected network on
@@ -2170,7 +2100,7 @@ tier2. Meta [14] suggests that, during the training of LLMs, there is
 
 701
 
-ACM SIGCOMM ’24, August 4–8, 2024, Sydney, NSW, Australia Kun Qian et al.
+ACM SIGCOMM '24, August 4–8, 2024, Sydney, NSW, Australia Kun Qian et al.
 
 **Table 4: Any-to-any tier2 vs. Rail-only tier2**
 
@@ -2242,7 +2172,7 @@ age cluster in the backend network: (1) Typically, the container
 
 images and dataset used by customers are usually stored in other
 
-data centers or customers’ self-built clusters. This external data can
+data centers or customers' self-built clusters. This external data can
 not be directly accessed through the backend network. Hence, this
 
 network design requires traffic to pass through a proxy between the
@@ -2381,7 +2311,7 @@ and Dennis Cai are the co-corresponding authors.
 
 702
 
-Alibaba HPN: A Data Center Network for Large Language Model Training ACM SIGCOMM ’24, August 4–8, 2024, Sydney, NSW, Australia
+Alibaba HPN: A Data Center Network for Large Language Model Training ACM SIGCOMM '24, August 4–8, 2024, Sydney, NSW, Australia
 
 ## References
 
@@ -2409,7 +2339,7 @@ Layers, and Management Parameters for Energy-Efficient Ethernet. [https://](http
 
 More Reliable Dual TOR Connectivity. [http://go.aussiebum.com/1KiYZf. (2021).](http://go.aussiebum.com/1KiYZf)
 
-[5] 2021. Demystifying Dual TOR - Credo’s SWITCH AEC and Upstream NOS
+[5] 2021. Demystifying Dual TOR - Credo's SWITCH AEC and Upstream NOS
 
 Support. [https://stordis.com/wp-content/uploads/documents/Credo-Stordis-](https://stordis.com/wp-content/uploads/documents/Credo-Stordis-Webinar-5-19-22.pdf)
 
@@ -2469,7 +2399,7 @@ Sacrificing Performance)? [https://arxiv.org/abs/2307.12169. (2023).](https://ar
 
 [map/load-balancing-aggregated-ethernet-interfaces.html. (2023).](https://www.juniper.net/documentation/us/en/software/junos/high-availability/topics/topic-map/load-balancing-aggregated-ethernet-interfaces.html)
 
-[19] 2023. Meta’s evolution of network for AI - presented by Meta. [https://www.](https://www.youtube.com/watch?v=5gOOtFySrqA)
+[19] 2023. Meta's evolution of network for AI - presented by Meta. [https://www.](https://www.youtube.com/watch?v=5gOOtFySrqA)
 
 [youtube.com/watch?v=5gOOtFySrqA. (2023).](https://www.youtube.com/watch?v=5gOOtFySrqA)
 
@@ -2487,7 +2417,7 @@ AI Leadership. [https://docs.nvidia.com/https:/docs.nvidia.com/dgx-superpod-](ht
 
 [virtualgraffiti.com.au/datasheets/Nvidia/pdf7.pdf. (2023).](https://www.virtualgraffiti.com.au/datasheets/Nvidia/pdf7.pdf)
 
-[23] 2023. Project Ceiba: AWS and Nvidia plan to build world’s largest cloud AI
+[23] 2023. Project Ceiba: AWS and Nvidia plan to build world's largest cloud AI
 
 supercomputer. [http://go.aussiebum.com/kx21Ey4b. (2023).](http://go.aussiebum.com/kx21Ey4b)
 
@@ -2541,7 +2471,7 @@ Management Configuration. [https://www.h3c.com/en/d_200712/211816_294551_](https
 
 [34] 2024. Heat Pipe Technology. [https://www.heatpipe.com/. (2024).](https://www.heatpipe.com/)
 
-[35] 2024. Heat Pipes & Vapor Chambers – What’s the Difference? [https://celsiainc.](https://celsiainc.com/heat-sink-blog/heat-pipes-vapor-chambers-difference/)
+[35] 2024. Heat Pipes & Vapor Chambers – What's the Difference? [https://celsiainc.](https://celsiainc.com/heat-sink-blog/heat-pipes-vapor-chambers-difference/)
 
 [com/heat-sink-blog/heat-pipes-vapor-chambers-difference/. (2024).](https://celsiainc.com/heat-sink-blog/heat-pipes-vapor-chambers-difference/)
 
@@ -2626,7 +2556,7 @@ Routers. [https://www.juniper.net/documentation/us/en/software/junos/high-](http
 [53] Mohammad Al-Fares, Alexander Loukissas, and Amin Vahdat. 2008. A scalable,
 
 commodity data center network architecture. In _Proceedings_ _of_ _the_ _ACM_ _SIG-_
-_COMM 2008 Conference on Data Communication (SIGCOMM ’08)_ . Association
+_COMM 2008 Conference on Data Communication (SIGCOMM '08)_ . Association
 
 for Computing Machinery, New York, NY, USA, 63–74. [https://doi.org/10.1145/](https://doi.org/10.1145/1402958.1402967)
 
@@ -2637,7 +2567,7 @@ for Computing Machinery, New York, NY, USA, 63–74. [https://doi.org/10.1145/](
 Vaidyanathan, Kevin Chu, Andy Fingerhut, Vinh The Lam, Francis Ma
 tus, Rong Pan, Navindra Yadav, and George Varghese. 2014. CONGA: distributed
 congestion-aware load balancing for datacenters. In _Proceedings of the 2014 ACM_
-_Conference on SIGCOMM (SIGCOMM ’14)_ . Association for Computing Machinery,
+_Conference on SIGCOMM (SIGCOMM '14)_ . Association for Computing Machinery,
 
 New York, NY, USA, 503–514. [https://doi.org/10.1145/2619239.2626316](https://doi.org/10.1145/2619239.2626316)
 
@@ -2682,11 +2612,11 @@ _IEEE INFOCOM_ . 2130–2138. [https://doi.org/10.1109/INFCOM.2013.6567015](http
 
 Firoozshahian. 2017. DRILL: Micro Load Balancing for Low-latency Data Center
 Networks. In _Proceedings of the Conference of the ACM Special Interest Group on_
-_Data Communication (SIGCOMM ’17)_ . Association for Computing Machinery,
+_Data Communication (SIGCOMM '17)_ . Association for Computing Machinery,
 
 703
 
-ACM SIGCOMM ’24, August 4–8, 2024, Sydney, NSW, Australia Kun Qian et al.
+ACM SIGCOMM '24, August 4–8, 2024, Sydney, NSW, Australia Kun Qian et al.
 
 New York, NY, USA, 225–238. [https://doi.org/10.1145/3098822.3098839](https://doi.org/10.1145/3098822.3098839)
 
@@ -2694,7 +2624,7 @@ New York, NY, USA, 225–238. [https://doi.org/10.1145/3098822.3098839](https://
 
 Changhoon Kim, Parantap Lahiri, David A. Maltz, Parveen Patel, and Sudipta
 Sengupta. 2009. VL2: a scalable and flexible data center network. In _Proceedings_
-_of the ACM SIGCOMM 2009 Conference on Data Communication (SIGCOMM ’09)_ .
+_of the ACM SIGCOMM 2009 Conference on Data Communication (SIGCOMM '09)_ .
 
 New York, NY, USA, 51–62. [https://doi.org/10.1145/1592568.1592576](https://doi.org/10.1145/1592568.1592576)
 
@@ -2706,7 +2636,7 @@ Xiang Zhou, Zongwei Zhou, and David A Patterson. 2023. TPU v4: An Optically
 
 Reconfigurable Supercomputer for Machine Learning with Hardware Support
 for Embeddings. In _Proceedings of the 50th Annual International Symposium on_
-_Computer Architecture (ISCA ’23)_ . Association for Computing Machinery, New
+_Computer Architecture (ISCA '23)_ . Association for Computing Machinery, New
 
 York, NY, USA, Article 82, 14 pages. [https://doi.org/10.1145/3579371.3589350](https://doi.org/10.1145/3579371.3589350)
 
@@ -2714,14 +2644,14 @@ York, NY, USA, Article 82, 14 pages. [https://doi.org/10.1145/3579371.3589350](h
 
 Jennifer Rexford. 2016. CLOVE: How I learned to stop worrying about the core
 and love the edge. In _Proceedings_ _of_ _the_ _15th_ _ACM_ _Workshop_ _on_ _Hot_ _Topics_ _in_
-_Networks (HotNets ’16)_ . Association for Computing Machinery, New York, NY,
+_Networks (HotNets '16)_ . Association for Computing Machinery, New York, NY,
 
 USA, 155–161. [https://doi.org/10.1145/3005745.3005751](https://doi.org/10.1145/3005745.3005751)
 
 [61] Naga Katta, Mukesh Hira, Changhoon Kim, Anirudh Sivaraman, and Jennifer
 
 Rexford. 2016. HULA: Scalable Load Balancing Using Programmable Data Planes.
-In _Proceedings_ _of_ _the_ _Symposium_ _on_ _SDN_ _Research_ _(SOSR_ _’16)_ . Association for
+In _Proceedings_ _of_ _the_ _Symposium_ _on_ _SDN_ _Research_ _(SOSR_ _'16)_ . Association for
 
 Computing Machinery, New York, NY, USA, Article 10, 12 pages. [https://doi.org/](https://doi.org/10.1145/2890955.2890968)
 
@@ -2733,7 +2663,7 @@ Pedram Dashti, Norm Jouppi, Cedric Lam, Sheng Li, Erji Mao, Daniel Nelson,
 
 George Papen, Mukarram Tariq, and Amin Vahdat. 2023. Lightwave Fabrics: At
 Scale Optical Circuit Switching for Datacenter and Machine Learning Systems.
-In _Proceedings_ _of_ _the_ _ACM_ _SIGCOMM_ _2023_ _Conference_ _(ACM_ _SIGCOMM_ _’23)_ .
+In _Proceedings_ _of_ _the_ _ACM_ _SIGCOMM_ _2023_ _Conference_ _(ACM_ _SIGCOMM_ _'23)_ .
 
 Association for Computing Machinery, New York, NY, USA, 499–515. [https:](https://doi.org/10.1145/3603269.3604836)
 
@@ -2747,10 +2677,10 @@ Kapoor, Stephen Kratzer, Nanfang Li, Hong Liu, Karthik Nagaraj, Jason Ornstein,
 
 Samir Sawhney, Ryohei Urata, Lorenzo Vicisano, Kevin Yasumura, Shidong Zhang,
 
-Junlan Zhou, and Amin Vahdat. 2022. Jupiter evolving: transforming google’s
+Junlan Zhou, and Amin Vahdat. 2022. Jupiter evolving: transforming google's
 
 datacenter network via optical circuit switches and software-defined networking.
-In _Proceedings of the ACM SIGCOMM 2022 Conference (SIGCOMM ’22)_ . Association
+In _Proceedings of the ACM SIGCOMM 2022 Conference (SIGCOMM '22)_ . Association
 
 for Computing Machinery, New York, NY, USA, 66–85. [https://doi.org/10.1145/](https://doi.org/10.1145/3544216.3544265)
 
@@ -2762,7 +2692,7 @@ Kumar, Masoud Moshref, Junhua Yan, Van Jacobson, David Wetherall, and Abdul
 
 Kabbani. 2022. PLB: congestion signals are simple and effective for network
 load balancing. In _Proceedings of the ACM SIGCOMM 2022 Conference (SIGCOMM_
-_’22)_ . Association for Computing Machinery, New York, NY, USA, 207–218. [https:](https://doi.org/10.1145/3544216.3544226)
+_'22)_ . Association for Computing Machinery, New York, NY, USA, 207–218. [https:](https://doi.org/10.1145/3544216.3544226)
 
 [//doi.org/10.1145/3544216.3544226](https://doi.org/10.1145/3544216.3544226)
 
@@ -2782,7 +2712,7 @@ Vol. 162. PMLR, 18332–18346. [https://proceedings.mlr.press/v162/rajbhandari22
 
 Scalable, optimal flow routing in datacenters via local link balancing. In _Pro-_
 _ceedings of the Ninth ACM Conference on Emerging Networking Experiments and_
-_Technologies (CoNEXT ’13)_ . Association for Computing Machinery, New York,
+_Technologies (CoNEXT '13)_ . Association for Computing Machinery, New York,
 
 NY, USA, 151–162. [https://doi.org/10.1145/2535372.2535397](https://doi.org/10.1145/2535372.2535397)
 
@@ -2796,7 +2726,7 @@ and Bryan Catanzaro. 2019. Megatron-LM: Training Multi-Billion Parameter Languag
 
 2017. Let it flow: resilient asymmetric load balancing with flowlet switching.
 In _Proceedings of the 14th USENIX Conference on Networked Systems Design and_
-_Implementation (NSDI’17)_ . USENIX Association, USA, 407–420.
+_Implementation (NSDI'17)_ . USENIX Association, USA, 407–420.
 
 [69] Yunhong Xu, Keqiang He, Rui Wang, Minlan Yu, Nick Duffield, Hassan Wassel,
 
@@ -2812,7 +2742,7 @@ Carlsbad, CA, 805–818. [https://www.usenix.org/conference/atc22/presentation/]
 
 Katz. 2012. DeTail: reducing the flow completion time tail in datacenter networks. In _Proceedings_ _of_ _the_ _ACM_ _SIGCOMM_ _2012_ _Conference_ _on_ _Applications,_
 _Technologies,_ _Architectures,_ _and_ _Protocols_ _for_ _Computer_ _Communication_ _(SIG-_
-_COMM ’12)_ . Association for Computing Machinery, New York, NY, USA, 139–150.
+_COMM '12)_ . Association for Computing Machinery, New York, NY, USA, 139–150.
 
 [https://doi.org/10.1145/2342356.2342390](https://doi.org/10.1145/2342356.2342390)
 
@@ -2820,7 +2750,7 @@ _COMM ’12)_ . Association for Computing Machinery, New York, NY, USA, 139–15
 
 2017. Resilient Datacenter Load Balancing in the Wild. In _Proceedings_ _of_ _the_
 _Conference of the ACM Special Interest Group on Data Communication (SIGCOMM_
-_’17)_ . Association for Computing Machinery, New York, NY, USA, 253–266. [https:](https://doi.org/10.1145/3098822.3098841)
+_'17)_ . Association for Computing Machinery, New York, NY, USA, 253–266. [https:](https://doi.org/10.1145/3098822.3098841)
 
 [//doi.org/10.1145/3098822.3098841](https://doi.org/10.1145/3098822.3098841)
 
@@ -2832,7 +2762,7 @@ _21)_ . USENIX Association, 855–862. [https://www.usenix.org/conference/atc21/
 
 [presentation/zhang-zhehui](https://www.usenix.org/conference/atc21/presentation/zhang-zhehui)
 
-704
+![Figure 19](images/Alibaba%20HPN%20-%20A%20Data%20Center%20Network%20for%20LLM%20Training/fig_19.png)
 
 **Figure 19: AllReduce performance of dual-plane.**
 
@@ -2872,7 +2802,7 @@ Appendices are supporting material that has not been peer-reviewed.
 
 **A** **Performance of Dual-plane**
 
-This part compares HPN’s collective communication performance
+This part compares HPN's collective communication performance
 
 with and without dual-plane. The scales of experiments vary from
 
@@ -2914,8 +2844,9 @@ the _𝑐𝑜𝑛𝑛𝑖_ with the minimal _𝑊𝑄𝐸𝑖_ .
 
 **C** **DCN+ Topology**
 
-Figure 20 illustrates the DCN+ network architecture, which is Al
-ibaba Cloud’s previous version of network architecture deployed
+![Figure 20](images/Alibaba%20HPN%20-%20A%20Data%20Center%20Network%20for%20LLM%20Training/fig_20.png)
+
+**Figure 20 illustrates the DCN+ network architecture, which is Al**ibaba Cloud's previous version of network architecture deployed
 
 in training clusters. In the backend network, DCN+ deploys a typ
 ical three-layer Clos network with the enhancement of dual-ToR.
@@ -2936,8 +2867,9 @@ remains the same compared with that in HPN.
 
 **D** **Data Center Layout**
 
-Figure 21 visualizes the layout of buildings in Alibaba Cloud’s data
+![Figure 21](images/Alibaba%20HPN%20-%20A%20Data%20Center%20Network%20for%20LLM%20Training/fig_21.png)
 
+**Figure 21 visualizes the layout of buildings in Alibaba Cloud's data**
 center. In the backend network, a Pod ( containing 15K GPUs) is
 
 completely accommodated by a backend building. Pods in different
@@ -2964,13 +2896,14 @@ volume.
 
 705
 
-ACM SIGCOMM ’24, August 4–8, 2024, Sydney, NSW, Australia Kun Qian et al.
+ACM SIGCOMM '24, August 4–8, 2024, Sydney, NSW, Australia Kun Qian et al.
 
 |IC1 N|IC2|
 |---|---|
 |PU1 G|PU2|
 
 **Figure 20: DCN+ topology. The frontend network is the same as that in HPN. In backend network, a segment contains 128**
+
 **GPUs and a Pod contains 4 segments.**
 
 (a) Data center layout.
@@ -2983,19 +2916,10 @@ Core6
 
 Core256
 
-|Frontend Network Backend Network in a Building<br>64*400G<br>64*400G Core1 Core64 Core193 Core256 Plane1 Agg1 Agg60 Plane2 Agg1 Agg60 8*400G Pod 1<br>64*400G Agg1 Agg8 Agg1 Agg8 … … 120*400G 15K GPUs<br>64*400G<br>ToR1 ToR2 ToR1 ToR2 ToR1 ToR2 ToR15 ToR16 ToR1 ToR2 ToR15 ToR16 60*400G<br>(128+8)*200G<br>NIC1 NIC8<br>Host 1 Host 136 Host 1 Host 136<br>CPFS/OSS Cluster<br>1024 (active) + 64 (backup) GPUs<br>Pod 1 Pod N Segment 1 Segment 15|Col2|Col3|Col4|Col5|Col6|Col7|Col8|Col9|Col10|Col11|Col12|
-|---|---|---|---|---|---|---|---|---|---|---|---|
-|Core256<br>Core1<br>Agg8<br>Agg1<br>ToR2<br>ToR1<br>ToR2<br>ToR1<br>CPFS/OSS Cluster<br>Agg8<br>Agg1<br>**Frontend Network**<br>**Backend Network in a Building**<br>…<br>ToR1<br>ToR2<br>ToR15<br>ToR16<br>ToR1<br>ToR2<br>ToR15<br>ToR16<br>…<br>Agg1<br>Agg60<br>Agg1<br>Agg60<br>1024 (active) + 64 (backup) GPUs<br>Host 1<br>Host 136<br>Host 1<br>Host 136<br>**Segment 15**<br>**Segment 1**<br>**Plane1**<br>**Plane2**<br>**Pod 1**<br>NIC1<br>NIC8<br>60*400G<br>(128+8)*200G<br>8*400G<br>120*400G<br>64*400G<br>64*400G<br>Core64<br>Core193<br>Pod 1<br>Pod N<br>64*400G<br>64*400G<br>**15K GPUs**|Core256<br>Core1<br>Agg8<br>Agg1<br>ToR2<br>ToR1<br>ToR2<br>ToR1<br>CPFS/OSS Cluster<br>Agg8<br>Agg1<br>**Frontend Network**<br>**Backend Network in a Building**<br>…<br>ToR1<br>ToR2<br>ToR15<br>ToR16<br>ToR1<br>ToR2<br>ToR15<br>ToR16<br>…<br>Agg1<br>Agg60<br>Agg1<br>Agg60<br>1024 (active) + 64 (backup) GPUs<br>Host 1<br>Host 136<br>Host 1<br>Host 136<br>**Segment 15**<br>**Segment 1**<br>**Plane1**<br>**Plane2**<br>**Pod 1**<br>NIC1<br>NIC8<br>60*400G<br>(128+8)*200G<br>8*400G<br>120*400G<br>64*400G<br>64*400G<br>Core64<br>Core193<br>Pod 1<br>Pod N<br>64*400G<br>64*400G<br>**15K GPUs**|Core256<br>Core1<br>Agg8<br>Agg1<br>ToR2<br>ToR1<br>ToR2<br>ToR1<br>CPFS/OSS Cluster<br>Agg8<br>Agg1<br>**Frontend Network**<br>**Backend Network in a Building**<br>…<br>ToR1<br>ToR2<br>ToR15<br>ToR16<br>ToR1<br>ToR2<br>ToR15<br>ToR16<br>…<br>Agg1<br>Agg60<br>Agg1<br>Agg60<br>1024 (active) + 64 (backup) GPUs<br>Host 1<br>Host 136<br>Host 1<br>Host 136<br>**Segment 15**<br>**Segment 1**<br>**Plane1**<br>**Plane2**<br>**Pod 1**<br>NIC1<br>NIC8<br>60*400G<br>(128+8)*200G<br>8*400G<br>120*400G<br>64*400G<br>64*400G<br>Core64<br>Core193<br>Pod 1<br>Pod N<br>64*400G<br>64*400G<br>**15K GPUs**|**ackend Network in a Building**<br>…<br>ToR1<br>ToR2<br>ToR15<br>ToR16<br>ToR1<br>ToR2<br>ToR15<br>ToR16<br>…<br>Agg1<br>Agg60<br>Agg1<br>Agg60<br>1024 (active) + 64 (backup) GPUs<br>Host 1<br>Host 136<br>Host 1<br>Host 136<br>**Segment 15**<br>**Segment 1**<br>**Plane1**<br>**Plane2**<br>**Pod 1**<br>NIC1<br>NIC8<br>60*400G<br>(128+8)*200G<br>8*400G<br>120*400G<br>**15K GPUs**|**ackend Network in a Building**<br>…<br>ToR1<br>ToR2<br>ToR15<br>ToR16<br>ToR1<br>ToR2<br>ToR15<br>ToR16<br>…<br>Agg1<br>Agg60<br>Agg1<br>Agg60<br>1024 (active) + 64 (backup) GPUs<br>Host 1<br>Host 136<br>Host 1<br>Host 136<br>**Segment 15**<br>**Segment 1**<br>**Plane1**<br>**Plane2**<br>**Pod 1**<br>NIC1<br>NIC8<br>60*400G<br>(128+8)*200G<br>8*400G<br>120*400G<br>**15K GPUs**|**ackend Network in a Building**<br>…<br>ToR1<br>ToR2<br>ToR15<br>ToR16<br>ToR1<br>ToR2<br>ToR15<br>ToR16<br>…<br>Agg1<br>Agg60<br>Agg1<br>Agg60<br>1024 (active) + 64 (backup) GPUs<br>Host 1<br>Host 136<br>Host 1<br>Host 136<br>**Segment 15**<br>**Segment 1**<br>**Plane1**<br>**Plane2**<br>**Pod 1**<br>NIC1<br>NIC8<br>60*400G<br>(128+8)*200G<br>8*400G<br>120*400G<br>**15K GPUs**|**ackend Network in a Building**<br>…<br>ToR1<br>ToR2<br>ToR15<br>ToR16<br>ToR1<br>ToR2<br>ToR15<br>ToR16<br>…<br>Agg1<br>Agg60<br>Agg1<br>Agg60<br>1024 (active) + 64 (backup) GPUs<br>Host 1<br>Host 136<br>Host 1<br>Host 136<br>**Segment 15**<br>**Segment 1**<br>**Plane1**<br>**Plane2**<br>**Pod 1**<br>NIC1<br>NIC8<br>60*400G<br>(128+8)*200G<br>8*400G<br>120*400G<br>**15K GPUs**|**ackend Network in a Building**<br>…<br>ToR1<br>ToR2<br>ToR15<br>ToR16<br>ToR1<br>ToR2<br>ToR15<br>ToR16<br>…<br>Agg1<br>Agg60<br>Agg1<br>Agg60<br>1024 (active) + 64 (backup) GPUs<br>Host 1<br>Host 136<br>Host 1<br>Host 136<br>**Segment 15**<br>**Segment 1**<br>**Plane1**<br>**Plane2**<br>**Pod 1**<br>NIC1<br>NIC8<br>60*400G<br>(128+8)*200G<br>8*400G<br>120*400G<br>**15K GPUs**|**ackend Network in a Building**<br>…<br>ToR1<br>ToR2<br>ToR15<br>ToR16<br>ToR1<br>ToR2<br>ToR15<br>ToR16<br>…<br>Agg1<br>Agg60<br>Agg1<br>Agg60<br>1024 (active) + 64 (backup) GPUs<br>Host 1<br>Host 136<br>Host 1<br>Host 136<br>**Segment 15**<br>**Segment 1**<br>**Plane1**<br>**Plane2**<br>**Pod 1**<br>NIC1<br>NIC8<br>60*400G<br>(128+8)*200G<br>8*400G<br>120*400G<br>**15K GPUs**|**ackend Network in a Building**<br>…<br>ToR1<br>ToR2<br>ToR15<br>ToR16<br>ToR1<br>ToR2<br>ToR15<br>ToR16<br>…<br>Agg1<br>Agg60<br>Agg1<br>Agg60<br>1024 (active) + 64 (backup) GPUs<br>Host 1<br>Host 136<br>Host 1<br>Host 136<br>**Segment 15**<br>**Segment 1**<br>**Plane1**<br>**Plane2**<br>**Pod 1**<br>NIC1<br>NIC8<br>60*400G<br>(128+8)*200G<br>8*400G<br>120*400G<br>**15K GPUs**|**ackend Network in a Building**<br>…<br>ToR1<br>ToR2<br>ToR15<br>ToR16<br>ToR1<br>ToR2<br>ToR15<br>ToR16<br>…<br>Agg1<br>Agg60<br>Agg1<br>Agg60<br>1024 (active) + 64 (backup) GPUs<br>Host 1<br>Host 136<br>Host 1<br>Host 136<br>**Segment 15**<br>**Segment 1**<br>**Plane1**<br>**Plane2**<br>**Pod 1**<br>NIC1<br>NIC8<br>60*400G<br>(128+8)*200G<br>8*400G<br>120*400G<br>**15K GPUs**|**ackend Network in a Building**<br>…<br>ToR1<br>ToR2<br>ToR15<br>ToR16<br>ToR1<br>ToR2<br>ToR15<br>ToR16<br>…<br>Agg1<br>Agg60<br>Agg1<br>Agg60<br>1024 (active) + 64 (backup) GPUs<br>Host 1<br>Host 136<br>Host 1<br>Host 136<br>**Segment 15**<br>**Segment 1**<br>**Plane1**<br>**Plane2**<br>**Pod 1**<br>NIC1<br>NIC8<br>60*400G<br>(128+8)*200G<br>8*400G<br>120*400G<br>**15K GPUs**|
-|Core256<br>Core1<br>Agg8<br>Agg1<br>ToR2<br>ToR1<br>ToR2<br>ToR1<br>CPFS/OSS Cluster<br>Agg8<br>Agg1<br>**Frontend Network**<br>**Backend Network in a Building**<br>…<br>ToR1<br>ToR2<br>ToR15<br>ToR16<br>ToR1<br>ToR2<br>ToR15<br>ToR16<br>…<br>Agg1<br>Agg60<br>Agg1<br>Agg60<br>1024 (active) + 64 (backup) GPUs<br>Host 1<br>Host 136<br>Host 1<br>Host 136<br>**Segment 15**<br>**Segment 1**<br>**Plane1**<br>**Plane2**<br>**Pod 1**<br>NIC1<br>NIC8<br>60*400G<br>(128+8)*200G<br>8*400G<br>120*400G<br>64*400G<br>64*400G<br>Core64<br>Core193<br>Pod 1<br>Pod N<br>64*400G<br>64*400G<br>**15K GPUs**|Core256<br>Core1<br>Agg8<br>Agg1<br>ToR2<br>ToR1<br>ToR2<br>ToR1<br>CPFS/OSS Cluster<br>Agg8<br>Agg1<br>**Frontend Network**<br>**Backend Network in a Building**<br>…<br>ToR1<br>ToR2<br>ToR15<br>ToR16<br>ToR1<br>ToR2<br>ToR15<br>ToR16<br>…<br>Agg1<br>Agg60<br>Agg1<br>Agg60<br>1024 (active) + 64 (backup) GPUs<br>Host 1<br>Host 136<br>Host 1<br>Host 136<br>**Segment 15**<br>**Segment 1**<br>**Plane1**<br>**Plane2**<br>**Pod 1**<br>NIC1<br>NIC8<br>60*400G<br>(128+8)*200G<br>8*400G<br>120*400G<br>64*400G<br>64*400G<br>Core64<br>Core193<br>Pod 1<br>Pod N<br>64*400G<br>64*400G<br>**15K GPUs**|Core256<br>Core1<br>Agg8<br>Agg1<br>ToR2<br>ToR1<br>ToR2<br>ToR1<br>CPFS/OSS Cluster<br>Agg8<br>Agg1<br>**Frontend Network**<br>**Backend Network in a Building**<br>…<br>ToR1<br>ToR2<br>ToR15<br>ToR16<br>ToR1<br>ToR2<br>ToR15<br>ToR16<br>…<br>Agg1<br>Agg60<br>Agg1<br>Agg60<br>1024 (active) + 64 (backup) GPUs<br>Host 1<br>Host 136<br>Host 1<br>Host 136<br>**Segment 15**<br>**Segment 1**<br>**Plane1**<br>**Plane2**<br>**Pod 1**<br>NIC1<br>NIC8<br>60*400G<br>(128+8)*200G<br>8*400G<br>120*400G<br>64*400G<br>64*400G<br>Core64<br>Core193<br>Pod 1<br>Pod N<br>64*400G<br>64*400G<br>**15K GPUs**||||||||||
-|64*400G<br>64*400G|64*400G<br>64*400G|64*400G<br>64*400G|…<br>ToR1<br>ToR2<br>ToR15<br>ToR16<br>ToR1<br>ToR2<br>ToR15<br>ToR16<br>…<br>Agg1<br>Agg60<br>Agg1<br>Agg60<br>1024 (active) + 64 (backup) GPUs<br>Host 1<br>Host 136<br>Host 1<br>Host 136<br>**Segment 15**<br>**Segment 1**<br>**Plane1**<br>**Plane2**<br>**Pod 1**<br>NIC1<br>NIC8<br>60*400G<br>(128+8)*2<br>8*400G<br>120*400G<br>**15K GPUs**|…<br>ToR1<br>ToR2<br>ToR15<br>ToR16<br>ToR1<br>ToR2<br>ToR15<br>ToR16<br>…<br>Agg1<br>Agg60<br>Agg1<br>Agg60<br>1024 (active) + 64 (backup) GPUs<br>Host 1<br>Host 136<br>Host 1<br>Host 136<br>**Segment 15**<br>**Segment 1**<br>**Plane1**<br>**Plane2**<br>**Pod 1**<br>NIC1<br>NIC8<br>60*400G<br>(128+8)*2<br>8*400G<br>120*400G<br>**15K GPUs**|…<br>ToR1<br>ToR2<br>ToR15<br>ToR16<br>ToR1<br>ToR2<br>ToR15<br>ToR16<br>…<br>Agg1<br>Agg60<br>Agg1<br>Agg60<br>1024 (active) + 64 (backup) GPUs<br>Host 1<br>Host 136<br>Host 1<br>Host 136<br>**Segment 15**<br>**Segment 1**<br>**Plane1**<br>**Plane2**<br>**Pod 1**<br>NIC1<br>NIC8<br>60*400G<br>(128+8)*2<br>8*400G<br>120*400G<br>**15K GPUs**|||gg60|gg60|gg60|gg60|
-|64*400G<br>64*400G|64*400G<br>64*400G|64*400G<br>64*400G|…<br>ToR1<br>ToR2<br>ToR15<br>ToR16<br>ToR1<br>ToR2<br>ToR15<br>ToR16<br>…<br>Agg1<br>Agg60<br>Agg1<br>Agg60<br>1024 (active) + 64 (backup) GPUs<br>Host 1<br>Host 136<br>Host 1<br>Host 136<br>**Segment 15**<br>**Segment 1**<br>**Plane1**<br>**Plane2**<br>**Pod 1**<br>NIC1<br>NIC8<br>60*400G<br>(128+8)*2<br>8*400G<br>120*400G<br>**15K GPUs**|…<br>ToR1<br>ToR2<br>ToR15<br>ToR16<br>ToR1<br>ToR2<br>ToR15<br>ToR16<br>…<br>Agg1<br>Agg60<br>Agg1<br>Agg60<br>1024 (active) + 64 (backup) GPUs<br>Host 1<br>Host 136<br>Host 1<br>Host 136<br>**Segment 15**<br>**Segment 1**<br>**Plane1**<br>**Plane2**<br>**Pod 1**<br>NIC1<br>NIC8<br>60*400G<br>(128+8)*2<br>8*400G<br>120*400G<br>**15K GPUs**|Agg60|Agg60|Agg60|Agg60|Agg60|Agg60|Agg60|
-|64*400G|ToR2<br>ToR1<br>Agg<br>Agg1|r<br>|r<br>|r<br>|r<br>|r<br>|r<br>|r<br>|r<br>|r<br>|r<br>|
-|64*400G|CPFS/OSS Cluste|CPFS/OSS Cluste|CPFS/OSS Cluste|CPFS/OSS Cluste|CPFS/OSS Cluste|CPFS/OSS Cluste|CPFS/OSS Cluste|CPFS/OSS Cluste||||
-|64*400G|CPFS/OSS Cluste|CPFS/OSS Cluste|CPFS/OSS Cluste|CPFS/OSS Cluste|CPFS/OSS Cluste|CPFS/OSS Cluste|CPFS/OSS Cluste|CPFS/OSS Cluste||||
-
-(b) HPN frontend network. (c) HPN backend network in a building.
+|Frontend Network Backend Network in a Building<br>64*400G<br>64*400G Core1 Core64 Core193 Core256 Plane1 Agg1 Agg60 Plane2 Agg1 Agg60 8*400G Pod 1<br>64*400G Agg1 Agg8 Agg1 Agg8 … … 120*400G 15K GPUs<br>64*400G<br>ToR1 ToR2 ToR1 ToR2 ToR1 ToR2 ToR15 ToR16 ToR1 ToR2 ToR15 ToR16 60*400G<br>(128+8)*200G<br>NIC1 NIC8<br>Host 1 Host 136 Host 1 Host 136<br>CPFS/OSS Cluster<br>1024 (active) + 64 (backup) GPUs<br>Pod 1 Pod N Segment 1 Segment 15
 
 **Figure 21: The layout of the entire data center that employs HPN. Each Pod in the backend is contained by an independent**
+
 **backend building. The frontend building contains the frontend network of the entire data center, as well as the storage cluster.**
 
 706

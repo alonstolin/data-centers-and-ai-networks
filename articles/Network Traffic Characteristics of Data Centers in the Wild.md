@@ -42,7 +42,7 @@ not made or distributed for profit or commercial advantage and that copies
 bear this notice and the full citation on the first page. To copy otherwise, to
 republish, to post on servers or to redistribute to lists, requires prior specific
 permission and/or a fee.
-_IMC’10,_ November 1–3, 2010, Melbourne, Australia.
+_IMC'10,_ November 1–3, 2010, Melbourne, Australia.
 Copyright 2010 ACM 978-1-4503-0057-5/10/11 ...$10.00.
 
 thousand servers. On the other hand, large online service providers,
@@ -58,7 +58,7 @@ center operations. Crucially, little is known about the key differences between 
 data centers (both those used for customer-facing applications and
 those used for large-scale data-intensives tasks).
 
-While several aspects of data centers still need substantial empirical analysis, the specific focus of our work is on issues pertaining to a data center network’s operation. We examine the sending/receiving patterns of applications running in data centers and
+While several aspects of data centers still need substantial empirical analysis, the specific focus of our work is on issues pertaining to a data center network's operation. We examine the sending/receiving patterns of applications running in data centers and
 the resulting link-level and network-level performance. A better
 understanding of these issues can lead to a variety of advancements,
 including traffic engineering mechanisms tailored to improve available capacity and reduce loss rates within data centers, mechanisms
@@ -78,14 +78,14 @@ studying different classes of data centers, we are able to shed light
 on the question of how similar or different they are in terms of their
 network usage, whether results taken from one class can be applied
 to the others, and whether different solutions will be needed for
-designing and managing the data centers’ internal networks.
+designing and managing the data centers' internal networks.
 
 We perform a top-down analysis of the data centers, starting with
 
 267
 
 the applications run in each data center and then drilling down to
-the applications’ send and receive patterns and their network-level
+the applications' send and receive patterns and their network-level
 impact. Using packet traces, we first examine the type of applications running in each data center and their relative contribution
 to network traffic. We then examine the fine-grained sending patterns as captured by data transmission behavior at the packet and
 flow levels. We examine these patterns both in aggregate and at a
@@ -111,7 +111,7 @@ in nature with properties that fit heavy-tailed distributions.
   - In the cloud data centers, a majority of traffic originated by
 servers (80%) stays within the rack. For the university and
 private enterprise data centers, most of the traffic (40-90%)
-leaves the rack and traverses the network’s interconnect.
+leaves the rack and traverses the network's interconnect.
 
   - Irrespective of the type, in most data centers, link utilizations
 are rather low in all layers but the core. In the core, we find
@@ -138,7 +138,7 @@ that have received a lot of recent attention, namely, network bisection bandwidt
 have argued that data centers need high bisection bandwidth
 to support demanding applications. Our measurements show
 that only a fraction of the _existing bisection capacity_ is likely
-to be utilized _within a given time interval_ in all the data centers, even in the “worst case” where application instances are
+to be utilized _within a given time interval_ in all the data centers, even in the "worst case" where application instances are
 
 **Data Center** **Type of** **Type of** **# of DCs**
 **Study** **Data Center** **Apps** **Measured**
@@ -158,7 +158,7 @@ Web Services
 **SPAIN [21]** Any Any 0
 **Our work** Cloud MapReduce 10
 Private Net Webservices
-Universities Distributed F’S
+Universities Distributed F'S
 
 **Table** **1:** **Comparison** **of** **prior** **data** **center** **studies,** **including**
 **type of data center and application.**
@@ -166,7 +166,7 @@ Universities Distributed F’S
 spread across racks rather than confined within a rack. This
 is true even for MapReduce data centers that see relatively
 higher utilization. From this, we conclude that load balancing mechanisms for spreading traffic across the existing links
-in the network’s core can help manage occasional congestion, given the current applications used.
+in the network's core can help manage occasional congestion, given the current applications used.
 
   - **Centralization** **Management:** A few recent proposals [2,
 14] have argued for centrally managing and scheduling networkwide transmissions to more effectively engineer data center
@@ -220,17 +220,17 @@ on a single MapReduce data centers, while the latter considers
 cloud data centers that host Web services as well as those running
 MapReduce. Neither study considers non-cloud data centers, such
 as enterprise and campus data centers, and neither provides as complete a picture of traffic patterns as this study. The key observations
-from Benson’s study [3] are that utilizations are highest in the core
+from Benson's study [3] are that utilizations are highest in the core
 but losses are highest at the edge. In our work, we augment these
 findings by examining the variations in link utilizations over time,
 the localization of losses to link, and the magnitude of losses over
-time. From Kandula’s study [19], we learned that while most traffic
+time. From Kandula's study [19], we learned that while most traffic
 in the cloud is restricted to within a rack and a significant number
 of hot-spots exist in the network. Our work supplements these results by quantifying the exact fraction of traffic that stays within
 a rack for a wide range of data centers. In addition, we quantify
 the number of hot-spots, show that losses are due to the underlying burstiness of traffic, and examine the flow level properties for
 university and private enterprise (both are classes of data centers
-ignored in Kandula’s study [19]).
+ignored in Kandula's study [19]).
 
 Our work complements prior work on measuring Internet traffic [20, 10, 25, 9, 8, 17] by presenting an equivalent study on the
 flow characteristics of applications and link utilizations within data
@@ -280,7 +280,7 @@ utilizations.
 
 ### 3.1 Data Collection
 **SNMP** **polls:** For all of the data centers that we studied, we
-were able to poll the switches’ SNMP MIBs for bytes-in and bytesout at granularities ranging from 1 minute to 30 minutes. For the
+were able to poll the switches' SNMP MIBs for bytes-in and bytesout at granularities ranging from 1 minute to 30 minutes. For the
 5 commercial cloud data centers and the 2 private enterprises, we
 were able to poll for the number of packet discards as well.
 
@@ -341,7 +341,7 @@ CLD5 S. America (3/3) ✓ X X 427 10K 20:1
 tive sites and web portals for students and faculty), and multicast
 video streams. We provide the exact application mix in the next
 section. In talking to the network operators, we found that these
-data centers “organically” evolved over time, moving from a collection of devices in a storage closet to a dedicated room for servers
+data centers "organically" evolved over time, moving from a collection of devices in a storage closet to a dedicated room for servers
 and network devices. As the data centers reached capacity, the operators re-evaluated their design and architecture. Many operators
 chose to move to a more structured, two-layer topology and introduced server virtualization to reduce heating and power requirements while controlling data center size.
 
@@ -372,10 +372,10 @@ to examine the physical topology of the data centers studied, we
 present a brief overview of the topology of a generic data center. In
 Figure 1, we present a canonical 3-Tiered data center. The 3 tiers of
 the data center are the edge tier, which consists of the Top-of-Rack
-switches that connect the servers to the data center’s network fabric;
+switches that connect the servers to the data center's network fabric;
 the aggregation tier, which consists of devices that interconnect the
 
-270
+![Figure 1](images/Network%20Traffic%20Characteristics%20of%20Data%20Centers%20in%20the%20Wild/fig_1.png)
 
 **Figure 1:** **Canonical 3-Tier data center topology.**
 
@@ -416,6 +416,8 @@ NCP
 
 AFS
 
+![Figure 2](images/Network%20Traffic%20Characteristics%20of%20Data%20Centers%20in%20the%20Wild/fig_2.png)
+
 **Figure 2:** **Classification of network traffic to application using**
 **Bro-Id.** **Each of the sniffers sees a very** **different mix of appli-**
 **cations, even though the first 4 sniffers are located on different**
@@ -427,7 +429,7 @@ these networks uniformly employ the 3-Tier textbook data center
 architectures described in [11].
 
 ## 4. APPLICATIONS IN DATA CENTERS
-We begin our “top-down” analysis of data centers by first focusing on the applications they run. In particular, we aim to answer
+We begin our "top-down" analysis of data centers by first focusing on the applications they run. In particular, we aim to answer
 the following questions: (1) What type of applications are running
 within these data centers? and, (2) What fraction of traffic originated by a switch is contributed by each application?
 
@@ -440,18 +442,18 @@ provided us with additional information about the specific applications running 
 The type of applications found at each edge switch, along with
 their relative traffic volumes, are shown in Figure 2. Each bar corresponds to a sniffer in a data center, and the first 4 bars are from the 4
 edges switches within the same data center (PRV2). In conversing
-with the operators, we discovered that this data center hosts a mixture of authentication services (labeled “LDAP”), 3-Tier Line-OfBusiness Web applications (captured in “HTTP” and “HTTPS”),
-and custom home-brewed applications (captured in “Others”).
+with the operators, we discovered that this data center hosts a mixture of authentication services (labeled "LDAP"), 3-Tier Line-OfBusiness Web applications (captured in "HTTP" and "HTTPS"),
+and custom home-brewed applications (captured in "Others").
 
 By looking at the composition of the 4 bars for PRV2, we can infer how the services and applications are deployed across racks in
 the data center. We find that each of the edge switches monitored
-hosts a portion of the back-end for the custom applications (captured in “Others”). In particular, the rack corresponding to PRV24
+hosts a portion of the back-end for the custom applications (captured in "Others"). In particular, the rack corresponding to PRV24
 appears to predominantly host custom applications that contribute
 over 90% of the traffic from this switch. At the other switches,
 these applications make up 50%, 25%, and 10% of the bytes, respectively.
 
 Further, we find that the secure portions of the Line-of-Business
-Web services (labeled “HTTPS”) are hosted in the rack correspond
+Web services (labeled "HTTPS") are hosted in the rack correspond
 
 Finally, the unsecured portions of the Line-of-Business (consist
 
@@ -473,13 +475,13 @@ at the last data center, EDU1, is split 60/40 between Web services
 (both HTTP and HTTPS) and other applications such as file sharing
 (SMB). The operator of this data center tells us that the data center
 also hosts payroll and benefits applications, which are captured in
-“Others.”
+"Others."
 
 Note that we find file system traffic to constitute a more significant fraction of the switches in the university data centers we monitored compared to the enterprise data center.
 
 The key take-aways from the above observations are that (1)
 There is a wide variety of applications observed both within and
-across data centers, such as “regular” and secure HTTP transactions, authentication services, file-system traffic, and custom applications and (2) We observe a wide variation in the composition
+across data centers, such as "regular" and secure HTTP transactions, authentication services, file-system traffic, and custom applications and (2) We observe a wide variation in the composition
 of traffic originated by the switches in a given data center (see the
 4 switches corresponding to PRV2). This implies that one cannot
 assume that applications are placed uniformly at random in data
@@ -489,12 +491,12 @@ For the remaining data centers (i.e., PRV1, CLD1–5), where we
 did not have access to packet traces, we used information from operators to understand the application mix. CLD4 and CLD5 are
 utilized for running MapReduce jobs, with each job, scheduled to
 pack as many of its nodes as possible into the same rack to reduce
-demand on the data center’s core interconnect. In contrast, CLD1,
+demand on the data center's core interconnect. In contrast, CLD1,
 CLD2, and CLD3 host a variety of applications, ranging from messaging and Webmail to Web portals. Each of these applications is
 comprised of multiple components with intricate dependencies, deployed across the entire data center. For example, the Web portal
 requires access to an authentication service for verifying users, and
 it also requires access to a wide range of Web services from which
-data is aggregated. Instant Messaging similarly utilizes an authentication service and composes the user’s buddy list by aggregating
+data is aggregated. Instant Messaging similarly utilizes an authentication service and composes the user's buddy list by aggregating
 data spread across different data stores. The application mix found
 in the data centers impacts the traffic results, which we look at next.
 
@@ -533,6 +535,10 @@ from the enterprise, namely, PRV21, PRV22, and PRV23, where
 the number of active flows is between 1,000 and 5,000 about 90%
 of the time.
 
+![Figure 3](images/Network%20Traffic%20Characteristics%20of%20Data%20Centers%20in%20the%20Wild/fig_3.png)
+
+**Figure 3: CDF of the distribution of the number of flows at the edge switch (a) and the arrival rate for flows (b) in EDU1, EDU2, EDU3, and PRV2.**
+
 We examine the flow inter-arrival times in Figure 3(b). We find
 that the time between new flows arriving at the monitored switch is
 less than 10µs for 2-13% of the flows. For most of the switches in
@@ -556,6 +562,10 @@ data center. However, we do note that the flows in EDU2 appear
 to be generally shorter and smaller than the flows in the other data
 centers. We believe this is due to the nature of the predominant
 application that accounts for over 70% of the bytes at the switch.
+
+![Figure 4](images/Network%20Traffic%20Characteristics%20of%20Data%20Centers%20in%20the%20Wild/fig_4.png)
+
+**Figure 4: CDF of the distribution of the flow sizes (a) and of flow lengths (b) in PRV2, EDU1, EDU2, and EDU3.**
 
 Finally, in Figure 5, we examine the distribution of packet sizes
 in the studied data centers. The packet sizes exhibit a bimodal pat
@@ -612,8 +622,9 @@ of continually maintaining them.
 ### 5.2 Packet-Level Communication Character-
 **istics**
 We first examine the temporal characteristics of the packet traces.
-Figure 6 shows a time-series of packet arrivals observed at one of
-the sniffers in PRV2, and the packet arrivals exhibit an ON/OFF
+![Figure 6](images/Network%20Traffic%20Characteristics%20of%20Data%20Centers%20in%20the%20Wild/fig_6.png)
+
+**Figure 6 shows a time-series of packet arrivals observed at one of**the sniffers in PRV2, and the packet arrivals exhibit an ON/OFF
 pattern at both 15ms and 100ms granularities. We observed similar
 traffic patterns at the remaining 6 switches as well.
 
@@ -642,8 +653,6 @@ x 10
 1 10 100 1000 10000 100000 1e+06 1e+07 1e+08
 
 Flow Sizes (in Bytes)
-
-(a) 15ms (b) 100ms
 
 **Figure 6:** **ON/OFF characteristics:** **Time series of Data Center**
 **traffic** **(number** **of** **packets** **per** **time)** **binned** **by** **two** **different**
@@ -745,6 +754,8 @@ Flow Lengths (in usecs)
 
 Packet Size (in Bytes)
 
+![Figure 5](images/Network%20Traffic%20Characteristics%20of%20Data%20Centers%20in%20the%20Wild/fig_5.png)
+
 **Figure 5:** **Distribution of packet size in the various networks.**
 
 of the OFF periods, and (iii) the packet inter-arrival times within
@@ -811,10 +822,7 @@ EDU3 Lognormal Weibull Weibull AFS
 
 Interarrival Times (in milliseconds)
 
-|wbl<br>logn<br>exp<br>par<br>dat|Col2|
-|---|---|
-|<br>wbl<br>logn<br>exp<br>par<br>dat|:0.016516<br> :0.016093<br> :0.0169~~5~~<br>eto :0.03225<br>a|
-|<br>wbl<br>logn<br>exp<br>par<br>dat||
+|wbl<br>logn<br>exp<br>par<br>dat
 
 Length of ON−Periods (in microseconds)
 
@@ -838,14 +846,13 @@ Length of ON−Periods (in microseconds)
 
 0.1
 
-|wb<br>log<br>ex<br>pa<br>da|Col2|
-|---|---|
-|<br>wb<br>log<br>ex<br>pa<br>da|l: 0.090269<br>n: 0.081732<br>p: 0.11594<br>reto: 0.66908<br>ta|
-|<br>wb<br>log<br>ex<br>pa<br>da||
+|wb<br>log<br>ex<br>pa<br>da
 
 2 3 4 5 6 7 8 9 10
 
 Length of OFF−Periods(in milliseconds) x 10 [4]
+
+![Figure 7](images/Network%20Traffic%20Characteristics%20of%20Data%20Centers%20in%20the%20Wild/fig_7.png)
 
 **Figure 7: CDF of the distribution of the arrival times of packets**
 **at 3 of the switches in PRV2.** **The figure contains best fit curve**
@@ -879,7 +886,7 @@ In the two previous sections, we examined the applications employed in each of t
 informing data center traffic engineering techniques, how existing
 data center applications utilize the interconnect. In particular, we
 aim to answer the following questions: (1) To what extent does
-the current application traffic utilize the data center’s interconnect?
+the current application traffic utilize the data center's interconnect?
 For example, is most traffic confined to within a rack or not? (2)
 What is the utilization of links at different layers in a data center?
 (3) How often are links heavily utilized and what are the properties of heavily utilized links? For example, how long does heavy
@@ -892,7 +899,7 @@ We start by examining the relative proportion of traffic generated
 by the servers that stays within a rack (Intra-Rack traffic) versus
 traffic that leaves its rack for either other racks or external destinations (Extra-Rack traffic). Extra-Rack traffic can be directly
 measured, as it is the amount of traffic on the uplinks of the edge
-switches (i.e., the “Top-of-Rack” switches). We compute IntraRack traffic as the difference between the volume of traffic generated by the servers attached to each edge switch and the traffic
+switches (i.e., the "Top-of-Rack" switches). We compute IntraRack traffic as the difference between the volume of traffic generated by the servers attached to each edge switch and the traffic
 exiting edge switches.
 
 In Figure 8, we present a bar graph of the ratio of Extra-Rack to
@@ -938,6 +945,8 @@ Edge Link Utilization
 
 Data Centers
 
+![Figure 8](images/Network%20Traffic%20Characteristics%20of%20Data%20Centers%20in%20the%20Wild/fig_8.png)
+
 **Figure 8:** **The ratio** **of Extra-Rack** **to Intra-Rack** **traffic in the**
 **data centers.**
 
@@ -976,6 +985,8 @@ on the persistence and prevalence of hot-spots. More specifically,
 we aim to answer the following questions: (1) Do some links frequently appear as hot-spots? How does this result vary across layers and data centers? (2) How does the set of hot-spot links in
 a layer change over time? (3) Do hot-spot links experience high
 packet loss?
+
+![Figure 9](images/Network%20Traffic%20Characteristics%20of%20Data%20Centers%20in%20the%20Wild/fig_9.png)
 
 **Figure 9:** **CDF of link utilizations (percentage) in each layer.**
 
@@ -1160,6 +1171,8 @@ Size of Agg Discards (in Bits)
 
 Size of Core Discards (in Bits)
 
+![Figure 10](images/Network%20Traffic%20Characteristics%20of%20Data%20Centers%20in%20the%20Wild/fig_10.png)
+
 **Figure 10:** **A CDF of the fraction of times that links in the var-**
 **ious layers are hot-spots.**
 
@@ -1181,6 +1194,8 @@ can be utilized to offload some traffic from the hot-spot links.
 
 _6.3.2_ _Hot-spots and Discards_
 Finally, we study loss rates across links in the data centers. In
+
+![Figure 11](images/Network%20Traffic%20Characteristics%20of%20Data%20Centers%20in%20the%20Wild/fig_11.png)
 
 **Figure 11:** **A CDF of the number of bits lost across the various**
 **layers.**
@@ -1205,8 +1220,9 @@ whether or not link utilizations are stable and predictable.
 
 We examined the link utilization over a one week period and
 found that diurnal patterns exist in all data centers. As an example,
-Figure 14 presents the utilization for input and output traffic at a
+![Figure 14](images/Network%20Traffic%20Characteristics%20of%20Data%20Centers%20in%20the%20Wild/fig_14.png)
 
+**Figure 14 presents the utilization for input and output traffic at a**
 276
 
 1
@@ -1287,6 +1303,8 @@ Utilization of Agg Links with Discards
 
 Time (in 5 minutes Intervals)
 
+![Figure 13](images/Network%20Traffic%20Characteristics%20of%20Data%20Centers%20in%20the%20Wild/fig_13.png)
+
 **Figure 13:** **Time series of the fraction of links that are hot-spots**
 **in the core layer for CLD1, CLD2, and CLD5.**
 
@@ -1347,6 +1365,8 @@ time-of-day and day-of-week variation exists in many of the data
 centers. The variation in link utilization is most significant in the
 core of the data centers and quite moderate in other layers of the
 data centers.
+
+![Figure 12](images/Network%20Traffic%20Characteristics%20of%20Data%20Centers%20in%20the%20Wild/fig_12.png)
 
 **Figure 12:** **A CDF of the utilization of links with discards.**
 
@@ -1429,6 +1449,8 @@ Max-Trough for Agg Link
 
 Max-Trough for Core Link
 
+![Figure 15](images/Network%20Traffic%20Characteristics%20of%20Data%20Centers%20in%20the%20Wild/fig_15.png)
+
 **Figure 15:** **Difference between the peak and trough utilization.**
 
 ## 7. IMPLICATIONS FOR DATA CENTER
@@ -1437,7 +1459,7 @@ Max-Trough for Core Link
 ### 7.1 Role of Bisection Bandwidth
 Several proposals [1, 22, 11, 2] for new data center network architectures attempt to maximize the network bisection bandwidth.
 These approaches, while well suited for data centers, which run
-applications that stress the network’s fabric with all-to-all traffic,
+applications that stress the network's fabric with all-to-all traffic,
 would be unwarranted in data centers where the bisection bandwidth is not taxed by the applications. In this section, we re-evaluate
 the SNMP and topology data captured from the 10 data centers and
 examine whether the prevalent traffic patterns are likely to stress the
@@ -1447,12 +1469,14 @@ the prevalent traffic patterns.
 
 Before explaining how we address these questions, we provide
 a few definitions. We define the _bisection_ _links_ for a tiered data
-center to be the set of links at the top-most tier of the data center’s
+center to be the set of links at the top-most tier of the data center's
 tree architecture; in other words, the core links make up the bisection links. The _bisection capacity_ is the aggregate capacity of these
 links. The _full bisection_ _capacity_ is the capacity that would be required to support servers communicating at full link speeds with
 arbitrary traffic matrices and no oversubscription. The full bisec
 
 Data Center
+
+![Figure 16](images/Network%20Traffic%20Characteristics%20of%20Data%20Centers%20in%20the%20Wild/fig_16.png)
 
 **Figure 16:** **The first bar is the ratio** **of aggregate** **server** **traffic**
 **over Bisection BW and the second bar is the ratio of aggregate**
@@ -1481,14 +1505,14 @@ congested (we would expect to find utilization ratios over 100%).
 However, we find in Figure 16 that the prevalent traffic patterns are
 such that, even in the worst case where all server-generated traffic
 is assumed to leave the rack hosting the server, the aggregate output
-from servers is smaller than the network’s current bisection capacity. This means even if the applications were moved around and
+from servers is smaller than the network's current bisection capacity. This means even if the applications were moved around and
 the traffic matrix changed, the current bisection would still be more
 than sufficient and no more than 25% of it would be utilized across
 all data centers, including the MapReduce data centers. Finally, we
 note that the aggregate output from servers is a negligible fraction
 of the ideal bisection capacity in all cases. This implies that should
 these data centers be equipped with a network that provides full bisection bandwidth, at least 95% of this capacity would go unused
-and be wasted by today’s traffic patterns.
+and be wasted by today's traffic patterns.
 
 Thus, the prevalent traffic patterns in the data centers can be supported by the existing bisection capacity, even if applications were
 placed in such a way that there was more inter-rack traffic than
@@ -1630,7 +1654,7 @@ _Networks_, 2009.
 [4] T. Benson, A. Anand, A. Akella, and M. Zhang. The case for
 
 fine-grained traffic engineering in data centers. In
-_Proceedings of INM/WREN ’10_, San Jose, CA, USA, April
+_Proceedings of INM/WREN '10_, San Jose, CA, USA, April
 2010.
 
 [5] M. Casado, M. J. Freedman, J. Pettit, J. Luo, N. McKeown,
@@ -1651,7 +1675,7 @@ _Measurment Workshop_, pages 229–241. ACM Press, 2001.
 [8] M. Fomenkov, K. Keys, D. Moore, and K. Claffy.
 
 Longitudinal study of Internet traffic in 1998-2003. In
-_WISICT ’04:_ _Proceedings of the Winter International_
+_WISICT '04:_ _Proceedings of the Winter International_
 _Symposium on Information and Communication_
 _Technologies_, pages 1–6. Trinity College Dublin, 2004.
 
@@ -1677,7 +1701,7 @@ scalable and flexible data center network. In _SIGCOMM_,
 
 S. Sengupta. Towards a next generation data center
 architecture: scalability and commoditization. In _PRESTO_
-_’08:_ _Proceedings of the ACM workshop on Programmable_
+_'08:_ _Proceedings of the ACM workshop on Programmable_
 _routers for extensible services of tomorrow_, pages 57–62,
 New York, NY, USA, 2008. ACM.
 
@@ -1701,13 +1725,13 @@ Saving energy in data center networks. April 2010.
 [16] C. Guo, H. Wu, K. Tan, L. Shi, Y. Zhang, and S. Lu. Dcell: a
 
 scalable and fault-tolerant network structure for data centers.
-In _SIGCOMM ’08:_ _Proceedings of the ACM SIGCOMM_
+In _SIGCOMM '08:_ _Proceedings of the ACM SIGCOMM_
 _2008 conference on Data communication_, pages 75–86, New
 York, NY, USA, 2008. ACM.
 
 [17] W. John and S. Tafvelin. Analysis of Internet backbone
 
-traffic and header anomalies observed. In _IMC ’07:_
+traffic and header anomalies observed. In _IMC '07:_
 _Proceedings of the 7th ACM SIGCOMM conference on_
 _Internet measurement_, pages 111–116, New York, NY, USA,
 2007. ACM.
@@ -1725,7 +1749,7 @@ Measurements and Analysis. In _IMC_, 2009.
 [20] W. E. Leland, M. S. Taqqu, W. Willinger, and D. V. Wilson.
 
 On the self-similar nature of ethernet traffic. In _SIGCOMM_
-_’93:_ _Conference proceedings on Communications_
+_'93:_ _Conference proceedings on Communications_
 _architectures, protocols and applications_, pages 183–193,
 New York, NY, USA, 1993. ACM.
 
@@ -1755,7 +1779,7 @@ dynamics. Technical report, 1997.
 
 [26] V. Paxson. Bro: a system for detecting network intruders in
 
-real-time. In _SSYM’98:_ _Proceedings of the 7th conference on_
+real-time. In _SSYM'98:_ _Proceedings of the 7th conference on_
 _USENIX Security Symposium_, pages 3–3, Berkeley, CA,
 USA, 1998. USENIX Association.
 

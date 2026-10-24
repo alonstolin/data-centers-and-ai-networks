@@ -1,6 +1,6 @@
 # Course articles
 
-One-paragraph summaries of the papers and lecture material in this folder, organized by course units and themes. Each entry says what problem the paper tackles, what it proposes, and what the headline result is, so you can decide which PDF to open.
+One-paragraph summaries of the papers and lecture material in this folder, organized by course units and themes. Each entry provides the core problem, proposed solution, headline results, and direct links to both the original **[PDF]** and full-text audited **[MD]** conversion (with high-resolution extracted figures, architecture diagrams, and tables embedded inline).
 
 **AI usage:** the summaries were written with Claude (Anthropic) from each paper's abstract, introduction and conclusion, not from a full read. Numbers are the ones the authors report. Check the PDF before quoting one.
 

@@ -16,8 +16,8 @@ service instances to be placed anywhere in the network, (2) Valiant
 Load Balancing to spread traffic uniformly across network paths,
 and (3) end-system based address resolution to scale to large server
 pools, without introducing complexity to the network control plane.
-VL2’s design is driven by detailed measurements of traffic and fault
-data from a large operational cloud service provider. VL2’s implementation leverages proven network technologies, already available
+VL2's design is driven by detailed measurements of traffic and fault
+data from a large operational cloud service provider. VL2's implementation leverages proven network technologies, already available
 at low cost in high-speed hardware implementations, to build a scalable and reliable network architecture. As a result, VL2 networks
 can be deployed today, and we have built a working prototype. We
 evaluate the merits of the VL2 design using measurement, analysis,
@@ -48,7 +48,7 @@ not made or distributed for profit or commercial advantage and that copies
 bear this notice and the full citation on the first page. To copy otherwise, to
 republish, to post on servers or to redistribute to lists, requires prior specific
 permission and/or a fee.
-_SIGCOMM’09,_ August 17–21, 2009, Barcelona, Spain.
+_SIGCOMM'09,_ August 17–21, 2009, Barcelona, Spain.
 Copyright 2009 ACM 978-1-60558-594-9/09/08 ...$10.00.
 
 Agility promises improved risk management and cost savings.
@@ -57,7 +57,7 @@ meet difficult to predict demand spikes, or risk failure at the brink
 of success. With agility, the data center operator can meet the fluctuating demands of individual services from a large shared server
 pool, resulting in higher server utilization and lower costs.
 
-Unfortunately, the designs for today’s data center network prevent agility in several ways. First, existing architectures do not
+Unfortunately, the designs for today's data center network prevent agility in several ways. First, existing architectures do not
 provide enough capacity between the servers they interconnect.
 Conventional architectures rely on tree-like network configurations
 built from high-cost hardware. Due to the cost of the equipment,
@@ -78,7 +78,7 @@ the fragmentation of address space creates an enormous configuration burden when
 the human involvement typically required in these reconfigurations
 limits the speed of deployment.
 
-To overcome these limitations in today’s design and achieve
+To overcome these limitations in today's design and achieve
 agility, we arrange for the network to implement a familiar and
 concrete model: give each service the illusion that all the servers
 assigned to it, and only those servers, are connected by a single
@@ -122,8 +122,8 @@ deployed today, so we limit ourselves from making any changes to
 the hardware of the switches or servers, and we require that legacy
 applications work unmodified. However, the sofware and operating systems on data-center servers are already extensively modified
 (e.g., to create hypervisors for virtualization or blob file-systems to
-store data). Terefore, VL2’s design explores a new split in the responsibilities between host and network — using a layer 2.5shim
-in servers’ network stack to work around limitations of the network
+store data). Terefore, VL2's design explores a new split in the responsibilities between host and network — using a layer 2.5shim
+in servers' network stack to work around limitations of the network
 devices. No new switch sofware or APIs are needed.
 
 VL2 consists of a network built from low-cost switch ASICs
@@ -157,7 +157,7 @@ implement VLB. Tese aspects of the design enable VL2to provide
 layer-2 semantics, while eliminating the fragmentation and waste of
 server pool capacity that the binding between addresses and locations causes in the existing architecture.
 
-Taken together, VL2’s choices of topology, routing design, and
+Taken together, VL2's choices of topology, routing design, and
 sofware architecture create a huge shared pool of network capacity
 that each pair of servers can draw from when communicating. We
 implement VLB by causing the traffic between any pair of servers
@@ -243,14 +243,14 @@ from ToRs are typically 1:5to 1:20oversubscribed (i.e., 1to 4Gbps
 of up-link for 20servers), and paths through the highest layer of
 the tree can be 1:240oversubscribed. Tis large over-subscription
 factor fragments the server pool by preventing idle servers from being assigned to overloaded services, and it severely limits the entire
-data-center’s performance.
+data-center's performance.
 
 **Fragmentation of resources** : As the cost and performance of
 communication depends on distance in the hierarchy, the conventional design encourages service planners to cluster servers nearby
 in the hierarchy. Moreover, spreading a service outside a single
 layer-2 domain frequently requires reconfiguring IP addresses and
 VLAN trunks, since the IP addresses used by servers are topologically determined by the access routers above them. Te result is
-a high turnaround time for such reconfiguration. Today’s designs
+a high turnaround time for such reconfiguration. Today's designs
 avoid this reconfiguration lag by wasting resources; the plentiful
 spare capacity throughout the data center is ofen effectively reserved by individual services (and not shared), so that each service
 can scale out to nearby servers to respond rapidly to demand spikes
@@ -259,7 +259,7 @@ growing resource needs of one service have forced data center operations to evic
 
 **Poor reliability and utilization** : Above the ToR, the basic resilience model is 1:1, i.e., the network is provisioned such that if an
 aggregation switch or access router fails, there must be sufficient remaining idle capacity on a counterpartdevice to carry the load. Tis
-forces each device and link to be run up to at most 50%of its maximum utilization. Further, multiple paths either do not exist or aren’t
+forces each device and link to be run up to at most 50%of its maximum utilization. Further, multiple paths either do not exist or aren't
 effectively utilized. Within a layer-2 domain, the Spanning Tree Protocol causes only a single path to be used even when multiple paths
 between switches exist. In the layer-3 portion, Equal Cost Multipath
 (ECMP) when turned on, can use multiple paths to a destination
@@ -307,22 +307,26 @@ above 80%utilization.
 To uncover the exact nature of traffic inside a data center, we
 instrumented a highly utilized 1,500node cluster in a data center
 that supports data mining on petabytes of data. Te servers are
-distributed roughly evenly across 75ToR switches, which are connected hierarchically as shown in Figure 1. We collected socket-level
-event logs from all machines over two months.
+distributed roughly evenly across 75ToR switches, which are connected hierarchically as shown in ![Figure 1](images/VL2%20-%20A%20Scalable%20and%20Flexible%20Data%20Center%20Network/fig_1.png)
+
+**Figure 1. We collected socket-level**event logs from all machines over two months.
 
 ### 3.2 Flow Distribution Analysis
-**Distribution** **of** **flow** **sizes:** Figure 2 illustrates the nature of
-flows within the monitored data center. Te flow size statistics
-(marked as ‘+’s) show that the majority of flows are small (a few
+**Distribution** **of** **flow** **sizes:** ![Figure 2](images/VL2%20-%20A%20Scalable%20and%20Flexible%20Data%20Center%20Network/fig_2.png)
+
+**Figure 2 illustrates the nature of**flows within the monitored data center. Te flow size statistics
+(marked as '+'s) show that the majority of flows are small (a few
 KB); most of these small flows are hellos and meta-data requests to
 the distributed file system. To examine longer flows, we compute a
-statistic termed total bytes (marked as ‘o’s) by weighting each flow
+statistic termed total bytes (marked as 'o's) by weighting each flow
 size by its number of bytes. Total bytes tells us, for a random byte,
 the distribution of the flow size it belongs to. Almost all the bytes
 in the data center are transported in flows whose lengths vary from
 about 100MB to about 1GB. Te mode at around 100MB springs
 from the fact that the distributed file system breaks long files into
 100-MB size chunks. Importantly, flows over a few GB are rare.
+
+**Figure 2: Mice are numerous; 99%of flows are smaller than 100MB. However, more than 90%of bytes are in flows between 100MB and 1GB.**
 
 0.45
 0.4
@@ -379,6 +383,8 @@ Flow Size (Bytes)
 
 Number of Concurrent flows in/out of each Machine
 
+![Figure 3](images/VL2%20-%20A%20Scalable%20and%20Flexible%20Data%20Center%20Network/fig_3.png)
+
 **Figure 3: Number of concurrent connections has two modes: (1)**
 **10flows per node more than 50%of the time and (2) 80flows per**
 **node for at least 5%of the time.**
@@ -394,7 +400,7 @@ with well understood resilience and performance.
 
 **Number of Concurrent Flows:** Figure 3 shows the probability
 density function (as a fraction of time) for the number of concurrent flows going in and out of a machine, computed over all 1,500
-monitored machines for a representative day’s worth of flow data.
+monitored machines for a representative day's worth of flow data.
 Tere are two modes. More than 50%of the time, an average machine has about ten concurrent flows, but at least 5%of the time it
 has greater than 80concurrent flows. We almost never see more
 than 100concurrent flows.
@@ -418,7 +424,7 @@ changes over time. For computational tractability, we compute the
 ToR-to-ToR TM — the entry TM (t)i,j is the number of bytes sent
 from servers in ToR i to servers in ToR j during the 100s beginning
 at time t. We compute one TM for every 100s interval, and servers
-outside the cluster are treated as belonging to a single “ToR”.
+outside the cluster are treated as belonging to a single "ToR".
 
 Given the timeseries of TMs, we find clusters of similar TMs
 using a technique due to Zhang et al. [22]. In short, the technique
@@ -436,7 +442,7 @@ representative TMs at that knee corresponds to a succinct number
 of distinct traffic matrices that summarize all TMs in the set.
 
 Surprisingly, the number of representative traffic matrices in
-our data center is quite large. On a timeseries of 864TMs, indicating a day’s worth of traffic in the datacenter, even when approximating with 50 − 60 clusters, the fitting error remains high (60%) and
+our data center is quite large. On a timeseries of 864TMs, indicating a day's worth of traffic in the datacenter, even when approximating with 50 − 60 clusters, the fitting error remains high (60%) and
 only decreases moderately beyond that point. Tis indicates that the
 variability in datacenter traffic is not amenable to concise summarization and hence engineering routes for just a few traffic matrices
 is unlikely to work well for the traffic encountered in practice.
@@ -504,7 +510,8 @@ downtimes can be significant: 95%of failures are resolved in 10min,
 
 Time in 100s intervals Run Length log(Time to Repeat)
 
-(a) (b) (c)
+![Figure 4](images/VL2%20-%20A%20Scalable%20and%20Flexible%20Data%20Center%20Network/fig_4.png)
+
 **Figure 4: Lack of short-term predictability: Te cluster to which**
 **a** **traffic** **matrix** **belongs,** **i.e.,** **the** **type of** **traffic** **mix** **in** **the** **TM,**
 **changes quickly and randomly.**
@@ -515,10 +522,9 @@ Run Length
 
 54
 
-|Link-state network<br>carrying only LAs<br>(e.g., 10/8)|Col2|
-|---|---|
-|Link-state network<br>carrying only LAs<br>(e.g., 10/8)|only LAs<br> 10/8)|
-|||
+|Link-state network<br>carrying only LAs<br>(e.g., 10/8)
+
+![Figure 5](images/VL2%20-%20A%20Scalable%20and%20Flexible%20Data%20Center%20Network/fig_5.png)
 
 **Figure 5: An example Clos network between Aggregation and In-**
 **termediate switches provides a richly-connected backbone well-**
@@ -531,7 +537,7 @@ tree. Despite these techniques, we find that in 0.3%of failures all
 redundant components in a network device group became unavailable (e.g., the pair of switches that comprise each node in the conventional network (Figure 1) or both the uplinks from a switch). In
 one incident, the failure of a core switch (due to a faulty supervisor card) affected ten million users for about four hours. We found
 the main causes of these downtimes are network misconfigurations,
-firmware bugs, and faulty components (e.g., ports). With no obvious way to eliminate all failures from the top of the hierarchy, VL2’s
+firmware bugs, and faulty components (e.g., ports). With no obvious way to eliminate all failures from the top of the hierarchy, VL2's
 approach is to broaden the topmost levels of the network so that the
 impact of failures is muted and performance degrades gracefully,
 moving from 1:1redundancy to n:m redundancy.
@@ -546,17 +552,17 @@ in §4.1, and the corresponding flow spreading mechanism in §4.2.
 
 VLB, in theory, ensures a non-interfering packet switched network [7], the counterpart of a non-blocking circuit switched network, as long as (a) traffic spreading ratios are uniform, and (b) the
 offered traffic patterns do not violate edge constraints (i.e., line card
-speeds). To meet the latter condition, we rely on TCP’s end-to-end
+speeds). To meet the latter condition, we rely on TCP's end-to-end
 congestion control mechanism. While our mechanisms to realize
 VLB do not perfectly meet either of these conditions, we show in
-§5.1 that our scheme’s performance is close to the optimum.
+§5.1 that our scheme's performance is close to the optimum.
 
 **Building on proven networking technology** : VL2is based on
 IP routing and forwarding technologies that are already available
 in commodity switches: link-state routing, equal-cost multi-path
 (ECMP) forwarding, IP anycasting, and IP multicasting. VL2 uses
 a link-state routing protocol to maintain the switch-level topology,
-but not to disseminateend hosts’ information. Tis strategyprotects
+but not to disseminateend hosts' information. Tis strategyprotects
 switches from needing to learn voluminous, frequently-changing
 host information. Furthermore, the routing design uses ECMP forwarding along with anycast addresses to enable VLB with minimal
 control plane messaging or churn.
@@ -565,16 +571,16 @@ control plane messaging or churn.
 must support agility, which means, in particular, support for hosting
 any service on any server, for rapid growing and shrinking of server
 pools, and for rapid virtual machine migration. In turn, this calls
-for separating names from locations. VL2’s addressing scheme separates server names, termed application-specific addresses (AAs),
+for separating names from locations. VL2's addressing scheme separates server names, termed application-specific addresses (AAs),
 from their locations, termed location-specific addresses (LAs). VL2
 uses a scalable, reliable directory system to maintain the mappings
 between names and locators. A shim layer running in the network
 stack on every server, called the VL2 agent, invokes the directory
-system’s resolution service. We evaluate the performance of the directory system in §5.5.
+system's resolution service. We evaluate the performance of the directory system in §5.5.
 
 **Embracing** **End** **Systems** : Te rich and homogeneous programmability available at data-center hosts provides a mechanism
 to rapidly realize new functionality. For example, the VL2 agent enables fine-grained path control by adjusting the randomization used
-in VLB. Te agent also replaces Ethernet’s ARP functionality with
+in VLB. Te agent also replaces Ethernet's ARP functionality with
 queries to the VL2 directory system. Te directory system itself is
 also realized on servers, rather than switches, and thus offers flexibility, such as fine-grained, context-aware server access control and
 dynamic service re-provisioning.
@@ -599,7 +605,7 @@ DI DA/2 times the link capacity.
 
 Te Clos topology is exceptionally well suited for VLB in that by
 indirectly forwarding traffic through an Intermediate switch at the
-top tier or “spine” of the network, the network can provide bandwidth guarantees for any traffic matrices subject to the hose model.
+top tier or "spine" of the network, the network can provide bandwidth guarantees for any traffic matrices subject to the hose model.
 Meanwhile, routing is extremely simple and resilient on this topology — take a random path up to a random intermediate switch and
 a random path down to a destination ToR switch.
 
@@ -613,16 +619,7 @@ the task of spreading load over the links (§5.2).
 
 Link-state network with LAs (10/8)
 
-|Int Int Int<br>(10.1.1.1) . . . (10.1.1.1) . . . (10.1.1.1)<br>H(ft) 10.1.1.1 H(ft) 10.0.0.6<br>H(ft) 10.0.0.6 20.0.0.55 20.0.0.56<br>20.0.0.55 20.0.0.56 Payload<br>Payload<br>(10.0.0.4) (10.0.0.6)<br>ToR ToR<br>(20.0.0.1) (20.0.0.1)<br>H(ft) 10.1.1.1<br>H(ft) 10.0.0.6<br>20.0.0.55 20.0.0.56 20.0.0.55 20.0.0.66<br>Payload Payload<br>S (20.0.0.55) D (20.0.0.56)|Col2|Col3|Col4|
-|---|---|---|---|
-|H(ft)<br>H(ft)|10.0.0.6<br>10.1.1.1|10.0.0.6<br>10.1.1.1|10.0.0.6<br>10.1.1.1|
-|20.0.0.55<br>|20.0.0.56<br>|20.0.0.56<br>|20.0.0.56<br>|
-|Payload<br><br>|Payload<br><br>|Payload<br><br>|Payload<br><br>|
-|||~~S ~~(20.0.0.55)|~~D ~~(20.0.0.56)|
-
-|H(ft)<br>H(ft)|10.1.1.1<br>10.0.0.6|
-|---|---|
-|20.0.0.55<br>|20.0.0.56<br>|
+|Int Int Int<br>(10.1.1.1) . . . (10.1.1.1) . . . (10.1.1.1)<br>H(ft) 10.1.1.1 H(ft) 10.0.0.6<br>H(ft) 10.0.0.6 20.0.0.55 20.0.0.56<br>20.0.0.55 20.0.0.56 Payload<br>Payload<br>(10.0.0.4) (10.0.0.6)<br>ToR ToR<br>(20.0.0.1) (20.0.0.1)<br>H(ft) 10.1.1.1<br>H(ft) 10.0.0.6<br>20.0.0.55 20.0.0.56 20.0.0.55 20.0.0.66<br>Payload Payload<br>S (20.0.0.55) D (20.0.0.56)
 
 IP subnet with AAs (20/8)
 
@@ -631,6 +628,8 @@ IP subnet with AAs (20/8)
 |Payload<br>20.0.0.55<br>20.0.0.56|Payload<br>20.0.0.55<br>20.0.0.56|
 
 IP subnet with AAs (20/8)
+
+![Figure 6](images/VL2%20-%20A%20Scalable%20and%20Flexible%20Data%20Center%20Network/fig_6.png)
 
 **Figure 6: VLB in an example VL2 network. Sender** S **sends pack-**
 **ets to destination** D **via a randomly-chosen intermediate switch**
@@ -649,7 +648,7 @@ switches run an IP-based (layer-3) link-state routing protocol that
 disseminates only these LAs. Tis allows switches to obtain the complete switch-level topology, as well as forward packets encapsulated
 with LAs along shortest paths. On the other hand, applications use
 application-specific IP addresses (AAs), which remain unaltered no
-matter how servers’ locations change due to virtual-machinemigration or re-provisioning. Each AA (server) is associated with an LA,
+matter how servers' locations change due to virtual-machinemigration or re-provisioning. Each AA (server) is associated with an LA,
 the identifier of the ToR switch to which the server is connected.
 Te VL2 directory system stores the mapping of AAs to LAs, and
 this mapping is created when application servers are provisioned to
@@ -673,7 +672,7 @@ believe that they all belong to the same IP subnet. Hence, when an
 application sends a packet to an AA for the first time,the networking
 stack on the host generates a broadcast ARP request for the destination AA. Te VL2 agent running on the host intercepts this ARP request and converts it to a unicast query to the VL2 directory system.
 Te directory system answers the query with the LA of the ToR to
-which packets should be tunneled. Te VL2 agent caches this mapping from AA to LA addresses, similar to a host’s ARP cache, such
+which packets should be tunneled. Te VL2 agent caches this mapping from AA to LA addresses, similar to a host's ARP cache, such
 that subsequent communication need not entail a directory lookup.
 
 **Access control via the directory service:** A server cannot send
@@ -704,11 +703,11 @@ each is needed to overcome limitations in the other. VL2 uses flows,
 rather than packets, as the basic unit of traffic spreading and thus
 avoids out-of-order delivery.
 
-Figure 6 illustrateshow the VL2 agent uses encapsulationto implement VLB by sending traffic through a randomly-chosen Intermediate switch. Te packet is first delivered to one of the Intermediate switches, decapsulated by the switch, delivered to the ToR’s LA,
+Figure 6 illustrateshow the VL2 agent uses encapsulationto implement VLB by sending traffic through a randomly-chosen Intermediate switch. Te packet is first delivered to one of the Intermediate switches, decapsulated by the switch, delivered to the ToR's LA,
 decapsulated again, and finally sent to the destination.
 
 While encapsulating packets to a specific,but randomly chosen,
-Intermediate switch correctly realizes VLB, it would require updating a potentially huge number of VL2 agents whenever an Intermediate switch’s availability changes due to switch/link failures. Instead, we assign the same LA address to all Intermediate switches,
+Intermediate switch correctly realizes VLB, it would require updating a potentially huge number of VL2 agents whenever an Intermediate switch's availability changes due to switch/link failures. Instead, we assign the same LA address to all Intermediate switches,
 and the directory system returns this anycast address to agents upon
 lookup. Since all Intermediate switches are exactly three hops away
 from a source host, ECMP takes care of delivering packets encapsulated with the anycast address to any one of the active Intermediate
@@ -728,7 +727,7 @@ inexpensive switches cannot correctly retrieve the five-tuple values
 headers. Tus, the agent at the source computes a hash of the fivetuple values and writes that value into the source IP address field,
 which all switches do use in making ECMP forwarding decisions.
 
-Te greatest concern with both ECMP and VLB is that if “elephant flows” are present, then the random placement of flows could
+Te greatest concern with both ECMP and VLB is that if "elephant flows" are present, then the random placement of flows could
 lead to persistent congestion on some links while others are underutilized. Our evaluation did not find this to be a problem on datacenter workloads(§5.2). Shouldit occur, initialresultsshowthe VL2
 agent can detect and deal with such situations with simple mechanisms, such as re-hashing to change the path of large flows when
 TCP detects a severe congestion event (e.g., a full window loss).
@@ -763,11 +762,9 @@ U
 
 S
 
-|BCD|Col2|
-|---|---|
-|||
-|||
-|||
+|BCD
+
+![Figure 7](images/VL2%20-%20A%20Scalable%20and%20Flexible%20Data%20Center%20Network/fig_7.png)
 
 **Figure 7: VL2Directory System Architecture**
 
@@ -871,13 +868,13 @@ sends the same update to another directory server, trading response
 time for reliability and availability.
 
 **Updating** **caches** **reactively** : Since AA-to-LA mappings are
-cached at directory servers and in VL2 agents’ caches, an update
+cached at directory servers and in VL2 agents' caches, an update
 can lead to inconsistency. To resolve inconsistency without wasting
 server and network resources, our design employs a reactive cacheupdate mechanism. Te cache-updateprotocol leverages this observation: a stale host mapping needs to be corrected only when that
 mapping is used to deliver traffic. Specifically, when a stale mapping is used, some packets arrive at a stale LA—a ToR which does
 not host the destination server anymore. Te ToR may forward a
 sample of such non-deliverable packets to a directory server, triggering the directory server to gratuitously correct the stale mapping
-in the source’s cache via unicast.
+in the source's cache via unicast.
 
 ## 5. EVALUATION
 In this section we evaluate VL2 using a prototype running on
@@ -916,6 +913,8 @@ objectives described in Section 1.
 
 Time (s)
 
+![Figure 8](images/VL2%20-%20A%20Scalable%20and%20Flexible%20Data%20Center%20Network/fig_8.png)
+
 **Figure 8: VL2 testbed comprising 80servers and 10switches.**
 
 Te testbed is built using the Clos network topology of Figure 5, consisting of 3Intermediate switches, 3Aggregation switches
@@ -925,13 +924,13 @@ switches have 210Gbps ports and 241Gbps ports. Each ToR is
 connected to two Aggregation switches via 10Gbps links, and to
 20servers via 1Gbps links. Internally, the switches use commodity
 ASICs - the Broadcom 56820and 56514— although any switch
-that supports line rate L3forwarding, OSPF, ECMP, and IPinIP decapsulation will work. To enable detailed analysis of the TCP behavior seen during experiments, the servers’ kernels are instrumented
+that supports line rate L3forwarding, OSPF, ECMP, and IPinIP decapsulation will work. To enable detailed analysis of the TCP behavior seen during experiments, the servers' kernels are instrumented
 to log TCP extended statistics [20] (e.g., congestion window (cwnd)
 and smoothed RTT) afer each socket buffer is sent (typically 128KB
 in our experiments). Tis logging only marginally affects goodput,
 i.e., useful information delivered per second to the application layer.
 
-We first investigate VL2’s ability to provide high and uniform
+We first investigate VL2's ability to provide high and uniform
 network bandwidth between servers. Ten, we analyze performance
 isolation and fairness between traffic flows, measure convergence
 afer link failures, and finally, quantify the performance of address
@@ -952,7 +951,7 @@ other servers. Tis data shuffle pattern arises in large scale sorts,
 merges and join operations in the data center. We chose this test
 because, in our interactions with application developers, we learned
 that many use such operations with caution, because the operations
-are highly expensive in today’s data center network. However, data
+are highly expensive in today's data center network. However, data
 shuffles are required, and, if data shuffles can be efficiently supported, it could have large impact on the overall algorithmic and
 data storage strategy.
 
@@ -960,9 +959,12 @@ We create an all-to-all data shuffle traffic matrix involving 75
 servers. Each of 75servers must deliver 500MB of data to each of
 the 74other servers - a shuffle of 2.7TB from memory to memory.
 
-Figure 9 shows how the sum of the goodput over all flows varies
-with time during a typical run of the 2.7TB data shuffle. All data is
+![Figure 9](images/VL2%20-%20A%20Scalable%20and%20Flexible%20Data%20Center%20Network/fig_9.png)
+
+**Figure 9 shows how the sum of the goodput over all flows varies**with time during a typical run of the 2.7TB data shuffle. All data is
 carried over TCP connections, all of which attempt to connect be
+
+**Figure 9: Aggregate goodput during a 2.7TB shuffle among 75 servers.**
 
 **Figure** **9:** **Aggregate goodput during** **a 2.7TB shuffle** **among 75**
 **servers.**
@@ -1014,7 +1016,7 @@ Due to its use of an anycast address on the intermediate
 switches, VL2 relies on ECMP to split traffic in equal ratios among
 the intermediate switches. Because ECMP does flow-level splitting,
 coexisting elephant and mice flows might be split unevenly at small
-time scales. To evaluate the effectiveness of VL2’s implementation
+time scales. To evaluate the effectiveness of VL2's implementation
 
 58
 
@@ -1041,6 +1043,8 @@ time scales. To evaluate the effectiveness of VL2’s implementation
 
 Time (s)
 
+![Figure 10](images/VL2%20-%20A%20Scalable%20and%20Flexible%20Data%20Center%20Network/fig_10.png)
+
 **Figure 10: Fairness measures how evenly flows are split to inter-**
 **mediate switches from aggregation switches.**
 
@@ -1057,7 +1061,7 @@ Before proceeding further, we note that, unlike the efficiency
 experiment above, the traffic mix here is indicative of actual data
 center workload. We mimic the flow size distribution and the number of concurrent flows observed by measurements in §3.
 
-In Figure 10, for each Aggregation switch, we plot Jain’s fairness index [15] for the traffic to Intermediate switches as a time series. Te average utilization of links was between 10%and 20%. As
+In Figure 10, for each Aggregation switch, we plot Jain's fairness index [15] for the traffic to Intermediate switches as a time series. Te average utilization of links was between 10%and 20%. As
 shown in the figure, the VLB split ratio fairness index averages more
 than 0.98for all Aggregation switches over the duration of this experiment. VL2 achievessuch highfairness becausethere are enough
 flows at the Aggregation switches that randomization benefits from
@@ -1092,8 +1096,10 @@ share of its bottleneck.
 
 Time (s)
 
+![Figure 11](images/VL2%20-%20A%20Scalable%20and%20Flexible%20Data%20Center%20Network/fig_11.png)
+
 **Figure 11: Aggregate goodput of two services with servers inter-**
-**mingled on the ToRs. Service one’s goodput is unaffected as ser-**
+**mingled on the ToRs. Service one's goodput is unaffected as ser-**
 **vice two ramps traffic up and down.**
 
 20
@@ -1116,6 +1122,8 @@ Time (s)
 
 Time (s)
 
+![Figure 12](images/VL2%20-%20A%20Scalable%20and%20Flexible%20Data%20Center%20Network/fig_12.png)
+
 **Figure 12:** **Aggregate goodput of service one as service two cre-**
 **ates bursts containing successively more short TCP connections.**
 
@@ -1132,7 +1140,7 @@ service has 18servers allocated to it and each server starts a single
 TCP transfer to one other server at time 0and these flows last for
 the duration of the experiment. Te second service starts with one
 server at 60seconds and a new server is assigned to it every 2seconds for a total of 19servers. Every server in service two starts an
-8GB transfer over TCP as soon as it starts up. Both the services’
+8GB transfer over TCP as soon as it starts up. Both the services'
 servers are intermingled among the 4ToRs to demonstrate agile assignment of servers.
 
 Figure 11 shows the aggregate goodput of both services as a
@@ -1140,11 +1148,11 @@ function of time. As seen in the figure,there is no perceptible change
 to the aggregate goodput of service one as the flows in service two
 start or complete, demonstrating performance isolation when the
 traffic consists of large long-lived flows. Trough extended TCP
-statistics, we inspected the congestion window size (cwnd) of service one’s TCP flows, and found that the flows fluctuate around their
-fair share briefly due to service two’s activity but stabilize quickly.
+statistics, we inspected the congestion window size (cwnd) of service one's TCP flows, and found that the flows fluctuate around their
+fair share briefly due to service two's activity but stabilize quickly.
 
 We would expect that a service sending unlimited rates of UDP
-traffic might violate the hose model and hence performance isolation. We do not observe such UDP traffic in our data centers, although techniques such as STCP to make UDP “TCP friendly” are
+traffic might violate the hose model and hence performance isolation. We do not observe such UDP traffic in our data centers, although techniques such as STCP to make UDP "TCP friendly" are
 well known if needed [14]. However, large numbers of short TCP
 connections (mice),which are common in DCs (Section 3),have the
 potential to cause problems similar to UDP as each flow can transmit small bursts of packets during slow start.
@@ -1152,7 +1160,7 @@ potential to cause problems similar to UDP as each flow can transmit small burst
 To evaluate this aspect, we conduct a second experiment with
 service one sending long-lived TCP flows, as in experiment one.
 Servers in service two create bursts of short TCP connections (1to
-20KB), each burst containing progressively more connections. Figure 12 shows the aggregate goodput of service one’s flows along with
+20KB), each burst containing progressively more connections. Figure 12 shows the aggregate goodput of service one's flows along with
 the total number of TCP connections created by service two. Again,
 
 59
@@ -1163,14 +1171,14 @@ the total number of TCP connections created by service two. Again,
 **lation marked with vertical lines.** **Network re-converges in** < 1 **s**
 **afer each failure and demonstrates graceful degradation.**
 
-service one’s goodput is unaffected by service two’s activity. We inspected the cwnd of service one’s TCP flows and found only brief
-fluctuations due to service two’s activity.
+service one's goodput is unaffected by service two's activity. We inspected the cwnd of service one's TCP flows and found only brief
+fluctuations due to service two's activity.
 
-Te two experiments above demonstrate TCP’s naturalenforcement of the hose model combined with VLB and a network with no
+Te two experiments above demonstrate TCP's naturalenforcement of the hose model combined with VLB and a network with no
 oversubscription is sufficient to provide performance isolation between services.
 
 ### 5.4 VL2 Convergence After Link Failures
-In this section, we evaluate VL2’s response to a link or a switch
+In this section, we evaluate VL2's response to a link or a switch
 failure, which could be caused by a physical failure or due to the
 routing protocol converting a link flap to a link failure. We begin an
 all-to-all data shuffle and then disconnect links between Intermediate and Aggregation switches until only one Intermediate switch
@@ -1179,8 +1187,9 @@ partition the network. According to our study of failures, this type
 of mass link failure has never occurred in our data centers, but we
 use it as an illustrative stress test.
 
-Figure 13 shows a time series of the aggregategoodput achieved
-by the flows in the data shuffle, with the times at which links were
+![Figure 13](images/VL2%20-%20A%20Scalable%20and%20Flexible%20Data%20Center%20Network/fig_13.png)
+
+**Figure 13 shows a time series of the aggregategoodput achieved**by the flows in the data shuffle, with the times at which links were
 disconnected and then reconnected marked by vertical lines. Te
 figure shows that OSPF re-converges quickly (sub-second) afer
 each failure. Both Valiant Load Balancing and ECMP work as expected, and the maximum capacity of the network gracefully degrades. Restoration, however, is delayed by the conservative defaults
@@ -1188,6 +1197,8 @@ for OSPF timers that are slow to act on link restoration. Hence, VL2
 fully uses a link roughly 50s afer it is restored. We note, however,
 that restoration does not interfere with traffic and, the aggregate
 goodput eventually returns to its previous level.
+
+**Figure 13: Aggregate goodput as all links to switches Interme- diate1and Intermediate2are unplugged in succession and then reconnected in succession. Approximate times of link manipu- lation marked wi**
 
 Tis experiment also demonstrates the behavior of VL2 when
 the network is structurally oversubscribed,i.e., the Clos network has
@@ -1221,7 +1232,7 @@ network churns.
 update rate and observe the response latencies (1 [st], 50 [th] and 99 [th]
 
 percentile). We observe that a directory system with three directory servers handles 50K lookups/sec within 10ms, which we set as
-the maximum acceptable latency for an “ARP request”. Up to 40K
+the maximum acceptable latency for an "ARP request". Up to 40K
 lookups/sec, the system offers a median response time of < 1ms.
 Updates, however, are more expensive, as they require executing a
 consensus protocol [19] to ensure that all RSM replicas are mutually consistent. Since high throughput is more important than latency for updates, we batch updates over a short time interval (i.e.,
@@ -1245,20 +1256,20 @@ servers). In Figure 14(a), the lines for one directory server show that
 it can handle 60%of the lookup load (19K) within 10ms. Te spike
 at two seconds is due to the timeout value of 2s in our prototype. Te
 entire load is handled by two directory servers, demonstrating the
-system’s fault tolerance. Additionally, the lossy network curve shows
+system's fault tolerance. Additionally, the lossy network curve shows
 the latency of three directory servers under severe (10%) packet
 losses between directory servers and clients (either requests or responses), showing the system ensures availability under network
 churns. For updates, however, the performance impact of the number of directory servers is higher than updates because each update
 issent toa single directoryserver toensure correctness. Figure 14(b)
 shows that failures of individual directory servers do not collapse
-the entire system’s processing capacity to handle updates. Te step
-pattern on the curves is due to a batching of updates (occurring every 50ms). We also find that the primary RSM server’s failure leads
+the entire system's processing capacity to handle updates. Te step
+pattern on the curves is due to a batching of updates (occurring every 50ms). We also find that the primary RSM server's failure leads
 
 60
 
-| ¬ª«<br> ®¯°±±²³´µ<br><br> ¬ª« ­ª«<br> <br> ©ª«|Col2|¼·¶<br>Á¿ÉÊ¶·»<br>ßÝÞ ßÝÞàáâããäåæç|Col4|ïêé<br>ôòüýéêî<br>û<br>ùúéêí<br>øöéì|
-|---|---|---|---|---|
-|<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>©<br>ª<br>«<br>¬<br>ª<br>«<br>­<br>ª<br>«<br>¬<br>ª<br>«<br>®<br>¯<br>°<br>±<br>±<br>²<br>³<br>´<br>µ|||||
+| ¬ª«<br> ®¯°±±²³´µ<br><br> ¬ª« ­ª«<br> <br> ©ª«
+
+![Figure 14](images/VL2%20-%20A%20Scalable%20and%20Flexible%20Data%20Center%20Network/fig_14.png)
 
 **Figure 14: Te directory system provides high throughput and fast response time for lookups and updates**
 
@@ -1285,7 +1296,7 @@ for
 for
 
 to only about 4s delay for updates until a new primary is elected,
-while a primary’s recovery or non-primary’s failures/recoveries do
+while a primary's recovery or non-primary's failures/recoveries do
 not affect the update latency at all.
 
 **Fast** **reconvergence and** **robustness:** Finally, we evaluate the
@@ -1337,8 +1348,8 @@ for a best-case traffic pattern by turning all traffic patterns (including
 both best-case and worst-case) into the average case. Tis performance loss will manifest itself as the utilization of some links being
 higher than they would under a more optimal traffic engineering
 system. To quantify the increase in link utilization VLB will suffer,
-we compare VLB’s maximum link utilization with that achieved by
-other routing strategies on the VL2 topology for a full day’s traffic
+we compare VLB's maximum link utilization with that achieved by
+other routing strategies on the VL2 topology for a full day's traffic
 matrices (TMs) (at 5min intervals) from the data center traffic data
 reported in Section 3.1.
 
@@ -1356,13 +1367,15 @@ schemes. We normalized the link utilization numbers so that the
 maximum utilization on any link for adaptive routing is 1.0. Te
 results show that for the median utilization link in each scheme,
 VLB performs about the same as the other two schemes. For the
-most heavily loaded link in each scheme, VLB’s link capacity usage
+most heavily loaded link in each scheme, VLB's link capacity usage
 is about 20%higher than that of the other two schemes. Tus, evaluations on actual data center workloads show that the simplicity and
 universality of VLB costs relatively little capacity when compared to
 much more complex traffic engineering schemes.
 
 **Cost and Scale:** With the range of low-cost commodity devices
 currently available, the VL2 topology can scale to create networks
+
+![Figure 15](images/VL2%20-%20A%20Scalable%20and%20Flexible%20Data%20Center%20Network/fig_15.png)
 
 **Figure 15: CDFof normalizedlinkutilizations forVLB,adaptive,**
 **and best oblivious routing schemes, showing that VLB (and best**
@@ -1416,15 +1429,15 @@ switch [3]. VLB has also been proposed, with modifications and
 generalizations [18, 23], for oblivious routing of variable traffic on
 the Internet under the hose traffic model [8].
 
-**Scalable routing:** Te Locator/ID Separation Protocol [9] proposes “map-and-encap” as a key principle to achieve scalability and
-mobility in Internet routing. VL2’s control-plane takes a similar approach (i.e., demand-driven host-information resolution and
-caching) but adapted to the data center environment and implemented on end hosts. SEATTLE [17] proposes a distributed hostinformation resolution system running on switches to enhance Ethernet’s scalability. VL2 takes an end host based approach to this
+**Scalable routing:** Te Locator/ID Separation Protocol [9] proposes "map-and-encap" as a key principle to achieve scalability and
+mobility in Internet routing. VL2's control-plane takes a similar approach (i.e., demand-driven host-information resolution and
+caching) but adapted to the data center environment and implemented on end hosts. SEATTLE [17] proposes a distributed hostinformation resolution system running on switches to enhance Ethernet's scalability. VL2 takes an end host based approach to this
 problem, which allows its solution to be implemented today, independent of the switches being used. Furthermore, SEATTLE
 does not provide scalable data plane primitives, such as multi-path,
 which are critical for scalability and increasing utilization of network resources.
 
 **Commercial** **Networks:** Data Center Ethernet (DCE) [4] by
-Cisco and other switch manufacturers shares VL2’s goal of increasing network capacity through multi-path. However, these industry
+Cisco and other switch manufacturers shares VL2's goal of increasing network capacity through multi-path. However, these industry
 efforts are primarily focused on consolidation of IP and storage area
 network (SAN) traffic, which is rare in cloud-service data centers.
 Due to the requirement to support loss-less traffic, their switches
@@ -1439,8 +1452,8 @@ be prohibitively expensive with the existing architecture.
 VL2 benefits the cloud service programmer. Today, programmers have to be aware of network bandwidth constraints and constrain server to server communications accordingly. VL2 instead
 provides programmers the simpler abstraction that all servers assigned to them are plugged into a single layer 2switch, with hotspot
 free performance regardless of where the servers are actually connected in the topology. VL2 also benefits the data center operator as
-today’s bandwidth and control plane constraints fragment the server
-pool, leaving servers (which account for the lion’s share of data center cost) under-utilized even while demand elsewhere in the data
+today's bandwidth and control plane constraints fragment the server
+pool, leaving servers (which account for the lion's share of data center cost) under-utilized even while demand elsewhere in the data
 center is unmet. Instead, VL2 enables agility: any service can be
 assigned to any server, while the network maintains uniform high
 bandwidth and performance isolation between services.
@@ -1454,7 +1467,7 @@ VL2is efficient. Our working prototype, built using commodity switches, approach
 that the theory predicts. Experiments with two data-center services
 showed that churn (e.g., dynamic re-provisioning of servers, change
 of link capacity, and micro-bursts of flows) has little impact on TCP
-goodput. VL2’s implementation of Valiant Load Balancing splits
+goodput. VL2's implementation of Valiant Load Balancing splits
 flows evenly and VL2 achieves high TCP fairness. On all-to-all data
 shuffle communications, the prototype sustains an efficiency of 94%
 with a TCP fairness index of 0.995.
@@ -1549,7 +1562,7 @@ Computer Systems, 16:133–169, 1998.
 
 statistics MIB. RFC 4898, 2007.
 
-[21] S. Sinha, S. Kandula, and D. Katabi. Harnessing TCP’s burstiness
+[21] S. Sinha, S. Kandula, and D. Katabi. Harnessing TCP's burstiness
 
 with flowlet switching. In HotNets, 2004.
 

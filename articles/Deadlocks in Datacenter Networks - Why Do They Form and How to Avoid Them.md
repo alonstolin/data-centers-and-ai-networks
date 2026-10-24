@@ -22,7 +22,7 @@ conditions might be less onerous.
 In this paper we discuss a problem that is quite (c)old,
 albeit one that has re-emerged in a new context, and admit
 that we have no idea how to solve it completely. Our hope
-is to draw the community’s attention to this problem, and
+is to draw the community's attention to this problem, and
 re-ignite research in this area.
 
 The problem is deadlock formation in lossless networks.
@@ -54,6 +54,8 @@ DOI: http://dx.doi.org/10.1145/3005745.3005760
 92
 
 Switch B buffer Switch C buffer
+![Figure 1](images/Deadlocks%20in%20Datacenter%20Networks%20-%20Why%20Do%20They%20Form%20and%20How%20to%20Avoid%20Them/fig_1.png)
+
 **Figure 1:** **PFC-induced deadlock:** **simple illustration**
 
 a standstill situation: there is a _Cyclic_ _Buffer_ _Dependency_
@@ -101,7 +103,7 @@ Both categories of approaches to deadlock prevention have
 some important drawbacks. Using routing restrictions to
 prevent deadlocks usually wastes link bandwidth and limits throughput performance. Preventing deadlocks via buffer
 management may require a lot of priority classes and switch
-buffer for networks of large diameters, rendering them impractical: today’s commodity switches with shallow buffer
+buffer for networks of large diameters, rendering them impractical: today's commodity switches with shallow buffer
 can support at most 2 lossless traffic classes [10].
 
 As noted earlier, all these mechanisms share a commonality: they seek to eliminate CBD. Thus, the drawbacks described above can be viewed as the cost of eliminating CBD
@@ -161,7 +163,7 @@ routing configuration may turn into deadlock-vulnerable. In
 fact, recent work has observed a PFC deadlock case in realworld tree-based datacenter [10], caused by the (unexpected)
 flooding of lossless class traffic. This case is a concrete example to show that even for tree-based topology, CBD can
 still occur if up-down routing is not strictly followed. Furthermore, there are multiple reports of routing loops due to
-misconfiguration in today’s production datacenters [23, 25].
+misconfiguration in today's production datacenters [23, 25].
 If lossless traffic encounters any of these loops, CBD is unavoidable.
 
 In this paper, we argue that we should accept the fact that
@@ -187,18 +189,13 @@ work correctly.
 
 93
 
-|1|A|Col3|Col4|B|
-|---|---|---|---|---|
-|**1**|**A**<br>||**TX1**<br>**RX1**<br>**RX1**<br>**TX1**||
-||**RX2**|**RX2**|||
-
-|RX1<br>A<br>RX2|Col2|B<br>RX1|
-|---|---|---|
-|**A**<br>**RX2**<br>**RX1**|||
+|1|A
 
 (a) Topology and flows
 
 Topology and flows (b) Buffer dependency graph (c) Stable state model
+
+![Figure 2](images/Deadlocks%20in%20Datacenter%20Networks%20-%20Why%20Do%20They%20Form%20and%20How%20to%20Avoid%20Them/fig_2.png)
 
 **Figure 2:** **Single looping flow creates CBD but may not create deadlock.**
 
@@ -215,10 +212,10 @@ directed line represents a buffer dependency from the source
 RX to the destination RX. For example, packets buffered in
 _RX_ 1 of switch A will be sent to _RX_ 1 of B, and vice versa.
 So in Figure 2(b), two directed lines are drawn between A
-and B. Switch A’s dependency on switch B means whether
+and B. Switch A's dependency on switch B means whether
 switch A can move the packets in its receiving buffer _RX1_
-to egress depends on switch B’s buffer _RX1_ . [3] The switches
-can send packets to the other side only when the other side’s
+to egress depends on switch B's buffer _RX1_ . [3] The switches
+can send packets to the other side only when the other side's
 buffer utilization is under PFC PAUSE threshold. The deadlock happens when both of the involved buffers reach the
 PFC threshold at the same time and PAUSE the links.
 
@@ -305,7 +302,7 @@ meaningful results. Because the flows do not have any rate
 limiting, one can easily analyze that the stable throughput
 of each flow is _B/_ 2. However, it is not easy to tell whether
 deadlock will form. For example, one may suspect that switch
-A’s _RX_ 1 will generate PFC PAUSE, and these PAUSE frames
+A's _RX_ 1 will generate PFC PAUSE, and these PAUSE frames
 
 94
 
@@ -387,9 +384,7 @@ Time/ms
 
 Time/ms
 
-(d) Buffer occupancy at switch A
-
-(e) Buffer occupancy at switch B (f) Buffer occupancy at switch C (g) Buffer occupancy at switch D
+![Figure 3](images/Deadlocks%20in%20Datacenter%20Networks%20-%20Why%20Do%20They%20Form%20and%20How%20to%20Avoid%20Them/fig_3.png)
 
 **Figure 3:** **There is no deadlock even though two flows create CBD among four switches.**
 
@@ -490,7 +485,7 @@ egress bandwidth.
 
 Time/ms
 
-(a) Topology and flows (b) Buffer dependency graph (c) Pause events at four links
+![Figure 4](images/Deadlocks%20in%20Datacenter%20Networks%20-%20Why%20Do%20They%20Form%20and%20How%20to%20Avoid%20Them/fig_4.png)
 
 **Figure 4:** **Slightly different traffic matrix leads to deadlock, even though the flow-level analysis shows that the average**
 **throughput of flow 1 and flow 2 should not be affected.**
@@ -517,9 +512,7 @@ Time/ms
 
 **Rate limiting=2Gbps**
 
-|RX2ATX1|Col2|
-|---|---|
-|**R**<br>|<br>**X1**|
+|RX2ATX1
 
 7
 
@@ -537,12 +530,7 @@ Time/ms
 
 **Flow 2**
 
-|Flow 3|Col2|Col3|Col4|
-|---|---|---|---|
-|**A TX1**<br>**B**<br>**RX2**<br>**RX1**<br><br>** 1**<br>**Flow 3**<br>**RX2**|**A TX1**<br>**B**<br>**RX2**<br>**RX1**<br><br>** 1**<br>**Flow 3**<br>**RX2**|**A TX1**<br>**B**<br>**RX2**<br>**RX1**<br><br>** 1**<br>**Flow 3**<br>**RX2**|**A TX1**<br>**B**<br>**RX2**<br>**RX1**<br><br>** 1**<br>**Flow 3**<br>**RX2**|
-|<br><br>**D**<br>**C**<br>**RX1**<br><br><br>**TX1**<br><br>**TX1**<br><br>**RX1**<br>**TX1**<br>**TX2**<br>**RX1**<br>**L1**<br>**L2**<br>**L3**<br>**L4**<br>**TX2**|<br><br>**D**<br>**C**<br>**RX1**<br><br><br>**TX1**<br><br>**TX1**<br><br>**RX1**<br>**TX1**<br>**TX2**<br>**RX1**<br>**L1**<br>**L2**<br>**L3**<br>**L4**<br>**TX2**|<br><br>**D**<br>**C**<br>**RX1**<br><br><br>**TX1**<br><br>**TX1**<br><br>**RX1**<br>**TX1**<br>**TX2**<br>**RX1**<br>**L1**<br>**L2**<br>**L3**<br>**L4**<br>**TX2**|<br><br>**D**<br>**C**<br>**RX1**<br><br><br>**TX1**<br><br>**TX1**<br><br>**RX1**<br>**TX1**<br>**TX2**<br>**RX1**<br>**L1**<br>**L2**<br>**L3**<br>**L4**<br>**TX2**|
-|<br><br>**D**<br>**C**<br>**RX1**<br><br><br>**TX1**<br><br>**TX1**<br><br>**RX1**<br>**TX1**<br>**TX2**<br>**RX1**<br>**L1**<br>**L2**<br>**L3**<br>**L4**<br>**TX2**|**T**<br>**TX2**|**X1**<br>|**X1**<br>|
-|<br><br>**D**<br>**C**<br>**RX1**<br><br><br>**TX1**<br><br>**TX1**<br><br>**RX1**<br>**TX1**<br>**TX2**<br>**RX1**<br>**L1**<br>**L2**<br>**L3**<br>**L4**<br>**TX2**|**D**<br><br>**RX1**|**D**<br><br>**RX1**|**C**<br><br><br>**TX2**|
+|Flow 3
 
 (a) Topology and flows
 
@@ -562,7 +550,7 @@ Time/ms
 
 Time/ms
 
-(c) 2Gbps rate limiter, no deadlock
+![Figure 5](images/Deadlocks%20in%20Datacenter%20Networks%20-%20Why%20Do%20They%20Form%20and%20How%20to%20Avoid%20Them/fig_5.png)
 
 **Figure 5:** **Different rate limiting determines whether the deadlock forms.**
 
@@ -595,7 +583,7 @@ packet-level and work for above examples.
 ### 3.3 Case 3: Rate Limiting Mitigates Deadlock
 In the last deadlock example (Figure 4), if we additionally
 limit the rate of flow 3, deadlock may be avoided. As shown
-in Figure 5(a), we add a rate limiter to switch B’s ingress port
+in Figure 5(a), we add a rate limiter to switch B's ingress port
 RX2. While the buffer dependency graph remains the same
 
 as Figure 4(b), slower flow 3 means that the congestion on
@@ -647,7 +635,7 @@ efficient deadlock prevention solutions.
 
 **TTL-based mitigation for deadlock caused by loops.** In
 a routing loop, deadlock formation becomes less likely with
-smaller TTL (see Equation 3). Thus, the most straightforward mitigation is to reduce packets’ initial TTL values. For
+smaller TTL (see Equation 3). Thus, the most straightforward mitigation is to reduce packets' initial TTL values. For
 example, in an _N_ -hop routing loop, if the initial TTL is not
 larger than _N_, no deadlock will form because the deadlock
 threshold for _r_ is _B_, which can never be exceeded.

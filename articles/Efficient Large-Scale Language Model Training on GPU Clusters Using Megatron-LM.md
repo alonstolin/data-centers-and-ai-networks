@@ -40,6 +40,10 @@ GPU (NVIDIA recently released 80GB-A100 cards), and (b) even if
 we are able to fit the model in a single GPU (e.g., by swapping parameters between host and device memory [38]), the high number
 of compute operations required can result in unrealistically long
 
+![Figure 1](images/Efficient%20Large-Scale%20Language%20Model%20Training%20on%20GPU%20Clusters%20Using%20Megatron-LM/fig_1.png)
+
+**Figure 1: Trend of sizes of state-of-the-art Natural Language Pro- cessing (NLP) models with time. The number of floating-point op- erations to train these models is increasing at an exponential rate.**
+
 _★_
 Work done as an intern at NVIDIA.
 
@@ -50,7 +54,7 @@ on the first page. Copyrights for components of this work owned by others than t
 author(s) must be honored. Abstracting with credit is permitted. To copy otherwise, or
 republish, to post on servers or to redistribute to lists, requires prior specific permission
 and/or a fee. Request permissions from permissions@acm.org.
-_SC ’21, November 14–19, 2021, St. Louis, MO, USA_
+_SC '21, November 14–19, 2021, St. Louis, MO, USA_
 © 2021 Copyright held by the owner/author(s). Publication rights licensed to ACM.
 ACM ISBN 978-1-4503-8442-1/21/11...$15.00
 https://doi.org/10.1145/3458817.3476209
@@ -93,7 +97,7 @@ across devices, leading to a _pipeline flush_ at the end of every batch,
 where microbatches are allowed to complete execution (and no
 new microbatches are injected). As much as 50% of time can be
 
-SC ’21, November 14–19, 2021, St. Louis, MO, USA
+SC '21, November 14–19, 2021, St. Louis, MO, USA
 
 spent flushing the pipeline depending on the number of microbatches injected into the pipeline. The larger the ratio of number
 of microbatches to the pipeline size, the smaller the time spent in
@@ -210,15 +214,13 @@ A batch is split into smaller microbatches; execution is then
 pipelined across microbatches. Pipelining schemes need to ensure
 that inputs see consistent weight versions across forward and backward passes for well-defined synchronous weight update semantics.
 
-Efficient Large-Scale Language Model Training on GPU Clusters Using Megatron-LM SC ’21, November 14–19, 2021, St. Louis, MO, USA
+Efficient Large-Scale Language Model Training on GPU Clusters Using Megatron-LM SC '21, November 14–19, 2021, St. Louis, MO, USA
+
+![Figure 2](images/Efficient%20Large-Scale%20Language%20Model%20Training%20on%20GPU%20Clusters%20Using%20Megatron-LM/fig_2.png)
 
 **Figure 2: Combination of tensor and pipeline model parallelism (MP) used in this work for transformer-based models.**
 
-| |   ||Col4|Col5|Col6|Col7|Col8||| | ||Col14|||||Col19|Col20|
-|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-||   | ||||||||<br>|<br>|||||||||
-||   | ||||||||<br>|<br>|||||||||
-||  | | |||||||<br>|||||||||<br>|
+| |   |
 
 **Figure** **3:** **GPipe** **pipeline** **schedule** **with** **forward** **passes** **(blue)** **for** **all** **microbatches** **(represented** **by** **numbers)** **followed** **by** **backward** **passes**
 **(green).** **The** **gray** **area** **represents** **the** **pipeline** **bubble.** **For** **simplicity,** **we** **assume** **that** **the** **backward** **pass** **takes** **twice** **as** **long** **as** **the** **forward**
@@ -227,17 +229,9 @@ Efficient Large-Scale Language Model Training on GPU Clusters Using Megatron-LM 
 **microbatches** 1 − 8 **, the second batch consists of microbatches** 9 − 16 **, and so on). The optimizer is stepped and weight parameters updated at**
 **the pipeline flush to ensure strict optimizer semantics, leading to idle devices and a pipeline bubble.**
 
-| | |Col3|Col4||Col6| |  |Col9||Col11|||Col14||Col16| ||Col19|Col20|Col21||
-|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-||  |||||<br>|<br>||||<br>|||||||||<br>||
-||  |<br>||||<br>|||||<br>||||||| |<br>|<br>||
-||<br>|<br>||||<br>|<br><br>|<br><br>|<br>|<br>||<br>|<br>|||||<br>|<br>|<br>| |
+| | 
 
-|   |     |Col3| || |  | |||| |  |Col14|   <br> |<br>|Col17|<br>|  |     |    | |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-|  |    | |  |||  |  ||||<br> <br>|<br><br>|<br><br>|<br><br><br><br><br> <br>|<br><br><br><br><br>|<br>|<br>| <br> | <br>  <br>|<br>  <br>| <br> |
-| |   <br>|  |  || | |  | |||<br><br>|<br>|<br>|<br><br><br><br><br>|<br><br><br>|<br> |<br>| <br> | <br>  <br>| <br>  <br>| <br> |
-||     |  |  || | |  | | ||<br><br>|||<br><br><br><br><br>|<br>   <br>| <br> |<br>| <br>|<br>  <br>| <br>  <br>| <br> |
+![Figure 4](images/Efficient%20Large-Scale%20Language%20Model%20Training%20on%20GPU%20Clusters%20Using%20Megatron-LM/fig_4.png)
 
 **Figure 4: Default and interleaved 1F1B pipeline schedules. The top figure shows the default non-interleaved 1F1B schedule. The bottom figure**
 **shows the interleaved 1F1B schedule, where each device is assigned multiple chunks (in this case, 2). Dark colors show the first chunk and**
@@ -261,19 +255,23 @@ tradeoffs between pipeline bubble size, communication, and memory footprint. We 
 _2.2.1_ _Default Schedule._ GPipe [20] proposes a schedule where the
 forward passes for all microbatches in a batch are first executed,
 
-SC ’21, November 14–19, 2021, St. Louis, MO, USA
+SC '21, November 14–19, 2021, St. Louis, MO, USA
 
-followed by backward passes for all microbatches (shown in Figure 3). We can quantify the size of GPipe’s pipeline bubble ( _𝑡𝑝𝑏_ ).
+followed by backward passes for all microbatches (shown in Figure 3). We can quantify the size of GPipe's pipeline bubble ( _𝑡𝑝𝑏_ ).
 We denote the number of microbatches in a batch as _𝑚_, the number
 of pipeline stages (number of devices used for pipeline parallelism)
 as _𝑝_, the ideal time per iteration as _𝑡𝑖𝑑_ (assuming perfect or ideal
-scaling), and the time to execute a single microbatch’s forward and
+scaling), and the time to execute a single microbatch's forward and
 backward pass as _𝑡𝑓_ and _𝑡𝑏_ . In this schedule, the pipeline bubble
 consists of _𝑝_ - 1 forward passes at the start of a batch, and _𝑝_ - 1
 backward passes at the end. The total amount of time spent in the
 pipeline bubble is then _𝑡𝑝𝑏_ = ( _𝑝_ - 1) · ( _𝑡𝑓_ + _𝑡𝑏_ ). The ideal processing
 time for the batch is _𝑡𝑖𝑑_ = _𝑚_ - ( _𝑡𝑓_ + _𝑡𝑏_ ). Therefore, the fraction of
 ideal computation time spent in the pipeline bubble is:
+
+![Figure 3](images/Efficient%20Large-Scale%20Language%20Model%20Training%20on%20GPU%20Clusters%20Using%20Megatron-LM/fig_3.png)
+
+**Figure 3: GPipe pipeline schedule with forward passes (blue) for all microbatches (represented by numbers) followed by backward passes (green). The gray area represents the pipeline bubble. For simpli**
 
 As shown in Figure 4, the pipeline flush for the same batch
 size happens sooner in the new schedule. If each device has _𝑣_
@@ -343,7 +341,7 @@ chunks (each with 2 layers), i.e., device 1 has layers 1 _,_ 2 _,_ 9 _,_ 10; dev
 in the pipeline is assigned multiple pipeline stages (each pipeline
 stage has less computation compared to before).
 
-As before, we can use an “all-forward, all-backward” version of
+As before, we can use an "all-forward, all-backward" version of
 this schedule, but this has a high memory footprint (proportional to
 _𝑚_ ). Instead, we developed an interleaved schedule that adapts the
 
@@ -369,6 +367,10 @@ partitioning strategy used by Megatron [40] for transformer layers,
 the bedrock of language models. We can apply similar ideas to other
 types of models, like CNNs, as well. We briefly outline this strategy,
 illustrated in Figure 5, below.
+
+![Figure 5](images/Efficient%20Large-Scale%20Language%20Model%20Training%20on%20GPU%20Clusters%20Using%20Megatron-LM/fig_5.png)
+
+**Figure 5: Blocks of transformer model partitioned with tensor model parallelism (figures borrowed from Megatron [40]). 𝑓and 𝑔 are conjugate. 𝑓is the identity operator in the forward pass and all- redu**
 
 A transformer layer consists of a self-attention block followed
 by a two-layer multi-layer perceptron (MLP). Further details of the
@@ -413,12 +415,12 @@ _𝐵_ =
 _𝐵_ 1
 _𝐵_ 2
 
-Efficient Large-Scale Language Model Training on GPU Clusters Using Megatron-LM SC ’21, November 14–19, 2021, St. Louis, MO, USA
+Efficient Large-Scale Language Model Training on GPU Clusters Using Megatron-LM SC '21, November 14–19, 2021, St. Louis, MO, USA
 
 ### 3.2 Tensor and Pipeline Model Parallelism
 
 Tensor and pipeline model parallelism can both be used to partition
-a model’s parameters over multiple GPUs. As stated earlier, using
+a model's parameters over multiple GPUs. As stated earlier, using
 pipeline parallelism with periodic flushes results in a pipeline bubble
 of size ( _𝑝_ - 1)/ _𝑚_ . Let us assume that _𝑑_ = 1 (data-parallel size);
 consequently, _𝑡_ - _𝑝_ = _𝑛_ . The pipeline bubble size in terms of _𝑡_ is:
@@ -437,9 +439,7 @@ _𝑚_ _𝑚_
 
 **(b) Self-Attention.**
 
-||Col2|
-|---|---|
-|||
+|
 
 **Figure** **5:** **Blocks** **of** **transformer** **model** **partitioned** **with** **tensor**
 **model parallelism (figures borrowed from Megatron [40]).** _𝑓_ **and** _𝑔_
@@ -551,12 +551,13 @@ _._
 _𝑏_ [′]
 
 As _𝑑_ becomes larger, _𝑛_ - _𝑑_ becomes smaller, and thus the pipeline
-bubble becomes smaller. Figure 6 shows the behavior of the pipeline
-bubble size for various values of _𝑑,𝑛,_ and _𝑏_ [′] . It might not be possible to increase _𝑑_ all the way to _𝑛_ for all models, since a model’s
+bubble becomes smaller. ![Figure 6](images/Efficient%20Large-Scale%20Language%20Model%20Training%20on%20GPU%20Clusters%20Using%20Megatron-LM/fig_6.png)
+
+**Figure 6 shows the behavior of the pipeline**bubble size for various values of _𝑑,𝑛,_ and _𝑏_ [′] . It might not be possible to increase _𝑑_ all the way to _𝑛_ for all models, since a model's
 full training memory footprint might be larger than the memory
 capacity of a single accelerator.
 
-SC ’21, November 14–19, 2021, St. Louis, MO, USA
+SC '21, November 14–19, 2021, St. Louis, MO, USA
 
 **Figure 6: Fraction of time spent idling due to pipeline flush (pipeline**
 **bubble** **size)** **versus** **data-parallel** **size** **(** _𝑑_ **),** **for** **different** **numbers** **of**
@@ -566,10 +567,13 @@ SC ’21, November 14–19, 2021, St. Louis, MO, USA
 **model** **with** **a** **billion** **parameters** **(128** **attention** **heads,** **hidden** **size**
 **of 4096, 4 transformer layers).**
 
+![Figure 8](images/Efficient%20Large-Scale%20Language%20Model%20Training%20on%20GPU%20Clusters%20Using%20Megatron-LM/fig_8.png)
+
 **Figure 8: Behavior of normalized estimated throughput (time com-**
 **puted** **as** _𝑡_ = ( _𝑏_ [′] / _𝑏_ + _𝑝_ - 1) -  _𝑡𝑓_ ( _𝑏_ ) + _𝑡𝑏_ ( _𝑏_ )  **)** **with** **respect** **to** **the** **mi-**
-**crobatch size** _𝑏_ **for the same GPT model from Figure 7.**
+**crobatch size** _𝑏_ **for the same GPT model from ![Figure 7](images/Efficient%20Large-Scale%20Language%20Model%20Training%20on%20GPU%20Clusters%20Using%20Megatron-LM/fig_7.png)
 
+**Figure 7.****
 GPU. We now want to determine the optimal microbatch size _𝑏_
 given a parallel configuration ( _𝑝,𝑡,𝑑_ ) and batch size _𝐵_ . The amount
 of data-parallel communication will be the same regardless of the
@@ -601,7 +605,7 @@ the computation in each model layer, and thus for insufficientlylarge layers, mo
 computations with peak efficiency.
 
 **Takeaway #2:** When using data and model parallelism, a total
-model-parallel size of _𝑀_ = _𝑡_ - _𝑝_ should be used so that the model’s
+model-parallel size of _𝑀_ = _𝑡_ - _𝑝_ should be used so that the model's
 parameters and intermediate metadata fit in GPU memory; data
 parallelism can be used to scale up training to more GPUs.
 
@@ -647,15 +651,9 @@ is obtained when _𝑐_ =
 ~~~~
 _𝑙_  - ~~~~ _𝐴_ [intermediate] / _𝐴_ [input] ~~~~ . In practice, we
 
-Efficient Large-Scale Language Model Training on GPU Clusters Using Megatron-LM SC ’21, November 14–19, 2021, St. Louis, MO, USA
+Efficient Large-Scale Language Model Training on GPU Clusters Using Megatron-LM SC '21, November 14–19, 2021, St. Louis, MO, USA
 
-||Col2||
-|---|---|---|
-||||
-
-||Col2|<br>|
-|---|---|---|
-||||
+|
 
 **(a) W/o scatter/gather optimization.**
 
@@ -690,12 +688,16 @@ of each transformer layer is replicated (after _𝑔_ in MLP block, see
 Figure 5a) across the tensor-parallel ranks. As a result, ranks in two
 consecutive pipeline stages that are performing tensor model parallelism send and receive the exact same set of tensors (Figure 9a).
 
+![Figure 9](images/Efficient%20Large-Scale%20Language%20Model%20Training%20on%20GPU%20Clusters%20Using%20Megatron-LM/fig_9.png)
+
+**Figure 9: Scatter/gather communication optimization. Light blue blocks are layers in the first pipeline stage, and dark blue blocks are layers in the second pipeline stage. Without the scatter/gather**
+
 For large enough models, we use a tensor-model-parallel size
 of 8. This means we are sending the same set of tensors 8 times
 between corresponding GPUs on adjacent multi-GPU servers. To
 reduce this redundancy, we can instead split the tensor on the send
 side into equal-sized chunks, and then only send one chunk to
-the corresponding rank on the next node using the rank’s own
+the corresponding rank on the next node using the rank's own
 InfiniBand card (e.g., rank 1 sends to rank 3 and rank 2 sends to
 rank 4 in Figure 9). With 8 tensor-model-parallel ranks, each chunk
 would be one-eighth smaller. Then, on the receive side, we can
@@ -769,7 +771,7 @@ models ranging from a billion to a trillion parameters, using tensor, pipeline, 
 described in §3). In particular, we use the interleaved pipeline schedule with the scatter/gather optimization enabled. All models use a
 vocabulary size (denoted by _𝑉_ ) of 51,200 (multiple of 1024) and a
 
-SC ’21, November 14–19, 2021, St. Louis, MO, USA
+SC '21, November 14–19, 2021, St. Louis, MO, USA
 
 |2YQFIVSJ<br>TEVEQIXIVW<br>FMPPMSR|%XXIRXMSR<br>LIEHW|,MHHIR<br>WM^I|2YQFIV<br>SJPE]IVW|8IRWSVQSHIP<br>TEVEPPIPWM^I|4MTIPMRIQSHIP<br>TEVEPPIPWM^I|2YQFIV<br>SJ+49W|&EXGL<br>WM^I|%GLMIZIH<br>XIVE*P34W<br>TIV+49|4IVGIRXEKISJ<br>XLISVIXMGEP<br>TIEO*034W|%GLMIZIH<br>EKKVIKEXI<br>TIXE*034W|
 |---|---|---|---|---|---|---|---|---|---|---|
@@ -813,6 +815,8 @@ the number of GPUs ( _𝑛_ ). The majority of floating-point operations
 in the model are performed in the matrix multiplications (GEMMs)
 in the transformer and logit layers. Considering just these GEMMs,
 the number of FLOPs per iteration is (more details in the Appendix):
+
+![Figure 10](images/Efficient%20Large-Scale%20Language%20Model%20Training%20on%20GPU%20Clusters%20Using%20Megatron-LM/fig_10.png)
 
 **Figure 10: Throughput per GPU of PTD-P and ZeRO-3 for two differ-**
 **ent GPT models (the 175B GPT-3 model is shown with dotted lines,**
@@ -878,7 +882,7 @@ _𝑛𝑋_ _[.]_
 Let us consider the GPT-3 model with _𝑃_ =175 billion parameters as
 an example. This model was trained on _𝑇_ = 300 billion tokens. On
 
-Efficient Large-Scale Language Model Training on GPU Clusters Using Megatron-LM SC ’21, November 14–19, 2021, St. Louis, MO, USA
+Efficient Large-Scale Language Model Training on GPU Clusters Using Megatron-LM SC '21, November 14–19, 2021, St. Louis, MO, USA
 
 |7GLIQI|2YQFIVSJ<br>TEVEQIXIVW<br>FMPPMSR|1SHIP<br>TEVEPPIP<br>WM^I|&EXGL<br>WM^I|2YQFIV<br>SJ+49W|1MGVSFEXGL<br>WM^I|%GLMIZIH<br>XIVE*P34W<br>TIV+49|8VEMRMRKXMQI<br>JSV&<br>XSOIRW HE]W|
 |---|---|---|---|---|---|---|---|
@@ -926,15 +930,19 @@ increasing the number of layers in the model, e.g., with a pipelineparallel size
 billion parameters, and with a pipeline-parallel size of 8, we use a
 model with 24 transformer layers and 121 billion parameters. We
 use a tensor-parallel size of 8 for all configurations, and vary the
-total number of A100 GPUs used from 8 to 64. Figure 11 shows
-throughput per GPU for two different batch sizes to illustrate the
+total number of A100 GPUs used from 8 to 64. ![Figure 11](images/Efficient%20Large-Scale%20Language%20Model%20Training%20on%20GPU%20Clusters%20Using%20Megatron-LM/fig_11.png)
+
+**Figure 11 shows**throughput per GPU for two different batch sizes to illustrate the
 impact of the pipeline bubble, which behaves as _[𝑝]_ _𝑚_ [−][1] [(§2.2.1). As]
+
+**Figure 11: Throughput per GPU of pipeline parallelism using two different batch sizes in a weak-scaling experiment setup (model size increases with the pipeline-parallel size).**
 
 expected, the higher batch size scales better since the pipeline
 bubble is amortized over more microbatches.
 
-_5.3.2_ _Interleaved versus Non-Interleaved Schedule._ Figure 12 shows
-the per-GPU-throughput for interleaved and non-interleaved schedules on the GPT-3 [11] model with 175 billion parameters (96
+_5.3.2_ _Interleaved versus Non-Interleaved Schedule._ ![Figure 12](images/Efficient%20Large-Scale%20Language%20Model%20Training%20on%20GPU%20Clusters%20Using%20Megatron-LM/fig_12.png)
+
+**Figure 12 shows**the per-GPU-throughput for interleaved and non-interleaved schedules on the GPT-3 [11] model with 175 billion parameters (96
 layers, 96 attention heads, hidden size of 12288). The interleaved
 
 **Figure 12: Throughput per GPU of interleaved and non-interleaved**
@@ -958,13 +966,16 @@ number of GPUs for a given model and multiple batch sizes.
 
 _5.4.1_ _Tensor versus Pipeline Parallelism._ We evaluate the impact of
 pipeline and tensor model parallelism on performance for a given
-model and batch size. The empirical results in Figure 13 show the
-importance of using both tensor and pipeline model parallelism in
+model and batch size. The empirical results in ![Figure 13](images/Efficient%20Large-Scale%20Language%20Model%20Training%20on%20GPU%20Clusters%20Using%20Megatron-LM/fig_13.png)
+
+**Figure 13 show the**importance of using both tensor and pipeline model parallelism in
 conjunction to train a 161-billion-parameter GPT model (32 transformer layers to support pipeline-parallel size of 32, 128 attention
 heads, hidden size of 20480) with low communication overhead and
 high compute resource utilization. We observe that tensor model
 
-SC ’21, November 14–19, 2021, St. Louis, MO, USA
+**Figure 13: Throughput per GPU of various parallel configurations that combine pipeline and tensor model parallelism using a GPT model with 162.2 billion parameters and 64 A100 GPUs.**
+
+SC '21, November 14–19, 2021, St. Louis, MO, USA
 
 **Figure** **13:** **Throughput** **per** **GPU** **of** **various** **parallel** **configurations**
 **that** **combine** **pipeline** **and** **tensor** **model** **parallelism** **using** **a** **GPT**
@@ -979,6 +990,8 @@ SC ’21, November 14–19, 2021, St. Louis, MO, USA
 **that combine data and tensor model parallelism using a GPT model**
 **with 5.9 billion parameters, three different batch sizes, microbatch**
 **size of 1, and 64 A100 GPUs.**
+
+![Figure 16](images/Efficient%20Large-Scale%20Language%20Model%20Training%20on%20GPU%20Clusters%20Using%20Megatron-LM/fig_16.png)
 
 **Figure 16: Throughput per GPU of a** ( _𝑡, 𝑝_ ) = (8 _,_ 8) **parallel configura-**
 **tion for different microbatch sizes on a GPT model with 91 billion**
@@ -1000,8 +1013,9 @@ performance of using both techniques in conjunction.
 
 _5.4.2_ _Pipeline versus Data Parallelism._ We evaluate the impact of
 data and pipeline model parallelism on performance for a GPT
-model with 5.9 billion parameters (32 transformer layers, 32 attention heads, hidden size of 3840) in Figure 14. We use a smaller
-model than before since we want to show performance for models
+model with 5.9 billion parameters (32 transformer layers, 32 attention heads, hidden size of 3840) in ![Figure 14](images/Efficient%20Large-Scale%20Language%20Model%20Training%20on%20GPU%20Clusters%20Using%20Megatron-LM/fig_14.png)
+
+**Figure 14. We use a smaller**model than before since we want to show performance for models
 that fit when the model-parallel size is only 2. For simplicity, we
 keep the microbatch size equal to 1 in these experiments. We see
 that for each batch size, the throughput decreases as the pipelineparallel size increases, matching our analytical model from §3.3.
@@ -1011,8 +1025,9 @@ parallelism should be used to scale up training.
 
 _5.4.3_ _Tensor versus Data Parallelism._ We also evaluate the impact
 of data and tensor model parallelism on performance for the same
-GPT model with 5.9 billion parameters in Figure 15 (smaller model
-used for same reason as above). As before, we keep the microbatch
+GPT model with 5.9 billion parameters in ![Figure 15](images/Efficient%20Large-Scale%20Language%20Model%20Training%20on%20GPU%20Clusters%20Using%20Megatron-LM/fig_15.png)
+
+**Figure 15 (smaller model**used for same reason as above). As before, we keep the microbatch
 size equal to 1 initially. With larger batch sizes and a microbatch
 size of 1, data-parallel communication is infrequent; the all-to-all
 communication required in tensor model parallelism needs to be
@@ -1021,6 +1036,8 @@ time, especially when communication needs to be performed across
 multi-GPU nodes. Additionally, as the tensor-model-parallel size
 increases, we perform smaller matrix multiplications on every GPU,
 decreasing utilization on each GPU.
+
+**Figure 15: Throughput per GPU of various parallel configurations that combine data and tensor model parallelism using a GPT model with 5.9 billion parameters, three different batch sizes, microbatch s**
 
 We should note that although data parallelism can lead to efficient scaling, we cannot use data parallelism in isolation for very
 large models with a limited training batch size because of a) insufficient memory capacity, and b) scaling limitations of data parallelism
@@ -1041,7 +1058,7 @@ in the pipeline ( _𝑚_ ), leading to a larger pipeline bubble; however,
 increasing the microbatch size can also improve GPU utilization
 by increasing the arithmetic intensity of executed kernels. These
 
-Efficient Large-Scale Language Model Training on GPU Clusters Using Megatron-LM SC ’21, November 14–19, 2021, St. Louis, MO, USA
+Efficient Large-Scale Language Model Training on GPU Clusters Using Megatron-LM SC '21, November 14–19, 2021, St. Louis, MO, USA
 
 teraFLOP/s per GPU). For the larger GPT model with 530 billion
 parameters (model configuration in Figure 1), throughput increased
@@ -1049,9 +1066,13 @@ by 11% (133 teraFLOP/s per GPU to 148 teraFLOP/s per GPU).
 
 ### 5.9 Inter-Node Communication Bandwidth
 
+![Figure 17](images/Efficient%20Large-Scale%20Language%20Model%20Training%20on%20GPU%20Clusters%20Using%20Megatron-LM/fig_17.png)
+
 **Figure 17: Throughput (in sequences per second) with and without**
 **activation recomputation for a GPT model with 145 billion param-**
 **eters using 128 A100 GPUs (** ( _𝑡, 𝑝_ ) = (8 _,_ 16) **).**
+
+![Figure 18](images/Efficient%20Large-Scale%20Language%20Model%20Training%20on%20GPU%20Clusters%20Using%20Megatron-LM/fig_18.png)
 
 **Figure 18: Throughput per GPU with and without the scatter/gather**
 **optimization for a GPT model with 175 billion parameters using 96**
@@ -1113,7 +1134,7 @@ _Parallelism for Large Models._ Pipeline model parallelism is a common technique
 comes in a few flavors: the mode discussed in this paper uses flushes
 to ensure _strict_ optimizer semantics. TeraPipe [26] exposes finegrained pipeline parallelism across tokens in a single training sequence for auto-regressive models like GPT. PipeTransformer [19]
 elastically adjusts the degree of pipelining and data parallelism
-by freezing layers with “stable” weights, and instead dedicates resources to train the remaining “active” layers. HetPipe [31] uses a
+by freezing layers with "stable" weights, and instead dedicates resources to train the remaining "active" layers. HetPipe [31] uses a
 combination of pipeline and data parallelism on a set of heterogeneous accelerators. Pipeline parallelism can also be implemented
 with relaxed semantics: PipeDream-2BW [30] maintains two weight
 versions and guarantees 1-stale weight updates without expensive flushes, while PipeMare [45] and Kosson et al. [23] use asynchoronous pipeline parallelism. These techniques have improved
@@ -1129,7 +1150,7 @@ with lower throughput than what was shown in this paper (52%
 vs. 36% of peak) for a few reasons: operator fusion to keep most of
 the operator graph compute-bound, a more-efficient pipeline parallelism schedule to minimize the pipeline bubble size, fast hardware
 
-SC ’21, November 14–19, 2021, St. Louis, MO, USA
+SC '21, November 14–19, 2021, St. Louis, MO, USA
 
 (A100 vs. V100 GPUs and high-bandwidth links between GPUs
 on the same and different servers), and scaling to more GPUs. We
@@ -1149,10 +1170,10 @@ _Sharded Data Parallelism._ As part of performance optimizations
 for MLPerf 0.6 [28], sharded data parallelism [24, 44], where optimizer state is sharded over data-parallel workers, was introduced.
 This method has two advantages: (a) it does not introduce extra
 communication over vanilla data parallelism, and (b) it divides the
-optimizer’s computation and memory cost across the data-parallel
+optimizer's computation and memory cost across the data-parallel
 partitions. ZeRO [36, 37] extends this idea: weight parameters and
 gradients are sharded across data-parallel workers as well, and
-workers fetch relevant state from their “owning” workers before
+workers fetch relevant state from their "owning" workers before
 performing computations. This adds additional communication,
 which can be partially hidden by carefully overlapping computation and communication. However, this can become harder if tensor
 parallelism is not used or the batch size is not large enough to hide
@@ -1250,7 +1271,7 @@ total number of floating-point operations is:
 
 _._
 
-Efficient Large-Scale Language Model Training on GPU Clusters Using Megatron-LM SC ’21, November 14–19, 2021, St. Louis, MO, USA
+Efficient Large-Scale Language Model Training on GPU Clusters Using Megatron-LM SC '21, November 14–19, 2021, St. Louis, MO, USA
 
 ## REFERENCES
 
@@ -1496,10 +1517,10 @@ Our 1 trillion parameter model was run with the following parameters:
   - Total number of GPUs: 3072
 Our repository has instructions on how to run distributed cases.
 To reproduce this experiment, the above command-line arguments
-need to be used with ‘pretrain_gpt.py‘.
+need to be used with 'pretrain_gpt.py'.
 
 We have scripts to reproduce each figure in the evaluation in the
-‘examples/sc21‘ sub-directory of the repository.
+'examples/sc21' sub-directory of the repository.
 
 _Author-Created or Modified Artifacts:_
 

@@ -30,12 +30,12 @@ performance gains over other packet spraying approaches.
 
 ## 1 Introduction
 
-Historically, TCP’s intolerance for packet reordering has
+Historically, TCP's intolerance for packet reordering has
 necessitated a rigid single-path-per-flow paradigm. While the
 downsides of this constraint have long been recognized and
 various alternatives proposed, network solutions have continued to respect this limitation, ranging from standard ECMP to
-more recent proposals like Meta’s enhanced ECMP [26] and
-Google’s PLB [70]. These approaches improve performance
+more recent proposals like Meta's enhanced ECMP [26] and
+Google's PLB [70]. These approaches improve performance
 by shifting path assignments, but still pin a flow to a single
 path at any given time. However, the extreme bandwidth
 demands of AI workloads are forcing operators to abandon
@@ -76,7 +76,7 @@ network parameters such as packet size and buffer size?
 The ongoing industry efforts suggest there is a lack of
 consensus on these questions. For instance, Nvidia supports
 switch-based packet spraying; the UEC suggests host-based
-spraying; Google’s Falcon design [49] uses host-implemented
+spraying; Google's Falcon design [49] uses host-implemented
 path adaptation as in PLB [70] but does not use packet spraying; Meta uses an enhanced ECMP and traffic engineering
 (TE) [26]; Alibaba uses oblivious packet spraying [53] and
 a host-managed and topology-aware subflow approach [69];
@@ -214,13 +214,13 @@ several papers [7, 39, 81], so here we provide a fairly brief summary. At a high
 are: (1) the **granularity** of traffic that is placed on different
 paths, which can vary from a packet ( _e.g.,_ [14, 30, 66]) to entire
 flows ( _e.g.,_ [32]), with various intermediate granularities such
-as “subflows” ( _i.e.,_ parallel streams whose union reconstitutes
+as "subflows" ( _i.e.,_ parallel streams whose union reconstitutes
 
 2
 
 Load Balancing for AI Training Workloads
 
-the original connection [71]) or “flowlets” (small sets of
+the original connection [71]) or "flowlets" (small sets of
 contiguous packets [37, 70]); (2) the **location** at which LB
 decisions are made can be centered at the host ( _e.g.,_ [11, 70])
 or in switches ( _e.g.,_ [8, 65]); (3) how LB **adapts** to varying
@@ -274,7 +274,7 @@ implemented at hosts, and is non-adaptive.
 the current set of equal cost paths, so the adaptivity we consider here is
 whether/how different schemes react to state about the _load_ on the network.
 2This rule differs from PLB in one aspect: in PLB, a host only changes the
-flow label at RPC boundaries; since we don’t have RPC traces, we instead
+flow label at RPC boundaries; since we don't have RPC traces, we instead
 allow the host to change a flow label at most every _𝛼_ packets.
 
 ,
@@ -325,7 +325,7 @@ _𝜌_ max is presented in Appendix A.
 
 Finally, in addition to the above ideal CCA, we also later
 consider **practical CCAs** . For this, we would like to compare
-our LB options using Google’s Swift [43], which combines low
+our LB options using Google's Swift [43], which combines low
 delays and high throughput. However, Swift is designed for single paths and experiences throughput collapse when handling
 spraying. Therefore, we use MSwift [27], a recent and publiclyavailable CCA that extends Swift to operate under spraying.
 **Loss recovery:** Packet loss is inevitable due to link failures.
@@ -340,7 +340,7 @@ McClure et al.
 
 **Table 1: A survey of existing load balancing approaches based on their considered state, granularity, and implementation location. We**
 **consider the design points marked with** ✓ **, and introduce the one with †. We note that some works allow splitting flows in time/packets in**
-**different amounts and with different strategies, thus we use a wide definition of “flowlet” that includes any splitting in these dimensions.**
+**different amounts and with different strategies, thus we use a wide definition of "flowlet" that includes any splitting in these dimensions.**
 **We** **do** **not** **include** _**routing**_ _**state**_ **in** **our** **definition** **of** **global** **state** **for** **switches** **(only** **congestion/traffic** **information)** **since** **it** **is** **often**
 **locally-available in the switch despite being a function of global information.**
 
@@ -515,11 +515,11 @@ CCT Increase (%)
 1 10 100
 CCT Increase (%)
 
-**(b) Permutation**
+![Figure 1](images/Load%20Balancing%20for%20AI%20Training%20Workloads/fig_1.png)
 
 **Figure 1: Completion times (increase over ideal) for different**
 **load** **balancing** **schemes** **with** **a** **perfect** **loss** **recovery** **protocol.**
-**Adaptive techniques are denoted with “AR” (adaptive routing).**
+**Adaptive techniques are denoted with "AR" (adaptive routing).**
 
 permutation matrix. In the permutation traffic, each node is
 sending traffic to exactly one other node, and receiving traffic
@@ -644,25 +644,13 @@ Switch Pkt AR
 
 ~~.1~~
 
-|12.5<br>(%)<br>10.0<br>Increase<br>7.5<br>5.0<br>2.5 CCT<br>0.0<br>0 25 50 75<br>Convergence Time, G (# RTTs)|Col2|Col3|Col4|Col5|Col6|Col7|Col8|Col9|Col10|
-|---|---|---|---|---|---|---|---|---|---|
-|0.0<br>2.5<br>5.0<br>7.5<br>10.0<br>12.5<br>0<br>25<br>50<br>75<br>Convergence Time, G (# RTTs)<br>CCT Increase (%)||||||||||
-|0.0<br>2.5<br>5.0<br>7.5<br>10.0<br>12.5<br>0<br>25<br>50<br>75<br>Convergence Time, G (# RTTs)<br>CCT Increase (%)||||||||||
-|0.0<br>2.5<br>5.0<br>7.5<br>10.0<br>12.5<br>0<br>25<br>50<br>75<br>Convergence Time, G (# RTTs)<br>CCT Increase (%)||||||||||
-|0.0<br>2.5<br>5.0<br>7.5<br>10.0<br>12.5<br>0<br>25<br>50<br>75<br>Convergence Time, G (# RTTs)<br>CCT Increase (%)||||||||||
-|0.0<br>2.5<br>5.0<br>7.5<br>10.0<br>12.5<br>0<br>25<br>50<br>75<br>Convergence Time, G (# RTTs)<br>CCT Increase (%)||||||||||
+|12.5<br>(%)<br>10.0<br>Increase<br>7.5<br>5.0<br>2.5 CCT<br>0.0<br>0 25 50 75<br>Convergence Time, G (# RTTs)
 
 **(a) All-to-All**
 
 McClure et al.
 
-|50<br>(%)<br>40<br>Increase<br>30<br>20<br>10 CCT<br>0 1 2 3 4<br>Convergence Time, G (# RTTs)|Col2|Col3|Col4|Col5|Col6|Col7|Col8|Col9|Col10|Col11|
-|---|---|---|---|---|---|---|---|---|---|---|
-|10<br>20<br>30<br>40<br>50<br>0<br>1<br>2<br>3<br>4<br>Convergence Time, G (# RTTs)<br>CCT Increase (%)|||||||||||
-|10<br>20<br>30<br>40<br>50<br>0<br>1<br>2<br>3<br>4<br>Convergence Time, G (# RTTs)<br>CCT Increase (%)|||||||||||
-|10<br>20<br>30<br>40<br>50<br>0<br>1<br>2<br>3<br>4<br>Convergence Time, G (# RTTs)<br>CCT Increase (%)|||||||||||
-|10<br>20<br>30<br>40<br>50<br>0<br>1<br>2<br>3<br>4<br>Convergence Time, G (# RTTs)<br>CCT Increase (%)|||||||||||
-|10<br>20<br>30<br>40<br>50<br>0<br>1<br>2<br>3<br>4<br>Convergence Time, G (# RTTs)<br>CCT Increase (%)|||||||||||
+|50<br>(%)<br>40<br>Increase<br>30<br>20<br>10 CCT<br>0 1 2 3 4<br>Convergence Time, G (# RTTs)
 
 **(b) Permutation**
 
@@ -682,7 +670,7 @@ CCT Increase (%)
 1 10 100
 CCT Increase (%)
 
-**(b) Permutation**
+![Figure 3](images/Load%20Balancing%20for%20AI%20Training%20Workloads/fig_3.png)
 
 **Figure 3: CCT increase for randomized failures with a per-link**
 **failure rate of 1%, with** _𝑮_ = **∞** **(** _**i.e.,**_ **convergence time** _>_ **CCT).**
@@ -701,8 +689,9 @@ transmitted over the failed link are silently dropped.
 In addition, all _other_ switches in the network must be
 notified of the failure so that they can update their routes and
 weighted ECMP (W-ECMP) configuration accordingly. An
-example of this process is shown in Fig. 2 in which route
-updates are propagated to all aggregation switches connected
+example of this process is shown in ![Figure 2](images/Load%20Balancing%20for%20AI%20Training%20Workloads/fig_2.png)
+
+**Fig. 2 in which route**updates are propagated to all aggregation switches connected
 to the same core router and all ToRs update how they weight
 each of their aggregation switches for Pod 1. Datacenters
 commonly run a routing protocol ( _e.g.,_ BGP [3, 45]) whose
@@ -710,6 +699,8 @@ convergence time will determine how quickly switches
 update their routes and weights. As above, a wide range of
 cross-switch convergence times have been reported from 100s
 of microseconds [68] to 100s of milliseconds [3].
+
+**Figure 2: Switches that must update routing and/or load balancing state based on a link failure. The pod with the failure must update state for all routes, and many nodes in other pods must update rou**
 
 Given the range of reported convergence times, we are
 interested in how this impacts LB performance. For example,
@@ -733,6 +724,8 @@ Our results in Fig. 3 now show a clear winner: HOST PKT
 AR. This is because, on the timescale of a small number of
 RTTs, HOST PKT AR is able to detect the failure (via timeouts
 
+![Figure 4](images/Load%20Balancing%20for%20AI%20Training%20Workloads/fig_4.png)
+
 **Figure 4: CCT increase over best possible under random link**
 **failures** **(1%** **fail** **rate)** **for** **host** **adaptive** **(dashed** **and** **shaded)**
 **compared to an in-network rebalancing approach with different**
@@ -743,7 +736,7 @@ on a particular path label) and avoid that path in future transmissions. Notably
 does not see this benefit because the queue length on the failed
 link may be short and thus continues to be chosen. Intuitively,
 this performance difference arises because HOST PKT AR
-enjoys an end-to-end view of a path’s performance (and can
+enjoys an end-to-end view of a path's performance (and can
 react accordingly) while SWITCH PKT AR is limited to its local
 view of switch state. Further, with SWITCH PKT AR, even if
 the switch with the failed link had reacted quickly to avoid
@@ -758,13 +751,13 @@ baseline for the permutation matrix.
 (SWITCH PKT AR and HOST PKT AR) for simplicity. We set _𝐺_ to
 be a (varying) multiple of the minimum network RTT. Hence,
 as we increase _𝐺_, a growing fraction of the collective runtime
-overlaps the network’s convergence period. For calibration,
+overlaps the network's convergence period. For calibration,
 the minimum CCT (with no failure) for the ATA is about 220
 RTTs, while the permutation matrix is between 2-3 RTTs. We
 include the performance of HOST PKT AR _with no convergence_
 ( _𝐺_ = ∞) for reference. In general, we see that at very low _𝐺_,
 switch-based and host-based approaches perform very similarly, but host-based solutions perform best as G grows. While
-routing convergence may re-hash flow labels previously categorized as ’good’ or ’bad’ by the host LB algorithm onto new
+routing convergence may re-hash flow labels previously categorized as 'good' or 'bad' by the host LB algorithm onto new
 paths, performance is maintained because W-ECMP weights
 now correctly distribute traffic across all available capacity; the
 only residual effect is that the host-based approach continues to
@@ -787,11 +780,14 @@ converged before the collective even begins) both approaches
 perform similarly. Thus, in-switch and end-host based packet
 spraying are similar in the no-failure case and under failures
 if the routes have converged.
-**Varying failure rate;** _𝑮_ = 0 **.** Finally, Fig. 5 plots performance
-under increasing link failure rates when routing state has
+**Varying failure rate;** _𝑮_ = 0 **.** Finally, ![Figure 5](images/Load%20Balancing%20for%20AI%20Training%20Workloads/fig_5.png)
+
+**Fig. 5 plots performance**under increasing link failure rates when routing state has
 converged ( _𝐺_ = 0). We see that, as expected, performance
 degrades with increasing failure rate but the performance gap
 (or lack thereof) across different schemes remains unchanged.
+
+**Figure 5: Impact of randomized link failure rates with 𝐺= 0. CCT is normalized to best-case without failures.**
 
 ### 5.3 Takeaways
 
@@ -953,8 +949,9 @@ our packet-based leading contenders. For completeness, we
 also show the performance of HOST DR and OFAN (discussed
 in the next section).
 
-Figure 6 shows that max queue size correlates well with the
-CCT metric from our earlier sections. We also see the general
+![Figure 6](images/Load%20Balancing%20for%20AI%20Training%20Workloads/fig_6.png)
+
+**Figure 6 shows that max queue size correlates well with the**CCT metric from our earlier sections. We also see the general
 trends revealed by our theoretical analysis. Specifically,
 algorithms cluster in three groups: (1) SIMPLE RR and JSQ
 form a first group with near-linear growth of the max queue
@@ -974,12 +971,12 @@ of SIMPLE RR and JSQ are a result of _synchronization_ effects
 that arise due to the uniform nature of collective workloads;
 _i.e.,_ that all senders transmit the same message and packet size,
 paced at identical rates. This uniformity leads to per-sender
-“stickiness” in which subsequent packets from the same sender
+"stickiness" in which subsequent packets from the same sender
 
 are forwarded along the same outgoing port to the same
 aggregation switch. Given the nature of a fat tree topology,
 such packets necessarily arrive at the same aggregation switch
-in the destination pod, and then “stick” to the same path all the
+in the destination pod, and then "stick" to the same path all the
 way down to the host destination. They then collide with other
 _sticky_ flows. We discuss these synchronization effects in detail
 in Appendix C and further validate them in simulation below.
@@ -991,7 +988,7 @@ broader scheduling literature in search of approaches that lead
 to our goal of O(1) queueing. We find inspiration in the DRB
 scheduler by Cao _et al_ [16]. The key idea in DRB is that each
 source host load balances packets in a round-robin fashion on
-a _per destination_ basis. We generalize DRB’s idea to define
+a _per destination_ basis. We generalize DRB's idea to define
 a new scheduling discipline that we term _Destination-Based_
 _Rotation_ _(DR)_ . [5] We observe that DRB can be viewed as a
 specific host-based implementation of DR scheduling, and we
@@ -1027,8 +1024,6 @@ Host DR
 
 CCT Increase (%)
 
-**(a) CCT increase** **(b) Max queue size**
-
 **Figure 6: Comparison of packet-based LB algorithms.**
 
 to the square-root of the message size, and (3) HOST DR and
@@ -1046,11 +1041,11 @@ realizing DR-based LB.
 In this section, we first provide intuition for why DR achieves
 optimality, then discuss the limitations of HOST DR and finally
 the detailed design of OFAN.
-**The** **reason** **behind** **DR’s** **optimality.** Why is destinationbased rotation (DR) optimal, while a scheme based on simple
+**The** **reason** **behind** **DR's** **optimality.** Why is destinationbased rotation (DR) optimal, while a scheme based on simple
 round-robin is not? In a nutshell, this is because, by balancing
 load on a per destination basis, DR ensures a uniform load on
 both uplinks _and downlinks_ . [6] In a scheme such as SIMPLE RR,
-the switch uses the packet’s destination to determine the group
+the switch uses the packet's destination to determine the group
 of next-hop links, but the destination does not influence _which_
 of these links is selected. Instead, the switch simply schedules
 all packets bound for that next-hop group in round-robin order.
@@ -1059,7 +1054,7 @@ pointer for each next-hop group. Thus, with SIMPLE RR on
 a fat-tree, a switch will round-robin all northbound traffic
 over its uplinks in a destination-agnostic manner. This does
 a good job of balancing traffic across uplinks but can result in
-imbalances in how _a particular destination’s_ traffic is spread
+imbalances in how _a particular destination's_ traffic is spread
 across the core switches. This in turn can lead to imbalanced
 traffic on the downlinks because, on a fat-tree, there is only
 one southbound path from core to destination and hence no
@@ -1067,12 +1062,12 @@ further opportunity to load balance traffic.
 
 By contrast, because DR explicitly balances load on a
 per-destination basis, it ensures that _any particular destina-_
-_tion_ ’s traffic is well-balanced across core switches and hence
-along downlinks, leading to DR’s guarantee of optimality and
+_tion_ 's traffic is well-balanced across core switches and hence
+along downlinks, leading to DR's guarantee of optimality and
 
-6Uplinks refers to the links traversed on a packet’s “northbound” path from
+6Uplinks refers to the links traversed on a packet's "northbound" path from
 source to a core switch, and downlinks refers to the links traversed on the
-“southbound” path from core to destination.
+"southbound" path from core to destination.
 
 ,
 
@@ -1105,7 +1100,7 @@ an aggregation switch _𝐵_ ( _𝐵_ ≠ _𝐴_ ). Hence, an edge switch on the
 northbound path will round-robin all traffic bound for the same
 destination edge switch, and an aggregation switch will roundrobin traffic bound for the same destination aggregation switch.
 
-OFAN’s consolidation of destinations retains DR’s property
+OFAN's consolidation of destinations retains DR's property
 of balancing traffic on both uplinks and downlinks. To see this,
 consider two flows that originate at source hosts under source
 edge switch _𝐸_, and are destined to destination hosts under destination edge switch _𝐹_ . Then _𝐸_ and _𝐹_ are _mandatory waypoints_
@@ -1121,7 +1116,7 @@ waypoint and hence a source aggregation switch can consolidate its scheduling of
 Thus, an edge switch maintains O(# edge switches) pointers,
 and an aggregation switch maintains O(# pods) pointers.
 
-7OFAN’s name is based on Ezekiel’s vision of wheels within wheels, fitting
+7OFAN's name is based on Ezekiel's vision of wheels within wheels, fitting
 the many pointer rotations.
 8To see this, notice that any packets leaving the black aggregation switch in
 Figure 2 can only traverse the red (and not white) aggregation switches on
@@ -1131,7 +1126,7 @@ their southbound path.
 
 ,
 
-**(a)** 1MB **message** **(b)** 32KB **message**
+![Figure 7](images/Load%20Balancing%20for%20AI%20Training%20Workloads/fig_7.png)
 
 **Figure 7: Worst-case link overload at each stage as a function**
 **of packet size for** 1MB **and small** 32KB **messages.**
@@ -1143,7 +1138,7 @@ this is a very reasonable number of pointers for switches to
 maintain. For example, in a fat-tree of parameter _𝑘_ =64 with
 65 _𝐾_ GPUs [13, 25, 48, 64], each edge switch would maintain
 2 _𝐾_ pointers and each aggregation switch 63 pointers.
-**Properties.** We prove in Appendix F that OFAN’s consolidation
+**Properties.** We prove in Appendix F that OFAN's consolidation
 achieves the dual goals of uplink and downlink LB. We get:
 
 **Theorem** **4.** _The_ _modeled_ _average_ _queue_ _size_ _for_ OFAN _is_
@@ -1191,23 +1186,13 @@ Number of Nodes
 
 2.5
 
-|0.8 (%)<br>Increase<br>0.6<br>CCT<br>0.4<br>50 100 150 200 25<br>Number of Nodes|Col2|Col3|Col4|Col5|Col6|Col7|Col8|Col9|
-|---|---|---|---|---|---|---|---|---|
-|0.4<br>0.6<br>0.8<br>50<br>100<br>150<br>200<br>25<br>Number of Nodes<br>CCT Increase (%)|||||||||
-|0.4<br>0.6<br>0.8<br>50<br>100<br>150<br>200<br>25<br>Number of Nodes<br>CCT Increase (%)|||||||||
-|0.4<br>0.6<br>0.8<br>50<br>100<br>150<br>200<br>25<br>Number of Nodes<br>CCT Increase (%)|||||||||
-|0.4<br>0.6<br>0.8<br>50<br>100<br>150<br>200<br>25<br>Number of Nodes<br>CCT Increase (%)|||||||||
-|0.4<br>0.6<br>0.8<br>50<br>100<br>150<br>200<br>25<br>Number of Nodes<br>CCT Increase (%)|||||||||
+|0.8 (%)<br>Increase<br>0.6<br>CCT<br>0.4<br>50 100 150 200 25<br>Number of Nodes
 
-**(a) All-to-All**
+![Figure 8](images/Load%20Balancing%20for%20AI%20Training%20Workloads/fig_8.png)
 
 **Figure 8: CCT increase as the network size increases.**
 
-|Host Pkt AR 6.04<br>Switch Pkt AR 6.52<br>Ofan 4.62<br>0 5 10<br>CCT Increase (%)|Host Pkt AR 13.5<br>Switch Pkt AR 6.34<br>Ofan 0.96<br>1 10<br>CCT Increase (%)|Col3|Col4|Col5|Col6|13.5|
-|---|---|---|---|---|---|---|
-|~~4.62~~<br>~~6.52~~<br>~~6.04~~<br>Ofan<br>Switch Pkt AR<br>Host Pkt AR<br>0<br>5<br>10<br>CCT Increase (%)|~~0.96~~<br>~~6.34~~<br>~~13.5~~<br>Ofan<br>Switch Pkt AR<br>Host Pkt AR<br>1<br>10<br>CCT Increase (%)||||~~.34~~<br>||
-|~~4.62~~<br>~~6.52~~<br>~~6.04~~<br>Ofan<br>Switch Pkt AR<br>Host Pkt AR<br>0<br>5<br>10<br>CCT Increase (%)|~~0.96~~<br>~~6.34~~<br>~~13.5~~<br>Ofan<br>Switch Pkt AR<br>Host Pkt AR<br>1<br>10<br>CCT Increase (%)||~~0.~~|~~6~~<br>|||
-|~~4.62~~<br>~~6.52~~<br>~~6.04~~<br>Ofan<br>Switch Pkt AR<br>Host Pkt AR<br>0<br>5<br>10<br>CCT Increase (%)|~~0.96~~<br>~~6.34~~<br>~~13.5~~<br>Ofan<br>Switch Pkt AR<br>Host Pkt AR<br>1<br>10<br>CCT Increase (%)||||||
+|Host Pkt AR 6.04<br>Switch Pkt AR 6.52<br>Ofan 4.62<br>0 5 10<br>CCT Increase (%)|Host Pkt AR 13.5<br>Switch Pkt AR 6.34<br>Ofan 0.96<br>1 10<br>CCT Increase (%)
 
 ~~6.~~
 
@@ -1215,14 +1200,12 @@ Number of Nodes
 
 ~~.6~~
 
-**(a) All-to-All**
-
-**(b) Permutation**
+![Figure 9](images/Load%20Balancing%20for%20AI%20Training%20Workloads/fig_9.png)
 
 **Figure 9: CCT increase with short (20 pkt) buffers.**
 
 DR maintains many per-flow pointers that can cause traffic to
-be “spread too thin”, especially with small messages. OFAN’s
+be "spread too thin", especially with small messages. OFAN's
 consolidation mitigates this, leading to improved performance.
 In Appendix F, we show that this performance gap widens as
 the network size grows, following the widening disparity in
@@ -1263,9 +1246,7 @@ AR, presumably because of its ability to more directly control
 
 Load Balancing for AI Training Workloads
 
-**(a) All-to-All**
-
-**(b) Permutation**
+![Figure 10](images/Load%20Balancing%20for%20AI%20Training%20Workloads/fig_10.png)
 
 **Figure 10: CCT increase as the message size increases.**
 
@@ -1278,15 +1259,16 @@ between them decreases. This is because, as the message size
 increases, the minimum CCT increases and hence the relative
 differences get smaller. Interestingly, we see that HOST PKT AR
 gets notably worse at very large message size. We conjecture
-that this is due to the “freezing mode” in REPS triggering as
+that this is due to the "freezing mode" in REPS triggering as
 queues become long enough to cause a timeout [11].
-**Packet** **Size.** Figure 11 repeats our default test, now with
-varying packet size and two different message sizes. The
+**Packet** **Size.** ![Figure 11](images/Load%20Balancing%20for%20AI%20Training%20Workloads/fig_11.png)
+
+**Figure 11 repeats our default test, now with**varying packet size and two different message sizes. The
 impact of packet size as a parameter in AI training is one that,
 to our knowledge, has not been extensively explored in the
 networking literature. Yet, as we see, the choice of packet size
 can have a significant impact, varying CCT by up to 10%. The
-graph also shows a clear “sweet spot” in packet size at which
+graph also shows a clear "sweet spot" in packet size at which
 performance is maximized. Intuitively, this is because sending
 _𝐷_ bytes with a packet size _𝑃_ and header _𝐻_, involves a trade-off:
 large packets increase queue size and hence CCT, while small
@@ -1297,8 +1279,6 @@ queueing as a constant of _𝛼_ packets (independent of the number
 of sent packets), then we obtain the following (Appendix G):
 
 ,
-
-**(a)** 0 _._ 5MB **message** **(b)** 16MB **message**
 
 **Figure 11: CCT increase as packet size increases, for two message**
 **sizes in bytes.**
@@ -1331,7 +1311,7 @@ CCT Increase (%)
 
 CCT Increase (%)
 
-**(b) Permutation**
+![Figure 12](images/Load%20Balancing%20for%20AI%20Training%20Workloads/fig_12.png)
 
 **Figure 12: CCT increase for each LB scheme with SACK-based**
 **loss recovery protocol.**
@@ -1358,7 +1338,8 @@ CCT Increase (%)
 ~~15~~
 
 CCT Increase (%)
-**(b)** 16MB **: CCT**
+
+![Figure 13](images/Load%20Balancing%20for%20AI%20Training%20Workloads/fig_13.png)
 
 **Figure 13: Packet-based LB algorithms with MSwift CCA.**
 
@@ -1432,29 +1413,17 @@ spraying algorithms with square-root queue-size growth,
 
 McClure et al.
 
-|Host Pkt AR 21<br>Switch Pkt AR 16.5<br>Ofan 0.32<br>1 10 100<br>CCT Increase (%)|Col2|Col3|Col4|Col5|Col6|21|
-|---|---|---|---|---|---|---|
-|~~21~~<br>~~16.5~~<br>~~0.32~~<br>Ofan<br>Switch Pkt AR<br>Host Pkt AR<br>1<br>10<br>100<br>CCT Increase (%)||||||~~6.5~~|
-|~~21~~<br>~~16.5~~<br>~~0.32~~<br>Ofan<br>Switch Pkt AR<br>Host Pkt AR<br>1<br>10<br>100<br>CCT Increase (%)||~~0.3~~|||||
-|~~21~~<br>~~16.5~~<br>~~0.32~~<br>Ofan<br>Switch Pkt AR<br>Host Pkt AR<br>1<br>10<br>100<br>CCT Increase (%)|||||||
+|Host Pkt AR 21<br>Switch Pkt AR 16.5<br>Ofan 0.32<br>1 10 100<br>CCT Increase (%)
 
 **(c) 405B: CCT increase** **(d) 405B: Utilization** **(e) 405B: Max queue size**
 
-|Host Pkt AR 18.6<br>Switch Pkt AR 13.1<br>Ofan 2.2<br>1 10 10<br>CCT Increase (%)|Col2|Col3|1|8.6|
-|---|---|---|---|---|
-|~~18.6~~<br>~~13.1~~<br>~~2.2~~<br>Ofan<br>Switch Pkt AR<br>Host Pkt AR<br>1<br>10<br>10<br>CCT Increase (%)|||~~13.~~||
-|~~18.6~~<br>~~13.1~~<br>~~2.2~~<br>Ofan<br>Switch Pkt AR<br>Host Pkt AR<br>1<br>10<br>10<br>CCT Increase (%)||~~.2~~|||
-|~~18.6~~<br>~~13.1~~<br>~~2.2~~<br>Ofan<br>Switch Pkt AR<br>Host Pkt AR<br>1<br>10<br>10<br>CCT Increase (%)|||||
+|Host Pkt AR 18.6<br>Switch Pkt AR 13.1<br>Ofan 2.2<br>1 10 10<br>CCT Increase (%)
 
 **(a) 7B: CCT increase**
 
-|Host Pkt AR 15.3<br>Switch Pkt AR 12.6<br>Ofan 0.99<br>1 3 10 30<br>CCT Increase (%)|Col2|Col3|Col4|Col5|Col6|Col7|15|.3|Col10|
-|---|---|---|---|---|---|---|---|---|---|
-|~~15.3~~<br>~~12.6~~<br>~~0.99~~<br>Ofan<br>Switch Pkt AR<br>Host Pkt AR<br>1<br>3<br>10<br>30<br>CCT Increase (%)|||||||~~12~~|~~6~~||
-|~~15.3~~<br>~~12.6~~<br>~~0.99~~<br>Ofan<br>Switch Pkt AR<br>Host Pkt AR<br>1<br>3<br>10<br>30<br>CCT Increase (%)|||~~0~~|~~9~~||||||
-|~~15.3~~<br>~~12.6~~<br>~~0.99~~<br>Ofan<br>Switch Pkt AR<br>Host Pkt AR<br>1<br>3<br>10<br>30<br>CCT Increase (%)||||||||||
+|Host Pkt AR 15.3<br>Switch Pkt AR 12.6<br>Ofan 0.99<br>1 3 10 30<br>CCT Increase (%)
 
-**(b) 70B: CCT increase**
+![Figure 14](images/Load%20Balancing%20for%20AI%20Training%20Workloads/fig_14.png)
 
 **Figure 14: FSDP with Llama 7B, 70B and 405B parameters.**
 
@@ -1462,15 +1431,15 @@ McClure et al.
 
 We now compare per-packet spraying algorithms with CCA.
 As mentioned previously, we would like to compare them
-using Google’s Swift [43], but Swift is designed for single
+using Google's Swift [43], but Swift is designed for single
 paths and experiences throughput collapse when handling
 spraying [27]. Therefore, we use MSwift [27], a recent and
 publicly available CCA that extends Swift to operate under
-spraying. MSwift’s key changes include: (i) an LTCP-based
+spraying. MSwift's key changes include: (i) an LTCP-based
 mechanism [87] to handle out-of-order packets that can
 trigger duplicate ACKs, and (ii) a new mechanism (based
-on observing recent ACKs) that avoids Swift’s throughput
-collapse scenario. We use MSwift’s default parameter values
+on observing recent ACKs) that avoids Swift's throughput
+collapse scenario. We use MSwift's default parameter values
 adjusted for our network setting (Appendix H).
 
 Figure 13 illustrates the impact of congestion control. It
@@ -1643,7 +1612,7 @@ _SIGCOMM 2022 Conference_ . 53–65.
 Mytkowicz, Jacob Nelson, and Olli Saarikivi. 2021. Synthesizing
 optimal collective algorithms. In _Proceedings of the 26th ACM SIGPLAN_
 _Symposium on Principles and Practice of Parallel Programming_ (Virtual
-Event, Republic of Korea) _(PPoPP ’21)_ . Association for Computing
+Event, Republic of Korea) _(PPoPP '21)_ . Association for Computing
 Machinery, New York, NY, USA, 62–75. [doi:10.1145/3437801.3441620](https://doi.org/10.1145/3437801.3441620)
 
 [16] Jiaxin Cao, Rui Xia, Pengkun Yang, Chuanxiong Guo, Guohan Lu,
@@ -1815,7 +1784,7 @@ McClure et al.
 
 [48] Lee, Kevin and Gangidi, Adi and Oldham, Mathew. 2024. Building
 
-Meta’s GenAI Infrastructure. [https://engineering.fb.com/2024/03/1](https://engineering.fb.com/2024/03/12/data-center-engineering/building-metas-genai-infrastructure/)
+Meta's GenAI Infrastructure. [https://engineering.fb.com/2024/03/1](https://engineering.fb.com/2024/03/12/data-center-engineering/building-metas-genai-infrastructure/)
 [2/data-center-engineering/building-metas-genai-infrastructure/.](https://engineering.fb.com/2024/03/12/data-center-engineering/building-metas-genai-infrastructure/)
 
 [49] Dan Lenoski and Nandita Dukkipati. 2023. Google opens Falcon, a reliable low-latency hardware transport, to the ecosystem.
@@ -1846,7 +1815,7 @@ Wang, Wei Lin, Ennan Zhai, Jiesheng Wu, Qiang Liu, Binzhang Fu,
 and Dennis Cai. 2025. Alibaba Stellar: A New Generation RDMA
 Network for Cloud AI. In _Proceedings of the ACM SIGCOMM 2025_
 _Conference_ (São Francisco Convent, Coimbra, Portugal) _(SIGCOMM_
-_’25)_ . Association for Computing Machinery, New York, NY, USA,
+_'25)_ . Association for Computing Machinery, New York, NY, USA,
 
 453–466. [doi:10.1145/3718958.3750539](https://doi.org/10.1145/3718958.3750539)
 
@@ -1933,7 +1902,7 @@ Yiming Yang, Donglin Wei, Boyang Zhou, Jian Wang, and Shan
 Ding. 2025. SGLB: Scalable and Robust Global Load Balancing in
 Commodity AI Clusters. In _Proceedings of the ACM SIGCOMM 2025_
 _Conference_ (São Francisco Convent, Coimbra, Portugal) _(SIGCOMM_
-_’25)_ . Association for Computing Machinery, New York, NY, USA,
+_'25)_ . Association for Computing Machinery, New York, NY, USA,
 
 626–644. [doi:10.1145/3718958.3750527](https://doi.org/10.1145/3718958.3750527)
 
@@ -1996,7 +1965,7 @@ Mun Choon Chan. 2023. Network Load Balancing with In-network
 ,
 
 Reordering Support for RDMA. In _Proceedings of the ACM SIGCOMM_
-_2023_ _Conference_ (New York, NY, USA) _(ACM_ _SIGCOMM_ _’23)_ .
+_2023_ _Conference_ (New York, NY, USA) _(ACM_ _SIGCOMM_ _'23)_ .
 Association for Computing Machinery, New York, NY, USA, 816–831.
 [doi:10.1145/3603269.3604849](https://doi.org/10.1145/3603269.3604849)
 
@@ -2100,8 +2069,9 @@ schemes are still differentiated by it.
 
 **B** **Permutation CCT Lower-Bound**
 
-**Outline.** Figure 15 illustrates how permutation collectives in
-fat trees exhibit interesting interactions between data and ACK
+**Outline.** ![Figure 15](images/Load%20Balancing%20for%20AI%20Training%20Workloads/fig_15.png)
+
+**Figure 15 illustrates how permutation collectives in**fat trees exhibit interesting interactions between data and ACK
 packets, as each host is at the same time a sender and a receiver.
 When computing the CCT, we find that there are in fact
 three successive modes of communication: (1) Data packets
@@ -2114,6 +2084,8 @@ and sends another flow of ACK packets traversing _𝐻_ hops
 as well. Let _𝑇𝑑_, _𝑇𝑎_, _𝑇𝑔_ and _𝑇𝑝_ respectively denote the data and
 ACK packet serialization times, the gap time between packets,
 and the one-way propagation time. Also, let _𝑇𝑑_ [′] [=] _[𝑇][𝑑]_ [+] _[𝑇][𝑔]_ [and]
+
+**Figure 15: Illustration of the symmetric dynamics of the permutation collective. and 𝐻serialization delays of𝑇𝑑, thus packet 1 arrives at time 𝑡1 =𝑇𝑝+𝐻·𝑇𝑑.**
 
 _𝑇𝑎_ [′] [=] _[𝑇][𝑎]_ [+] _[𝑇][𝑔]_ [.]
 
@@ -2130,7 +2102,7 @@ arrives at _𝑡𝑖_ [ACK] = _𝑡_ 1 [ACK] +( _𝑖_ −1)( _𝑇𝑑_ [′] [
 
 **Mode** **3:** **only** **ACKs.** At the end, the hosts send the _𝑚_ [th]
 
-message, and don’t need to interleave data and ACKs anymore.
+message, and don't need to interleave data and ACKs anymore.
 This is a symmetric case from _𝑖_ 1: it happens as they send ACK
 _𝑖_ 2, with _𝑖_ 2 = _𝑚_ - _𝑖_ 1 +1. For example, with _𝑚_ = 256 and _𝑖_ 1 = 78,
 it happens at the ACK for packet 179.
@@ -2164,7 +2136,7 @@ _𝑑_
 
 +1 (6)
 
-**Example.** With the paper’s settings, _𝑖_ 1 = 78 data packets. In
+**Example.** With the paper's settings, _𝑖_ 1 = 78 data packets. In
 other words, each sender sends at least 78 consecutive data
 packets before it sends ACKs. OF course, if _𝑚_ _<𝑖_ 1, then it only
 sends _𝑚_ data packets.
@@ -2173,7 +2145,7 @@ starts interleaving data and ACK packets, we assume that the
 host policy performs round-robin between the two, as long
 as there is data left.
 
-Let’s study when the first ACK arrives. Before, we saw
+Let's study when the first ACK arrives. Before, we saw
 that _𝑖_ 1 data packets are sent. We also saw that packet 1 arrives
 at time _𝑡_ 1 = _𝑇𝑝_ + _𝐻_ - _𝑇𝑑_ . Therefore, packet _𝑖_ 1 arrives at time
 _𝑡𝑖_ 1 = _𝑇_ 1 +( _𝑖_ 1 −1) _𝑇𝑑_ [′][. The first ACK for packet 1 arrives just after,]
@@ -2286,7 +2258,7 @@ times the probability for the second flow, _etc._
 
 Let _𝐴_ denote the event that all flows are northbound, and
 _𝐵_ that all flows target the exact same outside hotspot. An
-edge switch is red (event _𝐶_ ) if _𝐴_ happens but _𝐵_ doesn’t. So
+edge switch is red (event _𝐶_ ) if _𝐴_ happens but _𝐵_ doesn't. So
 _𝑃_ ( _𝐶_ ) = _𝑃_ ( _𝐴_ )− _𝑃_ ( _𝐴_ ∩ _𝐵_ ) = _𝑃_ ( _𝐴_ )− _𝑃_ ( _𝐵_ ) _,_ thus
 
 _𝑃𝑅𝑒𝑑_ = _𝑃_ northbound         - _𝑃_ hotspot _._ (10)
@@ -2301,7 +2273,7 @@ flow.
 To ensure this continuity, we focus on a flow, and define
 strict timing constraints regarding the service completion
 of competing flows relative to the service completion of our
-flow’s previous packet:
+flow's previous packet:
 
 _𝑃_ northbound = _[𝑛]_ [−] _[𝑘]_ [/][2]
 
@@ -2351,24 +2323,24 @@ _𝑛_ −1− _𝑖_
 (i) No packets in other queues completed transmission
 
 within the the inter-arrival gap duration _𝑇𝐼𝑃𝐺_ _before_ the
-service completion of the flow’s packet. The reason is
+service completion of the flow's packet. The reason is
 that if a packet from a competing flow were to finish
 within this window, its queue would become empty.
 When the next packet of that competing flow arrives,
 it will observe two empty queues (its own and the target
-flow’s). Consequently, it may select the target flow’s
+flow's). Consequently, it may select the target flow's
 port with equal probability, which we want to avoid.
 (ii) No packets in other queues completed transmission
 
 within the duration _𝑇𝐼𝑃𝐺_ _after_ the service completion of
-the flow’s packet. The reason is that if a competing flow
+the flow's packet. The reason is that if a competing flow
 finishes within this window, its queue also becomes
 empty. The next packet of our target flow arrives exactly
 _𝑇𝐼𝑃𝐺_ after the service completion of the last packet
 
 from our considered flow. Thus, it will encounter two
-empty queues (its original port and the competitor’s).
-It may therefore select the competitor’s port instead of
+empty queues (its original port and the competitor's).
+It may therefore select the competitor's port instead of
 preserving its path.
 
 Combined, these conditions imply that no other flows initiated
@@ -2545,6 +2517,8 @@ Load Balancing for AI Training Workloads
 
 **(a) Synchronized pairs** **(b) Aggregation-edge synchro-**
 **nization**
+
+![Figure 16](images/Load%20Balancing%20for%20AI%20Training%20Workloads/fig_16.png)
 
 **Figure 16: Synchronization mode for aggregation-edge links**
 
@@ -2812,8 +2786,9 @@ We then apply the same model. Note that the fit is not exact anymore, as traffic
 _model is only an approximation_ . Downlinks are an even coarser
 approximation,sinceeachlayermakestrafficlessperiodic. 
 
-Fig. 17 uses _𝑛_ =1 _,_ 024 hosts with a 4MB message to show the
-behavior of HOST DR at scale. It shows the average queue sizes
+![Figure 17](images/Load%20Balancing%20for%20AI%20Training%20Workloads/fig_17.png)
+
+**Fig. 17 uses _𝑛_ =1 _,_ 024 hosts with a 4MB message to show the**behavior of HOST DR at scale. It shows the average queue sizes
 at each of the 5 switch queueing layers: (i) edge to aggregation
 ( _𝐸_ → _𝐴_ ), (ii) aggregation to core ( _𝐴_ → _𝐶_ ), (iii) core to
 aggregation ( _𝐶_ → _𝐴_ ), (iv) aggregation to edge ( _𝐴_ → _𝐸_ ) and
@@ -2826,7 +2801,9 @@ pod, and (iii) we only use a fluid approximation. Finally, the
 two downlink edge layers are relatively close to the model as
 well despite the loss of periodicity.
 
-**F** **Proofs and Details of OFAN’s Properties**
+**Figure 17: Queue models for HOST DR. The average queue size at each of the 5 switch layers is compared against queueing models (dotted and dashed horizontal lined).**
+
+**F** **Proofs and Details of OFAN's Properties**
 
 **F.1** **Correctness of Consolidation**
 
@@ -2892,7 +2869,7 @@ always chooses the highest and largest consolidation level.
 
 **F.2** **Scaling Impact** _**vs.**_ **HOST DR**
 
-**Scaling** **impact** **on** **pointer** **numbers.** Let’s illustrate how
+**Scaling** **impact** **on** **pointer** **numbers.** Let's illustrate how
 consolidation improves SWITCH DR (OFAN) _vs._ HOST DR. Consider a random permutation with inter-pod traffic only. In OFAN,
 
 ,
@@ -2907,11 +2884,14 @@ _𝑘_ [2] /4 flows, corresponding to the _𝑘_ [2] /4 hosts in the destination
 pod. Thus, the consolidation gain in the number of pointers is
 at least _𝑘_ [2] /(4( _𝑘_ −1)) _>𝑘_ /4 _,_ increasing with the network size.
 **Scaling** **impact** **on** **queue** **sizes.** To illustrate how consolidation improves SWITCH DR (OFAN) _vs._ HOST DR, consider
-a random permutation with inter-pod traffic only. Figure 18
-plots the ratio of the maximum queue size of OFAN by that
-of HOST DR as a function of network size, with 30 runs per
+a random permutation with inter-pod traffic only. ![Figure 18](images/Load%20Balancing%20for%20AI%20Training%20Workloads/fig_18.png)
+
+**Figure 18
+plots the ratio of the maximum queue size of OFAN by that**of HOST DR as a function of network size, with 30 runs per
 size. The ratio increases with the network size, _i.e.,_ OFAN
 outperforms even more as we scale the network.
+
+**Figure 18: Ratio of the maximum queue size of SWITCH DR (Ofan) by that of HOST DR as a function of the number of hosts.**
 
 **F.3** **Model with Bounded Average Queue Sizes**
 
@@ -2956,6 +2936,8 @@ _._
 
 ,
 
+![Figure 19](images/Load%20Balancing%20for%20AI%20Training%20Workloads/fig_19.png)
+
 **Figure 19: Queue models for SWITCH DR (OFAN). The average**
 **queue** **size** **at** **each** **of** **the** **5** **switch** **layers** **is** **compared** **against**
 **queueing models (dotted and dashed horizontal lined).**
@@ -2997,7 +2979,7 @@ source pod and the _𝑖_ [th] aggregation switch, _𝐴𝐷_, of the destinatio
 
 McClure et al.
 
-such that the weight per destination edge switch equals this perpod weight if it’s reachable, and zero otherwise. As a result, we
+such that the weight per destination edge switch equals this perpod weight if it's reachable, and zero otherwise. As a result, we
 can only keep _𝑘_ shared per-destination-pod schedules, a _𝑘_ /2×
 reduction (32× for our _𝑘_ =64 example), and the many pointers
 per (destination switch, packet type) will rotate through these
@@ -3034,7 +3016,7 @@ be a simpler alternative to implement.
 PROOF OF THEOREM 5. The CCT can be modeled as the
 sum of (i) the time to send the message, (ii) the time to go
 through the queues, and (iii) the zero-load RTT. Only the first
-two components depend on the packet size _𝑃_, so let’s focus
+two components depend on the packet size _𝑃_, so let's focus
 on them.
 
 (i) The time to send the message is
@@ -3083,12 +3065,12 @@ Note that Fig. 11 assumes as a first approximation _𝐻_ =82B,
 accounting for the header and inter-frame gap components,
 and _𝛼_ =10 data packets.
 
-**H** **Swift’s Settings**
+**H** **Swift's Settings**
 
-In our evaluations with the MSwift CCA, we use LTCP’s and
-MSwift’s default settings. However, Swift needs tuning.
+In our evaluations with the MSwift CCA, we use LTCP's and
+MSwift's default settings. However, Swift needs tuning.
 
-Swift’s target delay parameters allow the maximum congestion window to adapt to the sum of a fixed bandwidth-delay
+Swift's target delay parameters allow the maximum congestion window to adapt to the sum of a fixed bandwidth-delay
 product (BDP) component and a small variable queueing
 component. They assume a maximum of 100 packets, given
 50 Gbps and 100 Gbps links. These numbers need to be
@@ -3103,7 +3085,7 @@ of (25−6 _._ 25)·50·10 [9] /8 =117KB; and
 
 - 50 _𝜇_ s for 100Gbps links, translating to 109KB.
 We use the average of 113KB. The target is proportional to the
-number of hops through Swift’s _ℎ_ parameter. When sending
+number of hops through Swift's _ℎ_ parameter. When sending
 at line rate, the initial congestion window is set to this target.
 
 23

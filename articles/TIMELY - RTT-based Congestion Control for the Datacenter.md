@@ -41,7 +41,7 @@ distributed for profit or commercial advantage and that copies bear this notice
 and the full citation on the first page. Copyrights for third-party components of
 this work must be honored. For all other uses, contact the owner/author(s).
 
-_SIGCOMM ’15 August 17-21, 2015, London, United Kingdom_
+_SIGCOMM '15 August 17-21, 2015, London, United Kingdom_
 
 _⃝_ c 2015 Copyright held by the owner/author(s).
 
@@ -118,8 +118,8 @@ indicators such as loss.
 
 Moreover, delay has not been used as a congestion signal in the datacenter because datacenter RTTs are difficult
 to measure at microsecond granularity. This level of precision is easily overwhelmed by host delays such as interrupt
-processing for acknowledgments. DCTCP eschews a delaybased scheme saying “the accurate measurement of such
-small increases in queueing delay is a daunting task.” [35]
+processing for acknowledgments. DCTCP eschews a delaybased scheme saying "the accurate measurement of such
+small increases in queueing delay is a daunting task." [35]
 
 Our insight is that recent NIC advances do allow datacenter RTTs to be measured with sufficient precision, while
 the wide-area pitfalls of using delay as a congestion signal
@@ -157,6 +157,8 @@ levels of latency and loss [15,35,37]. We argue that network
 0 200 400 600 800 1000
 
 RTT (µs)
+
+![Figure 2](images/TIMELY%20-%20RTT-based%20Congestion%20Control%20for%20the%20Datacenter/fig_2.png)
 
 **Figure 2: RTTs measured at end-system track closely the queue**
 **occupancy at congested link.**
@@ -234,8 +236,9 @@ RTT Range (µs)
 queues. The following experiment shows this behavior: we
 connect two hosts to the same network via 10 Gbps links
 and send 16 KB ping-pong messages without any cross traffic and on a quiescent network. Since there is no congestion, we expect the RTT measurements to be low and stable.
-Figure 1 compares the CDF of RTTs measured using NIC
-hardware timestamps and RTTs measured via the OS TCP
+![Figure 1](images/TIMELY%20-%20RTT-based%20Congestion%20Control%20for%20the%20Datacenter/fig_1.png)
+
+**Figure 1 compares the CDF of RTTs measured using NIC**hardware timestamps and RTTs measured via the OS TCP
 stack. The CDF for RTTs using NIC timestamps is nearly a
 straight line, indicating small variance. In contrast, the RTTs
 measured by kernel TCP are larger and much more variable.
@@ -254,6 +257,8 @@ undermine the independence of marks made closely in time
 because host sources are bursty. Large bursts at wire speed
 tend to see most packets either above or below the marking
 threshold.
+
+**Figure 1: RTTs measured by hardware timestamps have a much smaller random variance than that by kernel TCP stack.**
 
 Assuming it is accurate, a single high RTT measurement
 immediately signals the extent of congestion. This RTT
@@ -290,8 +295,9 @@ round-trip time, using the advance of _SND_UNA_ [41] to
 mark the end of an RTT round. We also measure the minimum RTT sample in every round, as prior work has found
 it to be a robust descriptor untainted by delayed ACKs and
 send/receive offload schemes. Both the scatter and box plots
-1 [4] in Figure 3 show only a weak correlation between the
-fraction of ECN marks and RTTs.
+1 [4] in ![Figure 3](images/TIMELY%20-%20RTT-based%20Congestion%20Control%20for%20the%20Datacenter/fig_3.png)
+
+**Figure 3 show only a weak correlation between the**fraction of ECN marks and RTTs.
 **Limitations** **of** **RTTs.** While we have found the RTT signal valuable, an effective design must use it carefully. RTT
 measurements lump queueing in both directions along the
 network path. This may confuse reverse path congestion
@@ -301,20 +307,26 @@ delay. This method works in the common case of flows that
 predominantly send data in one direction; we did not need
 more complicated methods.
 
+**Figure 3: Fraction of packets with ECN marks versus RTTs shown as scatter plot (top) and box plot (bottom).**
+
 We conducted an experiment to verify the efficacy of
 ACK prioritization: we started two incasts ( _primary_ and _sec-_
 _ondary_ ) such that the ACKs of the primary incast share the
 same congested queue as the data segments of the secondary
-incast, as shown in Figure 4. Figure 5 shows the CDF of
+incast, as shown in ![Figure 4](images/TIMELY%20-%20RTT-based%20Congestion%20Control%20for%20the%20Datacenter/fig_4.png)
 
-1Whiskers extend to the most distant point within 1 _._ 2 _X_ interquartile range. Points outside these limits are drawn individually.
+**Figure 4. ![Figure 5](images/TIMELY%20-%20RTT-based%20Congestion%20Control%20for%20the%20Datacenter/fig_5.png)
+
+**Figure 5 shows the CDF of****1Whiskers extend to the most distant point within 1 _._ 2 _X_ interquartile range. Points outside these limits are drawn individually.
+
+**Figure 5: In the presence of reverse congestion, RTT mea- surements with ACK prioritization are indistinguishable from RTTs that do not experience any reverse path congestion.**
 
 0.8
 0.6
 0.4
 0.2
 
-539
+![Figure 6](images/TIMELY%20-%20RTT-based%20Congestion%20Control%20for%20the%20Datacenter/fig_6.png)
 
 **Figure 6:** **TIMELY overview.**
 
@@ -363,6 +375,8 @@ components: 1) the serialization delay to transmit all packets
 in the segment, typically up to 64 KB; 2) the round-trip wire
 delay for the segment and its ACK to propagate across the
 
+![Figure 7](images/TIMELY%20-%20RTT-based%20Congestion%20Control%20for%20the%20Datacenter/fig_7.png)
+
 **Figure 7:** **Finding RTT from completion time.**
 
 datacenter; 3) the turnaround time at the receiver to generate
@@ -372,7 +386,7 @@ in both directions.
 We define the RTT to be the propagation and queueing delay components only. The first component is a deterministic
 function of the segment size and the line rate of the NIC. We
 compute and subtract it from the total elapsed time so that
-the RTTs input to TIMELY’s rate computation engine are
+the RTTs input to TIMELY's rate computation engine are
 independent of segment size. The third component is sufficiently close to zero in our setting with NIC-based ACKs
 that we can ignore it. Of the remaining components, the
 second is the propagation delay including the packet-based
@@ -392,7 +406,7 @@ takes 51 _µ_ s, propagation may range from 10-100 _µ_ s, and
 NIC support to precisely measure segment RTTs, described
 next.
 **ACK Timestamps.** We require the NIC to supply the completion timestamp, tcompletion. As shown in §2, OS timestamps suffer from variations such as scheduling and interrupts that can easily obscure the congestion signal. tsend is
-the NIC hardware time that’s read by host software just before posting the segment to NIC.
+the NIC hardware time that's read by host software just before posting the segment to NIC.
 **Prompt ACK generation.** We require NIC-based ACK generation so that we can ignore the turnaround time at the receiver. An alternative would be to use timestamps to measure the ACK turnaround delay due to host processing delay. We have avoided this option because it would require
 augmenting transport wire formats to include this difference
 explicitly.
@@ -498,7 +512,7 @@ circumstances is to control the _distribution_ of the queue occupancy. Even if c
 choosing a threshold for a datacenter network in which multiple queues can be a bottleneck is a notoriously hard tuning
 problem.
 
-TIMELY’s congestion controller achieves low latencies
+TIMELY's congestion controller achieves low latencies
 by reacting to the _delay gradient_ or derivative of the queuing
 with respect to time, instead of trying to maintain a standing
 queue. This is possible because we can accurately measure
@@ -581,8 +595,9 @@ measured error of [(] _[y]_ [(] _[t]_ [)] _[−][C]_ [)] = _[dq]_ [(] _[t]_ [)] 
 using RTT samples. It employs gradient tracking, adjusting
 the rate using a smoothed delay gradient as the error signal
 to keep throughput close to the available bandwidth. Additionally, we employ thresholds to detect and respond to
-extreme cases of under utilization or overly high packet latencies. Figure 8 shows the gradient zone along with the two
-thresholds. When the RTT is in the nominal operating range,
+extreme cases of under utilization or overly high packet latencies. ![Figure 8](images/TIMELY%20-%20RTT-based%20Congestion%20Control%20for%20the%20Datacenter/fig_8.png)
+
+**Figure 8 shows the gradient zone along with the two**thresholds. When the RTT is in the nominal operating range,
 the gradient tracking algorithm computes the delay gradient
 from RTT samples and uses it to adjust the sending rate.
 **Computing** **the** **delay** **gradient.** We rely on accurate RTT
@@ -605,6 +620,8 @@ the connection: _R_ = _R_ + _δ_, where _δ_ is the bandwidth additive increment
 total sending rate is greater than network capacity. Hence,
 TIMELY performs a multiplicative rate decrement _β_, scaled
 by the gradient factor:
+
+**Figure 8: Gradient tracking zone with low and high RTT thresholds.**
 
 _dt_ [(] _[t]_ [)] = ( _y_ ( _tC_ ) _−C_ )
 
@@ -680,6 +697,8 @@ Target RTT=50us
 1 2 3 4 5 6 7 8 9
 
 Time (s)
+
+![Figure 9](images/TIMELY%20-%20RTT-based%20Congestion%20Control%20for%20the%20Datacenter/fig_9.png)
 
 **Figure 9:** **Comparison of gradient (low and high thresholds of**
 **50** _µ_ **s and 500** _µ_ **s) with target-based approach (** _Ttarget_ **of 50** _µ_ **s**
@@ -777,6 +796,8 @@ that of a low target.
 
 RTT (µs)
 
+![Figure 11](images/TIMELY%20-%20RTT-based%20Congestion%20Control%20for%20the%20Datacenter/fig_11.png)
+
 **Figure 11:** **Comparison of the accuracy of NIC and SW times-**
 **tamps.**
 
@@ -785,6 +806,10 @@ oscillate more in the queue-size approach, as it drives the
 RTT up and down towards the target queue size. The gradient approach maintains a smoother rate around the fair share.
 Similar results are shown in control theory terms for AQMs
 using the queue-size approach and gradient approach [28].
+
+![Figure 10](images/TIMELY%20-%20RTT-based%20Congestion%20Control%20for%20the%20Datacenter/fig_10.png)
+
+**Figure 10: Per-connection rates in the gradient approach are smooth (top) while those in the queue-size based approach (with Ttarget = 50µs) are more oscillatory (bottom).**
 
 The main take-away is that _Tlow_ and _Thigh_ thresholds effectively bring the delay within a target range and play a
 role similar to the target queue occupancy in many AQM
@@ -848,7 +873,7 @@ the target rate increase only if the application is sending at
 more than 80% of the target rate, and we also cap the maximum target rate at 10 Gbps. The purpose of allowing some
 headroom is to let the application increase its rate without an
 unreasonable delay when it does have enough data to send.
-**Rate** **update** **frequency.** TIMELY’s rate update equation
+**Rate** **update** **frequency.** TIMELY's rate update equation
 assumes that there is at most one completion event per RTT
 interval. The transmission delay of a 64 KB message on a
 10 Gbps link is 51 _µ_ s; with a minimum RTT of 20 _µ_ s, there
@@ -877,6 +902,8 @@ If the rate has decreased, we recompute the send time, and
 0 25 50 75 100
 
 Average Added RTT Noise (µs)
+
+![Figure 12](images/TIMELY%20-%20RTT-based%20Congestion%20Control%20for%20the%20Datacenter/fig_12.png)
 
 **Figure 12:** **Impact of RTT noise on TIMELY throughput.**
 
@@ -966,10 +993,9 @@ RDMA deployment over PFC. While the throughput is
 slightly lower with TIMELY, the median and tail RTTs are
 lower by more than order of magnitude and pauses are not
 triggered at all. Next, we break out connections to show
-that TIMELY also delivers excellent performance for individual connections. Figure 13 shows a timeline of the observed RTT and throughput for a sample for four individual connections using TIMELY. Each datapoint represents
-a single completion event. The fair share for each connection is 500 Mbps. We see that the throughput is close to the
+that TIMELY also delivers excellent performance for individual connections. ![Figure 13](images/TIMELY%20-%20RTT-based%20Congestion%20Control%20for%20the%20Datacenter/fig_13.png)
 
-545
+**Figure 13 shows a timeline of the observed RTT and throughput for a sample for four individual connections using TIMELY. Each datapoint represents**a single completion event. The fair share for each connection is 500 Mbps. We see that the throughput is close to the
 
 **Figure 13:** **RTTs and sending rates of a sample of connections**
 **for** **TIMELY.** **The** **legend** **gives** **the** **mean** **and** **standard** **devia-**
@@ -986,6 +1012,8 @@ a single completion event. The fair share for each connection is 500 Mbps. We se
 0 200 400 600 800 1000 1200 1400
 
 RTT (µs)
+
+![Figure 14](images/TIMELY%20-%20RTT-based%20Congestion%20Control%20for%20the%20Datacenter/fig_14.png)
 
 **Figure 14:** **CDF of RTT distribution**
 
@@ -1028,8 +1056,9 @@ achieves better throughput and latency trade-offs.
 **Varying** _Tlow_ **.** Our performance is influenced by algorithm
 parameters, which we explore starting with the low threshold. Our purpose is to highlight factors that affect the thresholds, not to tune parameters. By design no more than a default setting is necessary. The low threshold exists to absorb the RTT variation during uncongested network use. The
 expected variation is related to the maximum segment size,
-since as segments grow larger the effect on the RTT of occasional segment collisions increases. Figure 15 shows how
-the bottleneck throughput and RTT times vary with different values of _Tlow_ for segments of size 16 KB, 32 KB and
+since as segments grow larger the effect on the RTT of occasional segment collisions increases. ![Figure 15](images/TIMELY%20-%20RTT-based%20Congestion%20Control%20for%20the%20Datacenter/fig_15.png)
+
+**Figure 15 shows how**the bottleneck throughput and RTT times vary with different values of _Tlow_ for segments of size 16 KB, 32 KB and
 64 KB.
 We see that decreasing the low threshold reduces the network delay. This is because a lower threshold allows the
 use of the RTT gradient more often to modulate the rate
@@ -1049,11 +1078,11 @@ as a long series of back-to-back packets at wire speed, e.g.,
 **Smoothing** **Bursts** **with** **Fine-Grained** **Pacers.** The Rate
 Control Engine described in §3.3 introduces a pacing delay
 
+**Figure 15: Throughput and RTT varying with Tlow and seg- ment size**
+
 546
 
-|50µs Tlow:<br>No Tlow:|Col2|Avg RTT<br>Avg RTT|Col4|99<br>99|Col6|Thruput<br>Thruput|
-|---|---|---|---|---|---|---|
-|50_µs Tlow_:<br>No_ Tlow_:|||||||
+|50µs Tlow:<br>No Tlow:
 
 ## 64 KB segments
 
@@ -1074,8 +1103,9 @@ this time with NIC pacing, with two values of _Tlow_ : 0 _µ_ s
 and 50 _µ_ s. We are not able to implement a dynamic finegrained pacing rate at this time and so use static rates. When
 computing RTTs from the completion times, we subtract the
 serialization delay introduced by NIC pacers to allow for
-comparison, e.g., pacing a 64 KB message at 1 Gbps introduces a serialization delay of 512 _µ_ s. Figure 16 shows the
-results for different NIC pacing rates. As expected, the reduced burstiness due to pacing leads to increase in throughput and decrease in delay, with larger throughput increases
+comparison, e.g., pacing a 64 KB message at 1 Gbps introduces a serialization delay of 512 _µ_ s. ![Figure 16](images/TIMELY%20-%20RTT-based%20Congestion%20Control%20for%20the%20Datacenter/fig_16.png)
+
+**Figure 16 shows the**results for different NIC pacing rates. As expected, the reduced burstiness due to pacing leads to increase in throughput and decrease in delay, with larger throughput increases
 for greater pacing. The most benefit is seen at 700 Mbps:
 18.9 Gbps throughput for _Tlow_ = 50 _µ_ s and 18.4 Gbps in the
 absence of any _Tlow_ (as opposed to 11.2 Gbps and 10.2 Gbps
@@ -1085,6 +1115,8 @@ pacing rate is adjusted dynamically. There is a slight dip in
 the throughput and rise in delay beyond this level, as pacing
 approaches the fair share and has a throttling effect.
 
+**Figure 16: Throughput and RTT varying with pacing rate for 64 KB segments**
+
 We note that NIC hardware pacing is not an absolute requirement in TIMELY design; but rather helps navigate the
 tradeoff between lower network tail latency and higher CPU
 overhead that can be caused by software pacing with smaller
@@ -1093,12 +1125,17 @@ segments.
 the low threshold because it only comes into play for large
 RTTs, but it becomes useful as the level of connection multiplexing grows and the likelihood of RTT spikes increase.
 
-Figure 17 shows the effect on throughput as the high
-threshold is reduced for different numbers of competing con
+![Figure 17](images/TIMELY%20-%20RTT-based%20Congestion%20Control%20for%20the%20Datacenter/fig_17.png)
+
+**Figure 17 shows the effect on throughput as the high**threshold is reduced for different numbers of competing con
+
+**Figure 17: Total throughput and RTT varying with Thigh for different number of connections. Segment Size = 16 KB, Tlow = 50 µs**
 
 0 20 40 60 80 100 120 140
 
 Time (ms)
+
+![Figure 18](images/TIMELY%20-%20RTT-based%20Congestion%20Control%20for%20the%20Datacenter/fig_18.png)
 
 **Figure 18:** **HAI quickly acquires available bandwidth.**
 
@@ -1128,7 +1165,7 @@ good balance between convergence and stability.
 
 ## **6.2 Large-Scale Experiments**
 
-We investigate TIMELY’s large-scale behavior with experiments run on a few hundred machines in a classic Clos
+We investigate TIMELY's large-scale behavior with experiments run on a few hundred machines in a classic Clos
 topology [12, 34]. We show that TIMELY is able to maintain predictable and low latency in large all-to-all and incast
 network congestion scenarios. The experiment generates
 RPCs between client server pairs. To stress TIMELY and
@@ -1157,31 +1194,17 @@ PFC
 
 Offered Load (normalized)
 
-|PFC<br>TIMELY|Col2|Col3|Col4|Col5|Col6|Col7|Col8|Col9|
-|---|---|---|---|---|---|---|---|---|
-|PFC<br>~~T~~IMELY|PFC<br>~~T~~IMELY|PFC<br>~~T~~IMELY|||||||
-||||||||||
-||||||||||
+|PFC<br>TIMELY
 
 0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1
 
 Offered Load (normalized)
 
-1600
-1400
-1200
-1000
-800
-600
-400
-200
+![Figure 19](images/TIMELY%20-%20RTT-based%20Congestion%20Control%20for%20the%20Datacenter/fig_19.png)
 
 **Figure 19:** **Accepted versus offered load (64 KB messages).**
 
-|PFC<br>TIMELY|Col2|Col3|Col4|Col5|Col6|Col7|Col8|
-|---|---|---|---|---|---|---|---|
-|||||||||
-|||||||||
+|PFC<br>TIMELY
 
 0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1
 
@@ -1196,23 +1219,13 @@ Offered Load (normalized)
 100
 0
 
-|PFC<br>TIMELY|Col2|Col3|Col4|Col5|Col6|Col7|Col8|Col9|Col10|
-|---|---|---|---|---|---|---|---|---|---|
-|||||||||||
-|||||||||||
-|||||||||||
+|PFC<br>TIMELY
 
 0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1
 
 Offered Load (normalized)
 
-12000
-10000
-8000
-6000
-4000
-2000
-0
+![Figure 21](images/TIMELY%20-%20RTT-based%20Congestion%20Control%20for%20the%20Datacenter/fig_21.png)
 
 **Figure 21:** **Median and 99-percentile RPC latencies.**
 
@@ -1222,22 +1235,13 @@ Offered Load (normalized)
 1000
 0
 
-|PFC<br>TIMELY|Col2|Col3|Col4|Col5|Col6|Col7|Col8|Col9|Col10|
-|---|---|---|---|---|---|---|---|---|---|
-|PFC<br>~~T~~IMELY|PFC<br>~~T~~IMELY|PFC<br>~~T~~IMELY|PFC<br>~~T~~IMELY|||||||
-|||||||||||
-|||||||||||
+|PFC<br>TIMELY
 
 0 0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1
 
 Offered Load (normalized)
 
-|UR|Col2|Col3|UR(w/ M-to-1)|Col5|Col6|Col7|Col8|Col9|Col10|Col11|Col12|Col13|
-|---|---|---|---|---|---|---|---|---|---|---|---|---|
-||||||||||||||
-||||||||||||||
-||||||||||||||
-||||||||||||||
+|UR
 
 **Figure** **20:** **Median** **and** **99-percentile** **RTTs** **as** **measured** **by**
 **pingers under different offered load.**
@@ -1257,27 +1261,27 @@ load is less than the offered load) is higher for TIMELY as
 it is able to send more traffic by minimizing queueing and
 thereby also pause frames per second.
 
-Figure 20 shows RTT versus load. TIMELY reduces the
-median and 99-percentile RTT by 2 _X_ and 5 _X_ respectively
+![Figure 20](images/TIMELY%20-%20RTT-based%20Congestion%20Control%20for%20the%20Datacenter/fig_20.png)
+
+**Figure 20 shows RTT versus load. TIMELY reduces the**median and 99-percentile RTT by 2 _X_ and 5 _X_ respectively
 compared to PFC. This results in a corresponding reduction of RPC median latency of about 2 _X_ (shown in Figure 21). Without TIMELY, beyond saturation the network
 queuing increases in an attempt to reach the offered load.
 With TIMELY, low network queuing is maintained by moving queuing from the shared network to the end-host (where
 it is included in RPC latency but not in the RTTs). Therefore,
 the 99-percentile of RPC latency reduction effect diminishes
 as the offered load increases beyond the saturation point.
-**Network** **imbalance** **(incast).** To stress TIMELY’s ability
+**Network** **imbalance** **(incast).** To stress TIMELY's ability
 to mitigate congestion, we designed an experiment with a
 background load of longest path uniform random traffic and
 then added an incast load. We use three levels of background
 load: low (0.167 of the maximum offered load in Figure 19),
-medium (0.3) and high (0.5). Figure 22 shows the normal
+medium (§0.3) and high (§0.5). ![Figure 22](images/TIMELY%20-%20RTT-based%20Congestion%20Control%20for%20the%20Datacenter/fig_22.png)
 
-|UR|Col2|Col3|Col4|UR(w/ M-to-1)|Col6|Col7|Col8|Col9|Col10|Col11|Col12|Col13|Col14|
-|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-|||||||||||||||
-|||||||||||||||
-|||||||||||||||
-|||||||||||||||
+**Figure 22 shows the normal**
+
+**Figure 20: Median and 99-percentile RTTs as measured by pingers under different offered load.**
+
+|UR
 
 **Figure 22:** **Adding one 40-to-1 pattern to longest path uniform**
 **random ((a) Normalized throughput (b) 99-percentile RTT).**
@@ -1295,8 +1299,9 @@ rate limiting only the flows passing along the congested path.
 The overall throughput for TIMELY remained the same during the incast.
 **Application level benchmark.**
 
-Figure 23 shows RPC latency of a datacenter storage
-benchmark (note that the y-axis is on a log-scale). Without TIMELY, the application is limited in the amount of
+![Figure 23](images/TIMELY%20-%20RTT-based%20Congestion%20Control%20for%20the%20Datacenter/fig_23.png)
+
+**Figure 23 shows RPC latency of a datacenter storage**benchmark (note that the y-axis is on a log-scale). Without TIMELY, the application is limited in the amount of
 data it can push through the network while keeping the 99th
 percentile RTT low enough. With TIMELY, the application
 is able to push at higher utilization levels without suffering
@@ -1317,8 +1322,6 @@ the increased throughput that the application is able to sustain during query ex
 10 [2]
 10 [1]
 10 [0]
-
-548
 
 **Figure 23:** **Application-level benchmark.**
 
@@ -1352,7 +1355,7 @@ A recent scheme, DX [17], independently identified the
 benefits of using delay as congestion signal for high throughput and low latency datacenter communications. DX implements accurate latency measurements using a DPDK driver
 for the NIC and the congestion control algorithm is within
 the Linux TCP stack. DX algorithm is similar to the conventional window-based proposals, with an additive increase
-and a multiplicative decrease that’s proportional to the average queuing delay.
+and a multiplicative decrease that's proportional to the average queuing delay.
 
 CAIA Delay Gradient [25] (CDG) proposes a delay gradient algorithm for TCP congestion control for wide-area networks. Its key goal is to figure out co-existence with loss
 based congestion control. Hence the nature of its algorithms
@@ -1442,22 +1445,22 @@ Timestamps? http://goo.gl/TI3r1u, 2013.
 [10] A. Kabbani et al. AF-QCN: Approximate Fairness
 
 with Quantized Congestion Notification for Multi
-tenanted Data Centers. In _Hot Interconnects’10_ .
+tenanted Data Centers. In _Hot Interconnects'10_ .
 
 [11] A. Kabbani et al. FlowBender: Flow-level Adaptive
 
 Routing for Improved Latency and Throughput in
-Datacenter Networks. In _ACM CoNEXT ’14_ .
+Datacenter Networks. In _ACM CoNEXT '14_ .
 
 [12] A. Singh et al. Jupiter Rising: A Decade of Clos
 
-Topologies and Centralized Control in Google’s
-Datacenter. In _SIGCOMM’15_ .
+Topologies and Centralized Control in Google's
+Datacenter. In _SIGCOMM'15_ .
 
 [13] Alizadeh et al. CONGA: Distributed Congestion
 
 aware Load Balancing for Datacenters. In _SIGCOMM_
-_’14_ .
+_'14_ .
 
 [14] B. Stephens et al. Practical DCB for improved data
 
@@ -1465,12 +1468,12 @@ center networks. In _Infocom 2014_ .
 
 [15] B. Vamanan et al. Deadline-aware datacenter TCP
 
-(D2TCP). In _SIGCOMM ’12_ .
+(D2TCP). In _SIGCOMM '12_ .
 
 [16] Brakmo et al. TCP Vegas: new techniques for
 
 congestion detection and avoidance. In _SIGCOMM_
-_’94_ .
+_'94_ .
 
 [17] C. Lee et al. Accurate Latency-based Congestion
 
@@ -1478,7 +1481,7 @@ Feedback for Datacenters. In _USENIX ATC 15_ .
 
 [18] C.-Y. Hong et al. Finishing Flows Quickly with
 
-Preemptive Scheduling. In _SIGCOMM ’12_ .
+Preemptive Scheduling. In _SIGCOMM '12_ .
 
 [19] D.-M. Chiu and R. Jain. Analysis of the Increase and
 
@@ -1487,7 +1490,7 @@ Computer Networks. _Comput. Netw. ISDN Syst._, 1989.
 
 [20] D. Zats et al. DeTail: Reducing the Flow Completion
 
-Time Tail in Datacenter Networks. In _SIGCOMM ’12_ .
+Time Tail in Datacenter Networks. In _SIGCOMM '12_ .
 
 [21] J. Dean and L. A. Barroso. The Tail at Scale.
 
@@ -1518,20 +1521,20 @@ Control for Low Latency.
 [27] C. Hollot, V. Misra, D. Towsley, and W.-B. Gong. A
 
 control theoretic analysis of RED. In _IEEE Infocom_
-_’01_ .
+_'01_ .
 
 [28] C. Hollot, V. Misra, D. Towsley, and W.-B. Gong. On
 
 designing improved controllers for AQM routers
-supporting TCP flows. In _IEEE Infocom ’01_ .
+supporting TCP flows. In _IEEE Infocom '01_ .
 
 [29] IEEE. 802.1Qau - Congestion Notification.
 
 http://www.ieee802.org/1/pages/802.1au.html.
 
-[30] J. Perry et al. Fastpass: A Centralized “Zero-Queue”
+[30] J. Perry et al. Fastpass: A Centralized "Zero-Queue"
 
-Datacenter Network. In _SIGCOMM ’14_ .
+Datacenter Network. In _SIGCOMM '14_ .
 
 [31] R. Jain, D. Chiu, and W. Hawe. A Quantitative
 
@@ -1542,7 +1545,7 @@ _Research Report TR-301_, 1984.
 [32] D. Katabi, M. Handley, and C. Rohrs. Internet
 
 Congestion Control for Future High Bandwidth-Delay
-Product Environments. In _SIGCOMM’02_ .
+Product Environments. In _SIGCOMM'02_ .
 
 [33] F. P. Kelly, G. Raina, and T. Voice. Stability and
 
@@ -1551,21 +1554,21 @@ buffers. _Computer Communication Review_, 2008.
 
 [34] M. Al-Fares et al. A Scalable, Commodity Data
 
-Center Network Architecture. SIGCOMM ’08.
+Center Network Architecture. SIGCOMM '08.
 
 [35] M. Alizadeh et al. Data center TCP (DCTCP). In
 
-_SIGCOMM ’10_ .
+_SIGCOMM '10_ .
 
 [36] M. Alizadeh et al. Data Center Transport Mechanisms:
 
 Congestion Control Theory and IEEE Standardization.
-In _Annual Allerton Conference ’08_ .
+In _Annual Allerton Conference '08_ .
 
 [37] M. Alizadeh et al. Less Is More: Trading a Little
 
 Bandwidth for Ultra-Low Latency in the Data Center.
-In _NSDI ’12_ .
+In _NSDI '12_ .
 
 [38] M. Alizadeh et al. Deconstructing datacenter packet
 
@@ -1585,7 +1588,7 @@ _Queue_, 10(5):20:20–20:34, May 2012.
 
 [42] S. Ha et al. CUBIC: A New TCP-Friendly High-Speed
 
-TCP Variant. _SIGOPS Operating System Review ’08_ .
+TCP Variant. _SIGOPS Operating System Review '08_ .
 
 [43] S. Radhakrishnan et al. SENIC: scalable NIC for
 
@@ -1594,12 +1597,12 @@ end-host rate limiting. In _NSDI 2014_ .
 [44] K. Tan and J. Song. A compound TCP approach for
 
 high-speed and long distance networks. In _IEEE_
-_INFOCOM ’06_ .
+_INFOCOM '06_ .
 
 [45] V. Vasudevan et al. Safe and effective fine-grained
 
 TCP retransmissions for datacenter communication. In
-_SIGCOMM ’09_ .
+_SIGCOMM '09_ .
 
 [46] D. X. Wei, C. Jin, S. H. Low, and S. Hegde. FAST
 
@@ -1609,7 +1612,7 @@ Performance. _IEEE/ACM Trans. Netw._, 2006.
 [47] C. Wilson, H. Ballani, T. Karagiannis, and
 
 A. Rowtron. Better never than late: meeting deadlines
-in datacenter networks. In _SIGCOMM ’11_ .
+in datacenter networks. In _SIGCOMM '11_ .
 
 [48] Y. Zhu et al. Congestion Control for Large-Scale
 

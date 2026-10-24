@@ -1,5 +1,5 @@
 **[DOI:10.1145/2975159](http://dx.doi.org/10.1145/2975159)**
-# Jupiter Rising: A Decade of Clos Topologies and Centralized Control in Google’s Datacenter Network
+# Jupiter Rising: A Decade of Clos Topologies and Centralized Control in Google's Datacenter Network
 
 By Arjun Singh, Joon Ong, Amit Agarwal, Glen Anderson, Ashby Armistead, Roy Bannon, Seb Boving,
 Gaurav Desai, Bob Felderman, Paulie Germano, Anand Kanagala, Hong Liu, Jeff Provost, Jason Simmons,
@@ -71,6 +71,8 @@ an external customer may in turn be running third party
 software that is difficult to modify. We have found that
 our data center network architecture substantially eases
 
+![Figure 1](images/Jupiter%20Rising%20-%20Decade%20of%20Clos%20Topologies%20in%20Google%20Datacenter%20Network/fig_1.png)
+
 **Figure 1. Aggregate server traffic in our datacenter fleet.**
 
 The original version of this paper was published in the
@@ -79,7 +81,7 @@ _Group on Data Communication_, ACM, 183–197.
 
 the management overhead of hosting external applications while simultaneously delivering new levels of performance and scale for Cloud customers.
 
-Inspired by the community’s ability to scale out computing with parallel arrays of commodity servers, we sought a
+Inspired by the community's ability to scale out computing with parallel arrays of commodity servers, we sought a
 similar approach for networking. This paper describes
 our experience with building five generations of custom
 data center network hardware and software by leveraging
@@ -102,7 +104,7 @@ routing across multiple equal-cost paths.
 targeting small-volume, large feature sets and high reliability, we targeted general-purpose merchant switch silicon,
 commodity priced, off the shelf, switching components. To
 keep pace with server bandwidth demands which scale with
-cores per server and Moore’s law, we emphasized bandwidth
+cores per server and Moore's law, we emphasized bandwidth
 density and frequent refresh cycles. Regularly upgrading
 network fabrics with the latest generation of commodity
 switch silicon allows us to deliver exponential growth in
@@ -171,6 +173,8 @@ leveraging Clos topologies (Figure 2) and the then-emerging
 (ca. 2003) merchant switching silicon industry. [11] Table 1 summarizes a number of the top-level challenges we faced in
 constructing and managing building-scale network fabrics.
 
+![Figure 2](images/Jupiter%20Rising%20-%20Decade%20of%20Clos%20Topologies%20in%20Google%20Datacenter%20Network/fig_2.png)
+
 **Figure 2. A generic three tier Clos architecture with edge switches**
 **(ToRs), aggregation blocks and spine blocks. All generations of Clos**
 **fabrics deployed in our datacenters follow variants of this architecture.**
@@ -196,8 +200,9 @@ powerful CPUs.
 Table 2 summarizes the multiple generations of our cluster
 network. With our initial approach, Firehose 1.0 (or FH1.0), our
 nominal goal was to deliver 1Gbps of nonblocking bisection
-bandwidth to each of 10K servers. Figure 3 details the FH1.0
-topology using 8x10G switches in both the aggregation blocks
+bandwidth to each of 10K servers. ![Figure 3](images/Jupiter%20Rising%20-%20Decade%20of%20Clos%20Topologies%20in%20Google%20Datacenter%20Network/fig_3.png)
+
+**Figure 3 details the FH1.0**topology using 8x10G switches in both the aggregation blocks
 as well as the spine blocks. The ToR switch delivered 2x10GE
 ports to the fabric and 24x1GE server ports.
 
@@ -226,13 +231,14 @@ Our first production deployment of a custom datacenter
 cluster fabric was Firehose 1.1 (FH1.1). We had learned from
 FH1.0 not to use servers to house switch chips. Thus, we
 built custom enclosures that standardized around the compact PCI chassis each with six independent linecards and a
-dedicated Single-Board Computer (SBC) to control the linecards using PCI. See insets in Figure 4. The fabric chassis did
+dedicated Single-Board Computer (SBC) to control the linecards using PCI. See insets in ![Figure 4](images/Jupiter%20Rising%20-%20Decade%20of%20Clos%20Topologies%20in%20Google%20Datacenter%20Network/fig_4.png)
 
+**Figure 4. The fabric chassis did**
 **Table 1. High-level summary of challenges we faced and our approach to address them.**
 
 **Challenge** **Our approach (section discussed in)**
 
-Introducing the network to production Initially deploy as bag-on-the-side with a fail-safe big-red button (3.1)
+Introducing the network to production Initially deploy as bag-on-the-side with a fail-safe big-red button (§3.1)
 
 High availability from cheaper components Redundancy in fabric, diversity in deployment, robust software, necessary protocols only,
 reliable out of band control plane (3.1, 3.2, 5.1)
@@ -241,22 +247,22 @@ Individual racks can leverage full uplink capacity to external
 clusters
 
 Introduce Cluster Border Routers to aggregate external bandwidth shared by all server
-racks (4.1)
+racks (§4.1)
 
-Routing scalability Scalable in-house IGP, centralized topology view and route control (5.2)
+Routing scalability Scalable in-house IGP, centralized topology view and route control (§5.2)
 
 Interoperate with external vendor gear Use standard BGP between Cluster Border Routers and vendor gear (5.2.5)
 
 Small on-chip buffers Congestion window bounding on servers, ECN, dynamic buffer sharing of chip buffers,
-QoS (6.1)
+QoS (§6.1)
 
-Routing with massive multipath Granular control over ECMP tables with proprietary IGP (5.1)
+Routing with massive multipath Granular control over ECMP tables with proprietary IGP (§5.1)
 
 Operating at scale Leverage existing server installation, monitoring software; tools build and operate fabric as
 a whole; move beyond individual chassis-centric network view; single
-cluster-wide confguration (5.3)
+cluster-wide confguration (§5.3)
 
-Inter cluster networking Portable software, modular hardware in other applications in the network hierarchy (4.2)
+Inter cluster networking Portable software, modular hardware in other applications in the network hierarchy (§4.2)
 
 **Table 2. Multiple generations of datacenter networks.**
 
@@ -278,8 +284,9 @@ All ports connected to external copper cables.
 
 A major concern with FH1.1 in production was deploying
 an unproven new network technology for our mission critical applications. To mitigate risk, we deployed Firehose 1.1
-in conjunction with our legacy networks as shown in Figure 5.
-We maintained a simple configuration; the ToR would forward default traffic to the legacy network (e.g., for connectivity to external clusters/data centers) while more specific
+in conjunction with our legacy networks as shown in ![Figure 5](images/Jupiter%20Rising%20-%20Decade%20of%20Clos%20Topologies%20in%20Google%20Datacenter%20Network/fig_5.png)
+
+**Figure 5.**We maintained a simple configuration; the ToR would forward default traffic to the legacy network (e.g., for connectivity to external clusters/data centers) while more specific
 intra-­cluster traffic would use the uplinks to Firehose 1.1.
 We built a _Big Red Button_ fail-safe to configure the ToRs to
 avoid Firehose uplinks in case of catastrophic failure.
@@ -304,8 +311,9 @@ Firehose 1.1 was the deployment challenges with the external copper cabling.
 We used these experiences to design Watchtower, our
 third-generation cluster fabric. The key idea was to leverage the next-generation merchant silicon switch chips,
 16x10G, to build a traditional switch chassis with a backplane.
-Figure 6 shows the half rack Watchtower chassis along with
-its internal topology and cabling. Watchtower consists of
+![Figure 6](images/Jupiter%20Rising%20-%20Decade%20of%20Clos%20Topologies%20in%20Google%20Datacenter%20Network/fig_6.png)
+
+**Figure 6 shows the half rack Watchtower chassis along with**its internal topology and cabling. Watchtower consists of
 eight line cards, each with three switch chips. Two chips
 on each linecard have half their ports externally facing, for
 a total of 16x10GE SFP+ ports. All three chips also connect
@@ -334,8 +342,9 @@ SEPTEMBER 2016 | VOL. 59 | NO. 9 | **COMMUNICATIONS OF THE ACM** **91**
 merchant silicon building blocks. A Saturn chassis supports
 12-linecards to provide a 288 port non-blocking switch.
 These chassis are coupled with new Pluto single-chip ToR
-switches; see Figure 7. In the default configuration, Pluto
-supports 20 servers with 4x10G provisioned to the cluster
+switches; see ![Figure 7](images/Jupiter%20Rising%20-%20Decade%20of%20Clos%20Topologies%20in%20Google%20Datacenter%20Network/fig_7.png)
+
+**Figure 7. In the default configuration, Pluto**supports 20 servers with 4x10G provisioned to the cluster
 fabric for an average bandwidth of 2 Gbps for each server.
 For more bandwidth-hungry servers, we could configure the
 Pluto ToR with 8x10G uplinks and 16x10G to servers providing 5 Gbps to each server. Importantly, servers could burst
@@ -364,8 +373,9 @@ technology would need to be introduced into the network
 _in situ_ . Hence, the fabric must support heterogeneous
 hardware and speeds.
 
-At Jupiter scale, we had to design the fabric through individual building blocks, see Figure 8. Our unit of deployment
-is a Centauri chassis, a 4RU chassis housing two linecards,
+At Jupiter scale, we had to design the fabric through individual building blocks, see ![Figure 8](images/Jupiter%20Rising%20-%20Decade%20of%20Clos%20Topologies%20in%20Google%20Datacenter%20Network/fig_8.png)
+
+**Figure 8. Our unit of deployment**is a Centauri chassis, a 4RU chassis housing two linecards,
 each with two switch chips with 16x40G ports controlled by
 a separate CPU linecard. Each port could be configured in
 
@@ -394,9 +404,13 @@ redundant 10G links. The dual redundancy aids fast
 
 **Figure 8. Building blocks used in the Jupiter topology.**
 
+![Figure 9](images/Jupiter%20Rising%20-%20Decade%20of%20Clos%20Topologies%20in%20Google%20Datacenter%20Network/fig_9.png)
+
 **Figure 9. Jupiter Middle blocks housed in racks.**
 
 reconvergence for the common case of single link failure
+![Figure 10](images/Jupiter%20Rising%20-%20Decade%20of%20Clos%20Topologies%20in%20Google%20Datacenter%20Network/fig_10.png)
+
 **Figure 10. Two-stage fabrics used for inter-cluster and intra-campus**
 or maintenance. Each aggregation block exposes up to **connectivity.**
 512x40G links towards the spine blocks. Jupiter employs six
@@ -446,7 +460,7 @@ routers configured to speak BGP.
 
 A Datacenter Freedome typically comprises four independent blocks to connect multiple clusters in the same
 datacenter building. Inter-cluster traffic local to the same
-building would travel from the source cluster’s CBR layer to
+building would travel from the source cluster's CBR layer to
 
 the Datacenter Freedome and finally to the CBR layer of the
 destination cluster. We connect the top stage router ports
@@ -500,7 +514,7 @@ fabric with tens of thousands of ports rather than a collection of hundreds of a
 dynamically discover information about the fabric. We
 were, at this time, inspired by the success of large-scale distributed storage systems with a centralized manager. [13] Our
 design informed the control architecture for both Jupiter
-datacenter networks and Google’s B4 WAN, [17] both of which
+datacenter networks and Google's B4 WAN, [17] both of which
 are based on OpenFlow [18] and custom SDN control stacks.
 
 ### 5.2. Routing
@@ -524,7 +538,7 @@ loops. Links that fail unidirectionally or develop high
 packet error rates should also be avoided and scheduled
 for replacement. To address these issues, we developed
 _Neighbor Discovery_ (ND), an online liveness and peer correctness checking protocol. ND uses the configured view
-of cluster topology together with a switch’s local ID to determine the expected peer IDs of its local ports and verifies that via message exchange.
+of cluster topology together with a switch's local ID to determine the expected peer IDs of its local ports and verifies that via message exchange.
 
 **Firepath.** We support Layer 3 routing all the way to the
 ToRs via a custom Interior Gateway Protocol (IGP), Firepath.
@@ -532,10 +546,12 @@ Firepath implements centralized topology state distribution, but distributed for
 two main components. A Firepath client runs on each fabric
 switch, and a set of redundant Firepath masters run on a
 selected subset of spine switches. Clients communicate
-with the elected master over the CPN. Figure 11 shows
-the interaction between the Firepath client and the rest of
-the switch stack. Figure 12 illustrates the protocol message
-exchange between various routing components.
+with the elected master over the CPN. ![Figure 11](images/Jupiter%20Rising%20-%20Decade%20of%20Clos%20Topologies%20in%20Google%20Datacenter%20Network/fig_11.png)
+
+**Figure 11 shows**the interaction between the Firepath client and the rest of
+the switch stack. ![Figure 12](images/Jupiter%20Rising%20-%20Decade%20of%20Clos%20Topologies%20in%20Google%20Datacenter%20Network/fig_12.png)
+
+**Figure 12 illustrates the protocol message**exchange between various routing components.
 
 At startup, each client is loaded with the static topology
 of the entire fabric called the cluster config. Each client
@@ -550,11 +566,11 @@ of the entire fabric called the cluster config. Each client
 **BGP speakers.**
 
 collects the state of its local interfaces from the embedded
-stack’s interface manager and transmits this state to the
+stack's interface manager and transmits this state to the
 master. The master constructs a Link State Database (LSD)
 with a monotonically increasing version number and distributes it to all clients via UDP/IP multicast over the CPN.
 After the initial full update, a subsequent LSD contains only
-the diffs from the previous state. The entire network’s LSD
+the diffs from the previous state. The entire network's LSD
 fits within a 64 KB payload. On receiving an LSD update,
 each client computes shortest path forwarding with EqualCost Multi-Path (ECMP) and programs the hardware forwarding tables local to its switch.
 
@@ -926,7 +942,7 @@ _the NSDI_ (2012), 413–426.
 
 A. Jupiter rising: A decade of clos
 topologies and centralized control
-in Google’s datacenter network.
+in Google's datacenter network.
 In _Proceedings of the 2015 ACM_
 _Conference on Special Interest Group_
 _on Data Communication_ (2015), ACM,

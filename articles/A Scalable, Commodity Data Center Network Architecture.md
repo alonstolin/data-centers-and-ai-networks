@@ -19,7 +19,7 @@ La Jolla, CA 92093-0404
 
 ## ABSTRACT
 
-Today’s data centers may contain tens of thousands of computers
+Today's data centers may contain tens of thousands of computers
 with significant aggregate bandwidth requirements. The network
 architecture typically consists of a tree of routing and switching
 elements with progressively more specialized and expensive equipment moving up the network hierarchy. Unfortunately, even when
@@ -31,7 +31,7 @@ In this paper, we show how to leverage largely commodity Ethernet switches to su
 consisting of tens of thousands of elements. Similar to how clusters
 of commodity computers have largely replaced more specialized
 SMPs and MPPs, we argue that appropriately architected and interconnected commodity switches may deliver more performance at
-less cost than available from today’s higher-end solutions. Our approach requires no modifications to the end host network interface,
+less cost than available from today's higher-end solutions. Our approach requires no modifications to the end host network interface,
 operating system, or applications; critically, it is fully backward
 compatible with Ethernet, IP, and TCP.
 
@@ -60,7 +60,7 @@ not made or distributed for profit or commercial advantage and that copies
 bear this notice and the full citation on the first page. To copy otherwise, to
 republish, to post on servers or to redistribute to lists, requires prior specific
 permission and/or a fee.
-_SIGCOMM’08,_ August 17–22, 2008, Seattle, Washington, USA.
+_SIGCOMM'08,_ August 17–22, 2008, Seattle, Washington, USA.
 Copyright 2008 ACM 978-1-60558-175-0/08/08 ...$5.00.
 
 institutions and thousand-node clusters are increasingly common
@@ -188,7 +188,7 @@ Achieving full bisection bandwidth for 10 Gb/s Ethernet is not currently possibl
 
 _2.1.3_ _Multi-path Routing_
 
-Delivering full bandwidth between arbitrary hosts in larger clusters requires a “multi-rooted” tree with multiple core switches (see
+Delivering full bandwidth between arbitrary hosts in larger clusters requires a "multi-rooted" tree with multiple core switches (see
 Figure 1). This in turn requires a multi-path routing technique,
 such as ECMP [19]. Currently, most enterprise core switches support ECMP. Without the use of ECMP, the largest cluster that can
 be supported with a singly rooted core with 1:1 oversubscription
@@ -212,15 +212,16 @@ of hosts and oversubscription using current best practices. We assume a cost of 
 and $700,000 for 128-port 10 GigE switches in the aggregation and
 core layers. We do not consider cabling costs in these calculations.
 
-Figure 2 plots the cost in millions of US dollars as a function
-of the total number of end hosts on the _x_ axis. Each curve represents a target oversubscription ratio. For instance, the switching
+![Figure 2](images/A%20Scalable%2C%20Commodity%20Data%20Center%20Network%20Architecture/fig_2.png)
+
+**Figure 2 plots the cost in millions of US dollars as a function**of the total number of end hosts on the _x_ axis. Each curve represents a target oversubscription ratio. For instance, the switching
 hardware to interconnect 20,000 hosts with full bandwidth among
 all hosts comes to approximately $37M. The curve corresponding
 to an oversubscription of 3:1 plots the cost to interconnect end
 hosts where the maximum available bandwidth for arbitrary end
 host communication would be limited to approximately 330 Mbps.
 
-64
+![Figure 1](images/A%20Scalable%2C%20Commodity%20Data%20Center%20Network%20Architecture/fig_1.png)
 
 **Figure 1:** **Common data center interconnect topology.** **Host to switch links are GigE and links between switches are 10 GigE.**
 
@@ -315,8 +316,9 @@ commodity switches [11].
 65
 
 We adopt a special instance of a Clos topology called a _fat-_
-_tree_ [23] to interconnect commodity Ethernet switches. We organize a _k_ -ary fat-tree as shown in Figure 3. There are _k_ pods, each
-containing two layers of _k/_ 2 switches. Each _k_ -port switch in the
+_tree_ [23] to interconnect commodity Ethernet switches. We organize a _k_ -ary fat-tree as shown in ![Figure 3](images/A%20Scalable%2C%20Commodity%20Data%20Center%20Network%20Architecture/fig_3.png)
+
+**Figure 3. There are _k_ pods, each**containing two layers of _k/_ 2 switches. Each _k_ -port switch in the
 lower layer is directly connected to _k/_ 2 hosts. Each of the remaining _k/_ 2 ports is connected to _k/_ 2 of the _k_ ports in the aggregation
 layer of the hierarchy.
 
@@ -383,7 +385,7 @@ power characteristics of our approach.
 
 Achieving maximum bisection bandwidth in this network requires spreading outgoing traffic from any given pod as evenly
 as possible among the core switches. Routing protocols such as
-OSPF2 [25] usually take the hop-count as their metric of “shortestpath,” and in the _k_ -ary fat-tree topology (see Section 2.2), there
+OSPF2 [25] usually take the hop-count as their metric of "shortestpath," and in the _k_ -ary fat-tree topology (see Section 2.2), there
 are ( _k/_ 2) [2] such shortest-paths between any two hosts on different pods, but only one is chosen. Switches, therefore, concentrate
 traffic going to a given subnet to a single port even though other
 choices exist that give the same cost. Furthermore, depending on
@@ -413,13 +415,13 @@ the form 10 _.pod.switch._ 1, where _pod_ denotes the pod number (in
 [0 _, k_ _−_ 1]), and _switch_ denotes the position of that switch in the
 pod (in [0 _, k−_ 1], starting from left to right, bottom to top). We give
 core switches addresses of the form 10 _.k.j.i_, where _j_ and _i_ denote
-that switch’s coordinates in the ( _k/_ 2) [2] core switch grid (each in
+that switch's coordinates in the ( _k/_ 2) [2] core switch grid (each in
 
 [1 _,_ ( _k/_ 2)], starting from top-left).
 
 The address of a host follows from the pod switch it is connected
 to; hosts have addresses of the form: 10 _.pod.switch.ID_, where
-_ID_ is the host’s position in that subnet (in [2 _, k/_ 2+1], starting from
+_ID_ is the host's position in that subnet (in [2 _, k/_ 2+1], starting from
 left to right). Therefore, each lower-level switch is responsible for a
 _/_ 24 subnet of _k/_ 2 hosts (for _k_ _<_ 256). Figure 3 shows examples of
 this addressing scheme for a fat-tree corresponding to _k_ = 4. Even
@@ -463,23 +465,7 @@ Edge
 
 **TCAM**
 
-|Prefix|Output port|Col3|
-|---|---|---|
-|10.2.0.0/24|0<br>|0<br>|
-|10.2.1.0/24<br>|1|1|
-|0.0.0.0/0|||
-
-|Next hop|Output port|
-|---|---|
-|<br>10.2.0.1|<br>0|
-|10.2.1.1|1|
-|10.4.1.1|2|
-|10.4.1.2|3|
-
-|Suf|fix Output port|
-|---|---|
-|0.0.0|.2/8<br> <br>2|
-|0.0.0|.3/8<br><br>3|
+|Prefix|Output port
 
 **Figure** **4:** **Two-level** **table** **example.** **This** **is** **the** **table** **at** **switch**
 10 _._ 2 _._ 2 _._ 1 **.** **An** **incoming** **packet** **with** **destination** **IP** **address**
@@ -509,10 +495,12 @@ than algorithmic approaches [15, 29] for finding a match against
 a bit pattern. A CAM can perform parallel searches among all
 its entries in a single clock cycle. Lookup engines use a special
 kind of CAM, called Ternary CAM (TCAM). A TCAM can store
-_don’t_ _care_ bits in addition to matching 0’s and 1’s in particular
+_don't_ _care_ bits in addition to matching 0's and 1's in particular
 positions, making it suitable for storing variable length prefixes,
 such as the ones found in routing tables. On the downside, CAMs
 have rather low storage density, they are very power hungry, and
+
+![Figure 5](images/A%20Scalable%2C%20Commodity%20Data%20Center%20Network%20Architecture/fig_5.png)
 
 **Figure 5:** **TCAM two-level routing table implementation.**
 
@@ -542,7 +530,7 @@ and is forwarded on port 2.
 The first two levels of switches in a fat-tree act as filtering traffic diffusers; the lower- and upper-layer switches in any given pod
 have terminating prefixes to the subnets in that pod. Hence, if a
 host sends a packet to another host in the same pod but on a different subnet, then all upper-level switches in that pod will have a
-terminating prefix pointing to the destination subnet’s switch.
+terminating prefix pointing to the destination subnet's switch.
 
 For all other outgoing inter-pod traffic, the pod switches have
 a default _/_ 0 prefix with a secondary table matching host IDs (the
@@ -562,7 +550,7 @@ one link to its destination pod, and that switch will include a terminating _/_ 
 Once a packet reaches its destination pod, the receiving upper-level
 pod switch will also include a (10 _.pod.switch._ 0 _/_ 24 _, port_ ) prefix
 to direct that packet to its destination subnet switch, where it is
-finally switched to its destination host. Hence, traffic diffusion occurs only in the first half of a packet’s journey.
+finally switched to its destination host. Hence, traffic diffusion occurs only in the first half of a packet's journey.
 
 It is possible to design distributed protocols to build the necessary forwarding state incrementally in each switch. For simplicity
 however, we assume a central entity with full knowledge of cluster
@@ -582,7 +570,7 @@ switches. The reason for the modulo shift in the outgoing port is
 to avoid traffic from different lower-layer switches addressed to a
 host with the same host ID going to the same upper-layer switch.
 
-For the lower pod switches, we simply omit the _/_ 24 subnet prefix step, in line 3, since that subnet’s own traffic is switched, and
+For the lower pod switches, we simply omit the _/_ 24 subnet prefix step, in line 3, since that subnet's own traffic is switched, and
 intra- and inter-pod traffic should be evenly split among the upper
 switches.
 
@@ -702,7 +690,7 @@ the source and destination for all active large flows. This represents
 a request by the edge switch for placement of that flow in an uncontended path.
 
 Note that unlike Section 3.6, this scheme does not allow edge
-switches to independently reassign a flow’s port, regardless of size.
+switches to independently reassign a flow's port, regardless of size.
 The central scheduler is the only entity with the authority to order
 a re-assignment.
 
@@ -720,7 +708,7 @@ switches to find one whose corresponding path components do not
 include a reserved link. [4] Upon finding such a path, the scheduler
 marks those links as reserved, and notifies the relevant lower- and
 upper-layer switches in the source pod with the correct outgoing
-port that corresponds to that flow’s chosen path. A similar search is
+port that corresponds to that flow's chosen path. A similar search is
 performed for intra-pod large flows; this time for an uncontended
 path through an upper-layer pod switch. The scheduler garbage
 collects flows whose last update is older than a given time, clearing their reservations. Note that the edge switches do not block
@@ -756,7 +744,7 @@ three classes of traffic:
 
 1. Outgoing inter- and intra-pod traffic originating from the
 lower-layer switch. In this case the local flow classifier sets
-the ‘cost’ of that link to infinity and does not assign it any
+the 'cost' of that link to infinity and does not assign it any
 new flows, and chooses another available upper-layer switch.
 
 2. Intra-pod traffic using the upper-layer switch as an intermediary. In response, this switch broadcasts a tag notifying all
@@ -767,7 +755,7 @@ tags and avoid it if possible. [5]
 3. Inter-pod traffic coming into the upper-layer switch. The
 core switch connected to the upper-layer switch has it as
 its only access to that pod, therefore the upper-layer switch
-broadcasts this tag to all its core switches signifying its inability to carry traffic to the lower-layer switch’s subnet.
+broadcasts this tag to all its core switches signifying its inability to carry traffic to the lower-layer switch's subnet.
 These core switches in turn mirror this tag to all upper-layer
 switches they are connected to in other pods. Finally, the
 upper-layer switches avoid the single affected core switch
@@ -804,6 +792,8 @@ kilowatts. Almost equally important is the issue of heat dissipation
 from the switches. Enterprise-grade switches generate considerable
 amounts of heat and thus require dedicated cooling systems.
 
+![Figure 6](images/A%20Scalable%2C%20Commodity%20Data%20Center%20Network%20Architecture/fig_6.png)
+
 **Figure 6:** **Comparison of power and heat dissipation.**
 
 In this section we analyze the power requirements and heat dissipation in our architecture and compare it with other typical approaches. We base our analysis on numbers reported in the switch
@@ -828,12 +818,15 @@ roughly 27k hosts. For the hierarchical design, we employ 576
 ProCurve 2900 edge switches and 54 BigIron RX-32 switches (36
 in the aggregation and 18 in the core layer). The fat-tree architecture employs 2,880 Netgear GSM 7252S switches. We are able to
 use the cheaper NetGear switch because we do not require 10 GigE
-uplinks (present in the ProCurve) in the fat-tree interconnect. Figure 7 shows that while our architecture employs more individual
-switches, the power consumption and heat dissipation is superior
+uplinks (present in the ProCurve) in the fat-tree interconnect. ![Figure 7](images/A%20Scalable%2C%20Commodity%20Data%20Center%20Network%20Architecture/fig_7.png)
+
+**Figure 7 shows that while our architecture employs more individual**switches, the power consumption and heat dissipation is superior
 to those incurred by current data center designs, with 56.6% less
 power consumption and 56.5% less heat dissipation. Of course, the
 actual power consumption and heat dissipation must be measured
 in deployment; we leave such a study to our ongoing work.
+
+**Figure 7: Comparison of total power consumption and heat dissipation.**
 
 ## 4. IMPLEMENTATION
 
@@ -847,7 +840,7 @@ To carry out larger-scale evaluations, we also built a prototype
 using Click, the focus of our evaluation in this paper. Click [21] is a
 modular software router architecture that supports implementation
 of experimental router designs. A Click router is a graph of packet
-processing modules called _elements_ that perform tasks such as routing table lookup or decrementing a packet’s TTL. When chained
+processing modules called _elements_ that perform tasks such as routing table lookup or decrementing a packet's TTL. When chained
 together, Click elements can carry out complex router functionality
 and protocols in software.
 
@@ -855,9 +848,9 @@ and protocols in software.
 
 We build a new Click element, _TwoLevelTable_, which implements the idea of a two-level routing table described in Section 3.3.
 This element has one input, and two or more outputs. The routing
-table’s contents are initialized using an input file that gives all the
+table's contents are initialized using an input file that gives all the
 prefixes and suffixes. For every packet, the TwoLevelTable element
-looks up the longest-matching first-level prefix. If that prefix is terminating, it will immediately forward the packet on that prefix’s
+looks up the longest-matching first-level prefix. If that prefix is terminating, it will immediately forward the packet on that prefix's
 port. Otherwise, it will perform a right-handed longest-matching
 suffix search on the secondary table and forward on the corresponding port.
 
@@ -931,7 +924,7 @@ Note that this solution has soft state that is not needed for correctness, but o
 is occasionally disruptive, as a minimal number of flows may be
 re-arranged periodically, potentially resulting in packet reordering.
 However, it is also adaptive to dynamically changing flow sizes and
-‘fair’ in the long-term. [6]
+'fair' in the long-term. [6]
 
 ### 4.3 FlowScheduler
 
@@ -944,7 +937,7 @@ large flows.
 The _FlowScheduler_ element receives notifications regarding active large flows from edge switches and tries to find uncontended
 
 6Fair in the sense that initial placement decisions are constantly
-being corrected since all flows’ sizes are continually tracked to approximate the optimal distribution of flows to ports.
+being corrected since all flows' sizes are continually tracked to approximate the optimal distribution of flows to ports.
 
 paths for them. To this end, it keeps the binary status of all the links
 in the network, as well as a list of previously placed flows. For any
@@ -952,7 +945,7 @@ new large flow, the scheduler performs a linear search among all
 equal-cost paths between the source and destination hosts to find
 one whose path components are all unreserved. Upon finding such
 a path, the flow scheduler marks all the component links as reserved
-and sends notifications regarding this flow’s path to the concerned
+and sends notifications regarding this flow's path to the concerned
 pod switches. We also modify the pod switches to process these
 port re-assignment messages from the scheduler.
 
@@ -982,7 +975,7 @@ by a 48-port ProCurve 2900 switch with 1 Gigabit Ethernet links.
 These machines have dual-core Intel Xeon CPUs at 2.33GHz, with
 4096KB cache and 4GB of RAM, running Debian GNU/Linux
 2.6.17.3. Each pod of switches is hosted on one machine; each
-pod’s hosts are hosted on one machine; and the two remaining machines run two core switches each. Both the switches and the hosts
+pod's hosts are hosted on one machine; and the two remaining machines run two core switches each. Both the switches and the hosts
 are Click configurations, running in user level. All virtual links between the Click elements in the network are bandwidth-limited to
 96Mbit/s to ensure that the configuration is not CPU limited.
 For the comparison case of the hierarchical tree network, we
@@ -1034,7 +1027,7 @@ probability 1 _−_ _SubnetP_ _−_ _PodP_ .
 
 _•_ Inter-pod Incoming: Multiple pods send to different hosts in
 the same pod, and all happen to choose the same core switch.
-That core switch’s link to the destination pod will be oversubscribed. The worst-case _local_ oversubscription ratio for this
+That core switch's link to the destination pod will be oversubscribed. The worst-case _local_ oversubscription ratio for this
 case is ( _k −_ 1) : 1.
 
 _•_ Same-ID Outgoing: Hosts in the same subnet send to different hosts elsewhere in the network such that the destination hosts have the same host ID byte. Static routing techniques force them to take the same outgoing upward port.
@@ -1095,7 +1088,7 @@ _k_ **Hosts**
 32 8,192 237.6 33 KB 1.64 MB
 48 27,648 754.43 111 KB 5.53 MB
 
-**Table 3:** **The flow scheduler’s time and memory requirements.**
+**Table 3:** **The flow scheduler's time and memory requirements.**
 
 ## 6. PACKAGING
 
@@ -1116,9 +1109,7 @@ method allows for incremental deployment of the network.
 
 72
 
-|  <br> <br>  <br>  <br>  |Col2|  <br> <br>  <br> |
-|---|---|---|
-|
+|  <br> <br>  <br>  <br>  
 
 
 <br>
@@ -1145,8 +1136,9 @@ We present our approach in the context of a maximum-capacity
 27,648-node cluster leveraging 48-port Ethernet switches as the
 building block of the fat-tree. This design generalizes to clusters
 of different sizes. We begin with the design of individual pods that
-make up the replication unit for the larger cluster, see Figure 8.
-Each pod consists of 576 machines and 48 individual 48-port GigE
+make up the replication unit for the larger cluster, see ![Figure 8](images/A%20Scalable%2C%20Commodity%20Data%20Center%20Network%20Architecture/fig_8.png)
+
+**Figure 8.**Each pod consists of 576 machines and 48 individual 48-port GigE
 switches. For simplicity, we assume each end host takes up one
 rack unit (1RU) and that individual racks can accommodate 48 machines. Thus, each pod consists of 12 racks with 48 machines each.
 
@@ -1169,12 +1161,12 @@ connect directly to core switches placed nearby in the same pod.
 The remaining cables would fan out, in sets of 12, to core switches
 housed in remote pods. Note that the fact that cables move in sets
 of 12 from pod to pod and in sets of 48 from racks to pod switches
-opens additional opportunities for appropriate “cable packaging” to
+opens additional opportunities for appropriate "cable packaging" to
 reduce wiring complexity.
 
 Finally, minimizing total cable length is another important consideration. To do so, we place racks around the pod switch in two
 dimensions, as shown in Figure 8 (we do not consider three dimensional data center layouts). Doing so will reduce cable lengths
-relative to more “horizontal” layouts of individual racks in a pod.
+relative to more "horizontal" layouts of individual racks in a pod.
 Similarly, we lay pods out in a 7 _×_ 7 grid (with one missing spot)
 
 to accommodate all 48 pods. Once again, this grid layout will reduce inter-pod cabling distance to appropriate core switches and
@@ -1330,7 +1322,7 @@ _Design and Implementation_, 2004.
 [13] G. DeCandia, D. Hastorun, M. Jampani, G. Kakulapati,
 
 A. Lakshman, A. Pilchin, S. Sivasubramanian, P. Vosshall, and
-W. Vogels. Dynamo: Amazon’s Highly Available Key-Value Store.
+W. Vogels. Dynamo: Amazon's Highly Available Key-Value Store.
 _ACM Symposium on Operating Systems Principles_, 2007.
 
 [14] A. B. Downey. Evidence for Long-tailed Distributions in the Internet.

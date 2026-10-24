@@ -13,12 +13,12 @@ Meta
 The rapid growth in both computational density and scale in AI
 models in recent years motivates the construction of an efficient
 and reliable dedicated network infrastructure. This paper presents
-the design, implementation, and operation of Meta’s Remote Direct
+the design, implementation, and operation of Meta's Remote Direct
 Memory Access over Converged Ethernet (RoCE) networks for
 distributed AI training.
 
 Our design principles involve a deep understanding of the workloads, and we translated these insights into the design of various network components: **Network Topology** - To support the
-rapid evolution of generations of AI hardware platforms, we separated GPU-based training into its own “backend” network. **Rout-**
+rapid evolution of generations of AI hardware platforms, we separated GPU-based training into its own "backend" network. **Rout-**
 **ing** - Training workloads inherently impose load imbalance and
 burstiness, so we deployed several iterations of routing schemes to
 achieve near-optimal traffic distribution. **Transport** - We outline
@@ -40,7 +40,7 @@ RDMA, Distributed Training
 Adithya Gangidi, Rui Miao, Shengbao Zheng, Sai Jayesh Bondu, Guilherme
 Goes, Hany Morsy, Rohit Puri, Mohammad Riftadi, Ashmitha Jeevaraj Shetty,
 Jingyi Yang, Shuqiang Zhang, Mikel Jimenez Fernandez, Shashidhar Gandham, Hongyi Zeng. 2024. RDMA over Ethernet for Distributed AI Training
-at Meta Scale. In _ACM SIGCOMM 2024 Conference (ACM SIGCOMM ’24), Au-_
+at Meta Scale. In _ACM SIGCOMM 2024 Conference (ACM SIGCOMM '24), Au-_
 _gust 4–8, 2024, Sydney, NSW, Australia._ ACM, New York, NY, USA, 14 pages.
 [https://doi.org/10.1145/3651890.3672233](https://doi.org/10.1145/3651890.3672233)
 
@@ -56,7 +56,7 @@ on the first page. Copyrights for components of this work owned by others than t
 author(s) must be honored. Abstracting with credit is permitted. To copy otherwise, or
 republish, to post on servers or to redistribute to lists, requires prior specific permission
 and/or a fee. Request permissions from permissions@acm.org.
-_ACM SIGCOMM ’24, August 4–8, 2024, Sydney, NSW, Australia_
+_ACM SIGCOMM '24, August 4–8, 2024, Sydney, NSW, Australia_
 © 2024 Copyright held by the owner/author(s). Publication rights licensed to ACM.
 
 ACM ISBN 979-8-4007-0614-1/24/08
@@ -72,8 +72,8 @@ of data center network design.
 The inter-GPU communication in distributed training workloads
 typically comprises two stages. In each training node, housing 4-8
 GPUs, these GPUs are interconnected using high-speed transports
-like NVLink[26], commonly known as “intra-node communication.”
-When a training job requires additional GPUs, the “inter-node communication” will happen across a network. The industry commonly
+like NVLink[26], commonly known as "intra-node communication."
+When a training job requires additional GPUs, the "inter-node communication" will happen across a network. The industry commonly
 employs two design approaches for this inter-node communication.
 One utilizes standard TCP/IP or modified socket implementations
 (e.g., fastsocket[7]). However, this method is susceptible to performance degradation because of CPU overhead and increased latency.
@@ -110,7 +110,7 @@ default ECMP (Equal-Cost Multi-Path) routing and its alternatives
 
 57
 
-ACM SIGCOMM ’24, August 4–8, 2024, Sydney, NSW, Australia A. Gangidi et al.
+ACM SIGCOMM '24, August 4–8, 2024, Sydney, NSW, Australia A. Gangidi et al.
 
 Model Dist. Network
 Collectives Traffic pattern
@@ -179,7 +179,7 @@ designs of RoCE clusters that support up to 32,000 GPUs.[18]
 
 While RoCE has been a subject of networking research before [3,
 6, 9, 19], its dominant application has historically been within storage networks. There has been a dearth of literature addressing
-RoCE’s deployment in large-scale AI training scenarios. In this
+RoCE's deployment in large-scale AI training scenarios. In this
 paper, we delve deeply into the intricacies of scaling the RoCE
 network to interconnect thousands of GPUs in each cluster. Our
 experience shows that, by understanding the workload well and
@@ -207,7 +207,7 @@ capable of delivering high bandwidth and low, predictable latency.
 
 ### 2.2 RoCE and Collective Communication
 
-RDMA is an industry standard on hardware-assisted communication acceleration. RDMA implements “verbs” APIs such as read and
+RDMA is an industry standard on hardware-assisted communication acceleration. RDMA implements "verbs" APIs such as read and
 write. Compared to TCP/IP-based communication, where a packet
 needs to be sent to the kernel before being copied into the memory,
 RDMA bypasses the kernels of both sender and receiver and transfers data directly from/to application memory. RoCEv2 is a protocol
@@ -242,7 +242,7 @@ routing, reducing persistent congestion risks with hashing schemes.
 
 58
 
-RDMA over Ethernet for Distributed AI Training at Meta Scale ACM SIGCOMM ’24, August 4–8, 2024, Sydney, NSW, Australia
+RDMA over Ethernet for Distributed AI Training at Meta Scale ACM SIGCOMM '24, August 4–8, 2024, Sydney, NSW, Australia
 
 Avg. # of QPs
 Collectives
@@ -251,10 +251,11 @@ per GPU
 Buffer occupancy
 per leaf switch (MB)
 
-**(a) Job size.**
-**(b) Collective type.**
+![Figure 1](images/RDMA%20over%20Ethernet%20for%20Distributed%20AI%20Training%20at%20Meta%20Scale/fig_1.png)
 
 **Figure 1: Distribution of job characteristics.** [2]
+
+![Figure 2](images/RDMA%20over%20Ethernet%20for%20Distributed%20AI%20Training%20at%20Meta%20Scale/fig_2.png)
 
 **Figure 2: Collective message size distribution.**
 
@@ -336,13 +337,14 @@ achieve optimal performance (Section 4).
 produces unique full mesh and hierarchical traffic patterns (like
 Ring or Tree) that both produce different modes of congestion, as
 shown in buffer occupancy in Table 2. These traffic patterns can be
-seen in Figure 3. There is no standard best practice for dealing with
-congestion for such traffic patterns with prior RDMA deployments
+seen in ![Figure 3](images/RDMA%20over%20Ethernet%20for%20Distributed%20AI%20Training%20at%20Meta%20Scale/fig_3.png)
+
+**Figure 3. There is no standard best practice for dealing with**congestion for such traffic patterns with prior RDMA deployments
 (Section 5).
 
 59
 
-ACM SIGCOMM ’24, August 4–8, 2024, Sydney, NSW, Australia A. Gangidi et al.
+ACM SIGCOMM '24, August 4–8, 2024, Sydney, NSW, Australia A. Gangidi et al.
 
 **Figure 3: Traffic pattern comparison from experiments**
 
@@ -350,17 +352,14 @@ ACM SIGCOMM ’24, August 4–8, 2024, Sydney, NSW, Australia A. Gangidi et al.
 |---|---|---|
 |400G<br>RDMA NIC|400G<br>RDMA NIC|NVMe|
 
-|UPI<br>400G NIC CPU0 PCH 400G NIC CPU1<br>CPU Tray PCIe Gen5x16|Col2|Col3|Col4|Col5|Col6|
-|---|---|---|---|---|---|
-|PCIe Gen5<br>Switch<br>400G<br>RDMA NIC<br>400G<br>RDMA NIC<br>NVMe<br>NVMe<br>PCIe Gen5x16<br>Switch Tray<br>|PCIe Gen5<br>Switch<br>400G<br>RDMA NIC<br>400G<br>RDMA NIC<br>NVMe<br>NVMe<br>PCIe Gen5x16<br>Switch Tray<br>|PCIe Gen5<br>Switch<br>400G<br>RDMA NIC<br>400G<br>RDMA NIC<br>NVMe<br>NVMe<br>PCIe Gen5x16<br>Switch Tray<br>||||
-|PCIe Gen5<br>Switch<br>400G<br>RDMA NIC<br>400G<br>RDMA NIC<br>NVMe<br>NVMe<br>PCIe Gen5x16<br>Switch Tray<br>||||||
-|||||||
-|GPU0<br>GPU1<br>NVSwitch<br>Retimer<br>Retimer<br>GPU Tray|GPU0<br>GPU1<br>NVSwitch<br>Retimer<br>Retimer<br>GPU Tray|GPU0<br>GPU1<br>NVSwitch<br>Retimer<br>Retimer<br>GPU Tray|NVlink|NVlink|NVlink|
+|UPI<br>400G NIC CPU0 PCH 400G NIC CPU1<br>CPU Tray PCIe Gen5x16
+
+![Figure 4](images/RDMA%20over%20Ethernet%20for%20Distributed%20AI%20Training%20at%20Meta%20Scale/fig_4.png)
 
 **Figure 4: Grand Teton platform**
 
 **The** **need** **for** **co-tuning:** Collective libraries, e.g., NCCL, may
-deliver sub-optimal, out-of-box performance with RoCE interconnects due to the difference of the developer’s environment and
+deliver sub-optimal, out-of-box performance with RoCE interconnects due to the difference of the developer's environment and
 production. This necessitates the co-tuning of both collective library and network configurations to achieve optimal performance
 (Section 6). Low entropy in traffic patterns can result in a few network paths experiencing higher traffic than others resulting in
 persistent congestion on those paths. Further, even with perfect
@@ -384,12 +383,14 @@ also requires increased compute and memory, placing significant
 demands on the network, thus lending themselves to a specially
 designed scale up system.
 
+![Figure 5](images/RDMA%20over%20Ethernet%20for%20Distributed%20AI%20Training%20at%20Meta%20Scale/fig_5.png)
+
 **Figure 5: Frontend and Backend networks**
 
 The first generation of training node design, ZionEX[20], combines general-purpose CPUs with NVIDIA A100 GPUs. Grand
 Teton[17], a more recent generation, is based on H100 GPUs. Both
 ZionEX and Grand Teton utilize a similar system architecture except
-for GPU NVLink interconnect. Figure 4 depicts Grand Teton’s internals. The node is divided into 3 trays - CPU Tray housing 2 CPUs
+for GPU NVLink interconnect. Figure 4 depicts Grand Teton's internals. The node is divided into 3 trays - CPU Tray housing 2 CPUs
 and frontend NICs, Switch Tray housing 4 PCIe Gen5 switches,
 NVMe storage, as well as 8 RDMA NICs, and GPU Tray housing 8
 GPUs. GPUs are fully-connected using NVSwitch[26]. There is a 1:1
@@ -429,30 +430,15 @@ switch redundancy. Therefore, we swiftly transitioned to a fabricbased architect
 
 60
 
-RDMA over Ethernet for Distributed AI Training at Meta Scale ACM SIGCOMM ’24, August 4–8, 2024, Sydney, NSW, Australia
+RDMA over Ethernet for Distributed AI Training at Meta Scale ACM SIGCOMM '24, August 4–8, 2024, Sydney, NSW, Australia
 
 RTSW
 
 Host
 
-|2|Col2|
-|---|---|
-|||
-|||
+|2
 
-|m|Col2|
-|---|---|
-|m||
-|||
-
-|1|2|Col3|
-|---|---|---|
-||||
-||||
-
-|1 2 k<br>1 2 n 1 2 n<br>400G<br>1 2 m 1 2 m<br>0G<br>AI Zone 1 AI Zone 2|Col2|
-|---|---|
-|1<br>1<br>AI Zone 1<br>2<br>n<br>m<br>2<br> 0G<br>400G|1<br>2<br>n<br>1<br>2<br>m<br>AI Zone 2|
+![Figure 6](images/RDMA%20over%20Ethernet%20for%20Distributed%20AI%20Training%20at%20Meta%20Scale/fig_6.png)
 
 **Figure 6: Backend Network Topology**
 
@@ -472,7 +458,7 @@ provides. To accommodate this, we designed an Aggregator Training Switch (ATSW) 
 building, expanding the RoCE domain beyond a single AI Zone.
 Note, the cross-AI zone connectivity is oversubscribed by design,
 with network traffic balanced using ECMP. To mitigate the performance bottleneck for cross-AI zone traffic, we enhanced the
-training job scheduler to find a “minimum cut” when dividing the
+training job scheduler to find a "minimum cut" when dividing the
 training nodes into different AI zones, reducing the cross-AI zone
 traffic and thus collective completion time. The scheduler does this
 by learning the position of GPU servers in the logical topology to
@@ -497,7 +483,7 @@ several challenging characteristics: (a) **Low entropy** : Compared
 to traditional data center workloads, the number and the diversity
 of flows for AI workloads are much smaller and the flow patterns
 are usually repetitive and predictable. (b) **Burstiness** : On the time
-dimension, the flows usually exhibit the “on and off” nature in
+dimension, the flows usually exhibit the "on and off" nature in
 
 the time granularity of milliseconds. (c) **Elephant flows** : For each
 burst, the intensity of each flow could reach up to the line rate of
@@ -524,7 +510,7 @@ performance.
 _4.1.2_ _Path_ _Pinning._ Alternatively, we designed and deployed a
 path-pinning scheme in the initial years of our deployment. This
 scheme routed packets to specific paths based on the destination
-“slice” (the index of the RTSW downlink). This worked well if each
+"slice" (the index of the RTSW downlink). This worked well if each
 
 rack was fully assigned to the same job and there was no failure
 in the network. However, this was seldom true. We saw that the
@@ -560,12 +546,14 @@ remained identical for different QP packets as expected, in some
 
 61
 
-ACM SIGCOMM ’24, August 4–8, 2024, Sydney, NSW, Australia A. Gangidi et al.
+ACM SIGCOMM '24, August 4–8, 2024, Sydney, NSW, Australia A. Gangidi et al.
+
+![Figure 7](images/RDMA%20over%20Ethernet%20for%20Distributed%20AI%20Training%20at%20Meta%20Scale/fig_7.png)
 
 **Figure 7: Performance Impact on AllReduce Benchmark: E-**
 **ECMP and Queue Pair Scaling**
 
-**(a) Ranking** **(b) LLM**
+![Figure 8](images/RDMA%20over%20Ethernet%20for%20Distributed%20AI%20Training%20at%20Meta%20Scale/fig_8.png)
 
 **Figure 8: QPs per NIC in production with QP Scaling**
 
@@ -601,6 +589,8 @@ _4.2.5_ _Motivation to Look Beyond E-ECMP:._ While we improved
 ECMP performance with QP scaling, the underlying probabilistic
 nature of hashing was a persistent downside of this routing scheme.
 
+![Figure 9](images/RDMA%20over%20Ethernet%20for%20Distributed%20AI%20Training%20at%20Meta%20Scale/fig_9.png)
+
 **Figure 9: Centralized Traffic Engineering architecture**
 
 Also, the need to customize the QP scaling factor and methodology
@@ -613,7 +603,7 @@ ECMP and path pinning approaches both had limitations from a
 hardware perspective; thus, we tackled these by developing a centralized traffic engineering (TE) controller, leveraging our previous
 experience in [5] and [31]. The TE controller dynamically optimizes
 routing based on real-time workloads and topology input. Figure 9
-provides an overview of TE’s architecture, demonstrating how it
+provides an overview of TE's architecture, demonstrating how it
 optimizes dynamic path allocation.
 
 _4.3.1_ _Control_ _Plane._ The control plane design consists of three
@@ -646,9 +636,9 @@ by the hardware to override the default routes. BGP-determined
 
 62
 
-RDMA over Ethernet for Distributed AI Training at Meta Scale ACM SIGCOMM ’24, August 4–8, 2024, Sydney, NSW, Australia
+RDMA over Ethernet for Distributed AI Training at Meta Scale ACM SIGCOMM '24, August 4–8, 2024, Sydney, NSW, Australia
 
-**(a) AlltoAll** **(b) AllReduce**
+![Figure 10](images/RDMA%20over%20Ethernet%20for%20Distributed%20AI%20Training%20at%20Meta%20Scale/fig_10.png)
 
 **Figure 10: Collective benchmark: Normalized Performance**
 **Comparison between E-ECMP and TE (128 GPU)**
@@ -666,7 +656,7 @@ longer than roofline completion time on average. Increasing the
 QP-scaling to 32 improves performance: worst case is improved
 from 20% to 52% of roofline. However, the majority of jobs can not
 achieve the roofline. In comparison, TE with actual demands can
-achieve 100% utilization when there’s enough capacity in network.
+achieve 100% utilization when there's enough capacity in network.
 However, when the link availability is compromised by failures to
 less than 1:1 subscription ratio, TE can be outperformed by E-ECMP.
 
@@ -693,6 +683,8 @@ much-increased size of the network. Computationally, there was
 also increased load to handle another layer of switches (ATSWs)
 and the accompanying path diversity. E-ECMP, hence presented a
 
+![Figure 11](images/RDMA%20over%20Ethernet%20for%20Distributed%20AI%20Training%20at%20Meta%20Scale/fig_11.png)
+
 **Figure 11: Out-of-order packets under flowlet interval**
 
 better operational trade-off for our DC-scale clusters. Thus, TE was
@@ -717,7 +709,7 @@ testing, such a scheme has exhibited superior link load balancing
 and better performance in case of congestion and multiple-link
 failure scenarios. Adaptability of this scheme helps it scale with
 minimal QP scaling for 4 for all workloads. Not needing customized
-QP scaling on per workload basis mitigates E-ECMP’s issues. Hardware support for the scheme helps mitigate the software complexity
+QP scaling on per workload basis mitigates E-ECMP's issues. Hardware support for the scheme helps mitigate the software complexity
 concerns from TE.
 **Out-of-order Packets:** Flow reassignments can result in out-oforder packets mainly because we resort to path reassignment with
 active flows. Managing out-of-order packets is an important aspect
@@ -741,12 +733,12 @@ statically for the lifetime of the flow. Interestingly, we observed
 
 63
 
-ACM SIGCOMM ’24, August 4–8, 2024, Sydney, NSW, Australia A. Gangidi et al.
+ACM SIGCOMM '24, August 4–8, 2024, Sydney, NSW, Australia A. Gangidi et al.
 
 that even in those scenarios, flowlet switching exhibited superior
 load balancing as compared to ECMP simply because of its picking
 up initial port based on the port quality (load) rather than hash. So
-while the path doesn’t change for the lifetime of the flow, flowlet
+while the path doesn't change for the lifetime of the flow, flowlet
 mechanism makes better decision to pick the path based on its
 current port load. In workloads where we do not have long lived
 flows, we will still benefit from this mechanism.
@@ -797,11 +789,15 @@ on the order of milliseconds. Therefore, quickly recognizing and
 isolating unhealthy network elements and links and carefully tuning LAT duration, are important for predictable training workload
 performance.
 
+![Figure 12](images/RDMA%20over%20Ethernet%20for%20Distributed%20AI%20Training%20at%20Meta%20Scale/fig_12.png)
+
 **Figure 12: ECN impact on performance: Allreduce comple-**
 **tion** **time(ms)** **on** **32** **GPUs** **comparison** **with** **CTSW** **ECN**
 **threshold changes. Baseline uses 5MB as both low and high**
 **thresholds. A tighter threshold of 300KB low and 600KB high**
 **leads to lower performance.**
+
+![Figure 13](images/RDMA%20over%20Ethernet%20for%20Distributed%20AI%20Training%20at%20Meta%20Scale/fig_13.png)
 
 **Figure 13: Tuning DCQCN for AlltoAll collective**
 
@@ -831,18 +827,16 @@ GPU AllReduce benchmark by a smaller margin (∼ 5%).
 
 64
 
-RDMA over Ethernet for Distributed AI Training at Meta Scale ACM SIGCOMM ’24, August 4–8, 2024, Sydney, NSW, Australia
+RDMA over Ethernet for Distributed AI Training at Meta Scale ACM SIGCOMM '24, August 4–8, 2024, Sydney, NSW, Australia
 
 |Channel<br>Buffer|Cop|y<br>Compute<br>Buffer|
 |---|---|---|
 |Channel<br>Buffer<br>|||
 |Channel<br>Buffer|Channel<br>Buffer|Channel<br>Buffer|
 
-|SENDER CPU proxy CPU proxy RECEIVER<br>Free RDMA write CTS Complete Flush<br>Copy Channel DMARDMA RDMA DMA Channel Copy<br>Buffer NIC RDMA NIC Buffer<br>Compute Channel network Channel Compute<br>Buffer Buffer Buffer Buffer<br>● ● ● ● ● ●<br>GPU HBM GPU HBM|Col2|Col3|Col4|
-|---|---|---|---|
-|Compute<br>Buffer<br>Channel<br>Buffer<br>GPU HBM<br>Copy<br>●<br>●<br>●<br>Channel<br>Buffer|Compute<br>Buffer|Cop|Channel<br>Buffer<br>y|
-|Compute<br>Buffer<br>Channel<br>Buffer<br>GPU HBM<br>Copy<br>●<br>●<br>●<br>Channel<br>Buffer|Compute<br>Buffer|||
-|Compute<br>Buffer<br>Channel<br>Buffer<br>GPU HBM<br>Copy<br>●<br>●<br>●<br>Channel<br>Buffer|Compute<br>Buffer||Channel<br>Buffer|
+|SENDER CPU proxy CPU proxy RECEIVER<br>Free RDMA write CTS Complete Flush<br>Copy Channel DMARDMA RDMA DMA Channel Copy<br>Buffer NIC RDMA NIC Buffer<br>Compute Channel network Channel Compute<br>Buffer Buffer Buffer Buffer<br>● ● ● ● ● ●<br>GPU HBM GPU HBM
+
+![Figure 14](images/RDMA%20over%20Ethernet%20for%20Distributed%20AI%20Training%20at%20Meta%20Scale/fig_14.png)
 
 **Figure 14: GPU to GPU communication architecture.**
 
@@ -882,12 +876,12 @@ _5.2.2_ _Receiver-Driven Traffic Admission via Collective Library._ To
 mitigate the congestion for 400G and beyond, we co-designed the
 collective library and RoCE transport to enforce receiver-driven traffic admission for better performance. Figure 14 shows that the GPUto-GPU communication architecture in our production training
 clusters predominantly uses two-stage copy and receiver-initiated
-communication via the NCCL collective library. Each GPU’s High
+communication via the NCCL collective library. Each GPU's High
 Bandwidth Memory (HBM) maintains multiple channels for parallel transmission of chunked collective messages. The sender GPU
 threads first copy data from compute buffer to an available channel buffer. The sender CPU proxy thread can only post an RDMA
 write request after receiving a clear-to-send (CTS) packet from the
 receiver, which includes the size and memory information. The
-receiver’s GPU threads then copy the channel buffer contents to
+receiver's GPU threads then copy the channel buffer contents to
 the destination compute buffer. Finally, CPU proxy threads on both
 
 PFC Perftest Gather
@@ -907,7 +901,7 @@ the right setting can be challenging as: 1) the number of channels
 is limited due to the resource contention on GPU threads with
 concurrent compute operations; 2) setting the channel buffer size
 requires a more careful balance between congestion spreading and
-bandwidth under-utilization than Infiniband due to RoCE’s more
+bandwidth under-utilization than Infiniband due to RoCE's more
 coarse-grained flow control and possible end-host slowness.
 
 Thus, we took two steps to improve the performance. First, we
@@ -947,24 +941,22 @@ congestion.
 
 65
 
-ACM SIGCOMM ’24, August 4–8, 2024, Sydney, NSW, Australia A. Gangidi et al.
+ACM SIGCOMM '24, August 4–8, 2024, Sydney, NSW, Australia A. Gangidi et al.
 
-**(a) AlltoAll**
-
-**(b) AllReduce**
+![Figure 15](images/RDMA%20over%20Ethernet%20for%20Distributed%20AI%20Training%20at%20Meta%20Scale/fig_15.png)
 
 **Figure 15: Network/Collective Co-Tuning performance**
 
 ### 5.3 Discussion
 
 Congestion control have been a focal point of research in RDMA
-networks [15, 43]. DCQCN has been the “gold standard” for storagefocused networks. However, our experience with distributed AI
+networks [15, 43]. DCQCN has been the "gold standard" for storagefocused networks. However, our experience with distributed AI
 training workloads provides a different perspective on tailoring
 the congestion control algorithms. Despite turning off DCQCN and
 multiple instances of RTSW sending PFC to a deep-buffer CTSW,
 we have not encountered a scenario over the last 4 years where
 production AI training traffic causes the CTSW to send PFCs to
-RTSWs persistently. Specifically, it’s worth evaluating the feasibility of operating without transport-level congestion control at all.
+RTSWs persistently. Specifically, it's worth evaluating the feasibility of operating without transport-level congestion control at all.
 Our current solution depends on careful coordination between the
 collective communication library and the network, and may depend on the relative throughput between GPU and network, which
 may not be applicable to all scenarios. We encourage the research
@@ -979,7 +971,7 @@ performance for AI Training workloads involved tuning how collective library, tr
 have been able to improve the out-of-the-box RoCE performance by
 more than 2x in many cases and even higher as shown in Figure 15.
 
-We observed NCCL may deliver sub-optimal out-of-the-box performance due to the difference of the developer’s environment
+We observed NCCL may deliver sub-optimal out-of-the-box performance due to the difference of the developer's environment
 vs. our production environment. Some of the assumptions from
 the developer environment include: very low RTT latency (<10 _𝜇_ s),
 
@@ -1038,7 +1030,9 @@ for small sizes.
 
 66
 
-RDMA over Ethernet for Distributed AI Training at Meta Scale ACM SIGCOMM ’24, August 4–8, 2024, Sydney, NSW, Australia
+RDMA over Ethernet for Distributed AI Training at Meta Scale ACM SIGCOMM '24, August 4–8, 2024, Sydney, NSW, Australia
+
+![Figure 16](images/RDMA%20over%20Ethernet%20for%20Distributed%20AI%20Training%20at%20Meta%20Scale/fig_16.png)
 
 **Figure 16: Performance in various Network Stages**
 
@@ -1059,7 +1053,7 @@ The Stage 1 Backend Network has a topology with 1:1 subscription ratio from RTSW
 1:2 under-subscription. Both Stage 1 and Stage 2 use static routing with traffic collisions. We observe a significant performance
 increase with additional capacity when migrating from Stage 1
 to Stage 2. The lower and inconsistent performance in Stage 1 is
-attributed to the static routing traffic collisions as described earlier. While the performance impact was resolved with Stage 2’s
+attributed to the static routing traffic collisions as described earlier. While the performance impact was resolved with Stage 2's
 under-subscription, the solution came with investing 2x network
 infrastructure.
 
@@ -1068,7 +1062,7 @@ setup to be controlled by the traffic engineering while keeping
 under-subscription to 1:2. You can observe similar performance
 with Stage 2 but with a tighter band. In Stage 4, we further reduced
 under-subscription ratio to 1: 1.125 to reclaim CTSW hardware
-without any negative impact to performance. We didn’t reduce the
+without any negative impact to performance. We didn't reduce the
 under-subscription all the way to 1:1 in order to allow for buffer
 for up to two link failures.
 
@@ -1089,7 +1083,7 @@ were instances of packet drops not reported anywhere else, but
 this transport metric showed the existence of the problem. (2) Link
 Flap Counters: This can indicate both hardware and software flaps
 reported by the NIC. (3) Local Ack Timeouts (LAT): The number of
-times a Queue Pair’s ACK timer expired for QPs at the sender side.
+times a Queue Pair's ACK timer expired for QPs at the sender side.
 Expiration can impact performance regressions and on occasion
 job failures. With RoCET, these counters are directly reported to
 users when their jobs fail and serve as a strong indication that some
@@ -1136,7 +1130,7 @@ and library instrumentation to capture this and establish a baseline.
 
 67
 
-ACM SIGCOMM ’24, August 4–8, 2024, Sydney, NSW, Australia A. Gangidi et al.
+ACM SIGCOMM '24, August 4–8, 2024, Sydney, NSW, Australia A. Gangidi et al.
 
 _6.4.2_ _Dynamic_ _Nature_ _of_ _AI_ _Training_ _Job._ We observed several
 CTSWs reporting RoCE traffic drops in a training cluster which we
@@ -1210,7 +1204,7 @@ Many current and former people in the Network Infrastructure team
 at Meta have contributed to productionizing RoCE networks for AI
 training over the years. In particular, we would like to acknowledge
 Srinivas Sridharan, Petr Lapukhov, Jose Leitao, and Brandon Taylor.
-This work is a close collaboration with our partners in Meta’s
+This work is a close collaboration with our partners in Meta's
 AI Production Engineering, AI and Systems Co-design, and AI
 Hardware Systems teams. We are also indebted to Omar Baldonado,
 our shepherd Kun Tan, and the anonymous SIGCOMM reviewers
@@ -1260,7 +1254,7 @@ Zhang, Kyle Sugrue, Henry Kwok, Mikel Jimenez Fernandez, Petr Lapukhov,
 Sandeep Hebbani, Gaya Nagarajan, Omar Baldonado, Lixin Gao, and Ying Zhang.
 2023. EBB: Reliable and Evolvable Express Backbone Network in Meta. In _Pro-_
 _ceedings of the ACM SIGCOMM 2023 Conference_ (, New York, NY, USA,) _(ACM_
-_SIGCOMM_ _’23)_ . Association for Computing Machinery, New York, NY, USA,
+_SIGCOMM_ _'23)_ . Association for Computing Machinery, New York, NY, USA,
 346–359. [https://doi.org/10.1145/3603269.3604860](https://doi.org/10.1145/3603269.3604860)
 
 [6] Yixiao Gao, Qiang Li, Lingbo Tang, Yongqing Xi, Pengcheng Zhang, Wenwen
@@ -1270,7 +1264,7 @@ Liu, Pan Liu, Xingkui Liu, Zhongjie Wu, Junping Wu, Zheng Cao, Chen Tian,
 
 68
 
-RDMA over Ethernet for Distributed AI Training at Meta Scale ACM SIGCOMM ’24, August 4–8, 2024, Sydney, NSW, Australia
+RDMA over Ethernet for Distributed AI Training at Meta Scale ACM SIGCOMM '24, August 4–8, 2024, Sydney, NSW, Australia
 
 Jinbo Wu, Jiaji Zhu, Haiyong Wang, Dennis Cai, and Jiesheng Wu. 2021. When
 Cloud Storage Meets RDMA. In _18th USENIX Symposium on Networked Systems_
@@ -1281,14 +1275,14 @@ _Design_ _and_ _Implementation_ _(NSDI_ _21)_ . USENIX Association, Virtual, 519
 
 [to/nccl-fast-socket.](https://cloud.google.com/kubernetes-engine/docs/how-to/nccl-fast-socket)
 
-[8] Google. 2024. Google Cloud demonstrates the world’s largest distributed training job for large language models across 50000+ TPU v5e
+[8] Google. 2024. Google Cloud demonstrates the world's largest distributed training job for large language models across 50000+ TPU v5e
 chips. [https://cloud.google.com/blog/products/compute/the-worlds-largest-](https://cloud.google.com/blog/products/compute/the-worlds-largest-distributed-llm-training-job-on-tpu-v5e)
 [distributed-llm-training-job-on-tpu-v5e.](https://cloud.google.com/blog/products/compute/the-worlds-largest-distributed-llm-training-job-on-tpu-v5e)
 
 [9] Chuanxiong Guo, Haitao Wu, Zhong Deng, Gaurav Soni, Jianxi Ye, Jitu Pad
 hye, and Marina Lipshteyn. 2016. RDMA over Commodity Ethernet at Scale. In
 _Proceedings of the 2016 ACM SIGCOMM Conference_ (Florianopolis, Brazil) _(SIG-_
-_COMM ’16)_ . Association for Computing Machinery, New York, NY, USA, 202–215.
+_COMM '16)_ . Association for Computing Machinery, New York, NY, USA, 202–215.
 [https://doi.org/10.1145/2934872.2934908](https://doi.org/10.1145/2934872.2934908)
 
 [10] Shuihai Hu, Yibo Zhu, Peng Cheng, Chuanxiong Guo, Kun Tan, Jitendra Padhye,
@@ -1312,7 +1306,7 @@ Nishant Patil, Suvinay Subramanian, Andy Swing, Brian Towles, Clifford Young,
 Xiang Zhou, Zongwei Zhou, and David A Patterson. 2023. TPU v4: An Optically
 Reconfigurable Supercomputer for Machine Learning with Hardware Support
 for Embeddings. In _Proceedings of the 50th Annual International Symposium on_
-_Computer Architecture_ (Orlando, FL, USA) _(ISCA ’23)_ . Association for Computing
+_Computer Architecture_ (Orlando, FL, USA) _(ISCA '23)_ . Association for Computing
 Machinery, New York, NY, USA, Article 82, 14 pages. [https://doi.org/10.1145/](https://doi.org/10.1145/3579371.3589350)
 [3579371.3589350](https://doi.org/10.1145/3579371.3589350)
 
@@ -1327,7 +1321,7 @@ _VLDB Endow._ 13, 12 (aug 2020), 3005–3018. [https://doi.org/10.14778/3415478.
 
 Zheng Cao, Ming Zhang, Frank Kelly, Mohammad Alizadeh, and Minlan Yu.
 2019. HPCC: high precision congestion control. In _Proceedings_ _of_ _the_ _ACM_
-_Special Interest Group on Data Communication_ (Beijing, China) _(SIGCOMM ’19)_ .
+_Special Interest Group on Data Communication_ (Beijing, China) _(SIGCOMM '19)_ .
 Association for Computing Machinery, New York, NY, USA, 44–58. [https://doi.](https://doi.org/10.1145/3341302.3342085)
 [org/10.1145/3341302.3342085](https://doi.org/10.1145/3341302.3342085)
 
@@ -1336,7 +1330,7 @@ Association for Computing Machinery, New York, NY, USA, 44–58. [https://doi.](
 Zheng, Srinivas Sridharan, and Christina Delimitrou. 2023. Mystique: Enabling
 Accurate and Scalable Generation of Production AI Benchmarks. In _Proceedings_
 _of the 50th Annual International Symposium on Computer Architecture_ (Orlando,
-FL, USA) _(ISCA ’23)_ . Association for Computing Machinery, New York, NY, USA,
+FL, USA) _(ISCA '23)_ . Association for Computing Machinery, New York, NY, USA,
 Article 37, 13 pages. [https://doi.org/10.1145/3579371.3589072](https://doi.org/10.1145/3579371.3589072)
 
 [17] Meta. 2024. Grand Teton. [https://www.opencompute.org/documents/grand-](https://www.opencompute.org/documents/grand-teton-intel-based-cpu-tray-specification-v1-0-pdf)
@@ -1353,7 +1347,7 @@ Cheng, Jiaqi Gao, Yan Zhuang, Pengcheng Zhang, Rong Liu, Chao Shi, Binzhang
 Fu, Jiaji Zhu, Jiesheng Wu, Dennis Cai, and Hongqiang Harry Liu. 2022. From
 luna to solar: the evolutions of the compute-to-storage networks in Alibaba cloud.
 In _Proceedings of the ACM SIGCOMM 2022 Conference_ (Amsterdam, Netherlands)
-_(SIGCOMM_ _’22)_ . Association for Computing Machinery, New York, NY, USA,
+_(SIGCOMM_ _'22)_ . Association for Computing Machinery, New York, NY, USA,
 753–766. [https://doi.org/10.1145/3544216.3544238](https://doi.org/10.1145/3544216.3544238)
 
 [20] Dheevatsa Mudigere, Yuchen Hao, Jianyu Huang, Zhihao Jia, Andrew Tulloch,
@@ -1369,7 +1363,7 @@ Lapukhov, Maxim Naumov, Ajit Mathews, Lin Qiao, Mikhail Smelyanskiy, Bill
 Jia, and Vijay Rao. 2022. Software-Hardware Co-Design for Fast and Scalable
 Training of Deep Learning Recommendation Models. In _Proceedings of the 49th_
 _Annual International Symposium on Computer Architecture_ (New York, New York)
-_(ISCA ’22)_ . Association for Computing Machinery, New York, NY, USA, 993–1011.
+_(ISCA '22)_ . Association for Computing Machinery, New York, NY, USA, 993–1011.
 [https://doi.org/10.1145/3470496.3533727](https://doi.org/10.1145/3470496.3533727)
 
 [21] Maxim Naumov, Dheevatsa Mudigere, Hao-Jun Michael Shi, Jianyu Huang,
@@ -1409,7 +1403,7 @@ New York, NY, USA, 75–89. [https://doi.org/10.1145/3341302.3342065](https://do
 [29] Sudarsanan Rajasekaran, Manya Ghobadi, Gautam Kumar, and Aditya Akella.
 
 2022. Congestion control in machine learning clusters. In _Proceedings_ _of_ _the_
-_21st_ _ACM_ _Workshop_ _on_ _Hot_ _Topics_ _in_ _Networks_ (Austin, Texas) _(HotNets_ _’22)_ .
+_21st_ _ACM_ _Workshop_ _on_ _Hot_ _Topics_ _in_ _Networks_ (Austin, Texas) _(HotNets_ _'22)_ .
 Association for Computing Machinery, New York, NY, USA, 235–242. [https:](https://doi.org/10.1145/3563766.3564115)
 [//doi.org/10.1145/3563766.3564115](https://doi.org/10.1145/3563766.3564115)
 
@@ -1425,7 +1419,7 @@ _Systems Design and Implementation (NSDI 22)_ . USENIX Association, Renton, WA,
 Madhyastha, Italo Cunha, James Quinn, Saif Hasan, Petr Lapukhov, and Hongyi
 Zeng. 2017. Engineering Egress with Edge Fabric: Steering Oceans of Content to
 the World. In _Proceedings of the Conference of the ACM Special Interest Group on_
-_Data Communication_ (Los Angeles, CA, USA) _(SIGCOMM ’17)_ . Association for
+_Data Communication_ (Los Angeles, CA, USA) _(SIGCOMM '17)_ . Association for
 Computing Machinery, New York, NY, USA, 418–431. [https://doi.org/10.1145/](https://doi.org/10.1145/3098822.3098853)
 [3098822.3098853](https://doi.org/10.1145/3098822.3098853)
 
@@ -1483,7 +1477,7 @@ Recommendations. [arXiv:2402.17152 [cs.LG]](https://arxiv.org/abs/2402.17152)
 
 69
 
-ACM SIGCOMM ’24, August 4–8, 2024, Sydney, NSW, Australia A. Gangidi et al.
+ACM SIGCOMM '24, August 4–8, 2024, Sydney, NSW, Australia A. Gangidi et al.
 
 [40] Yiwen Zhang, Yue Tan, Brent Stephens, and Mosharaf Chowdhury. 2022. Justi
 tia: Software Multi-Tenancy in Hardware Kernel-Bypass Networks. In _19th_

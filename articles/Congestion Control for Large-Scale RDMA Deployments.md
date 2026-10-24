@@ -16,7 +16,7 @@ Priority-based Flow Control (PFC) to enable a drop-free network. However, PFC ca
 To optimize DCQCN performance, we build a fluid model,
 and provide guidelines for tuning switch buffer thresholds,
 and other protocol parameters. Using a 3-tier Clos network
-testbed, we show that DCQCN dramatically improves throughput and fairness of RoCEv2 RDMA traffic. DCQCN is implemented in Mellanox NICs, and is being deployed in Microsoft’s datacenters.
+testbed, we show that DCQCN dramatically improves throughput and fairness of RoCEv2 RDMA traffic. DCQCN is implemented in Mellanox NICs, and is being deployed in Microsoft's datacenters.
 
 ## **CCS Concepts**
 
@@ -40,7 +40,7 @@ owned by others than ACM must be honored. Abstracting with credit is permitted. 
 lists, requires prior specific permission and/or a fee. Request permissions from
 permissions@acm.org.
 
-_SIGCOMM ’15, August 17–21, 2015, London, United Kingdom_
+_SIGCOMM '15, August 17–21, 2015, London, United Kingdom_
 
 _⃝_ c 2015 ACM. ISBN 978-1-4503-3542-3/15/08. . . $15.00
 
@@ -56,7 +56,7 @@ demand ultra-low latency (less than 10 _µ_ s per hop) message transfers. Tradit
 latency [10].
 
 We are deploying Remote Direct Memory Access (RDMA)
-technology in Microsoft’s datacenters to provide ultra-low
+technology in Microsoft's datacenters to provide ultra-low
 latency and high throughput to applications, with very low
 CPU overhead. With RDMA, network interface cards (NICs)
 transfer data in and out of pre-registered memory buffers at
@@ -73,7 +73,7 @@ a high-speed, lossless environment, and that can be implemented on the NIC.
 We have developed a protocol, called Datacenter QCN
 (DCQCN) for this purpose. DCQCN builds upon the congestion control components defined in the RoCEv2 standard.
 DCQCN is implemented in Mellanox NICs, and is currently
-being deployed in Microsoft’s datacenters.
+being deployed in Microsoft's datacenters.
 
 To understand the need for DCQCN, it is useful to point
 out that historically, RDMA was deployed using InfiniBand
@@ -84,7 +84,7 @@ the IB protocol stack is implemented on the NIC. IB supports
 RDMA with so-called single-sided operations, in which a
 server registers a memory buffer with its NIC, and clients
 read (write) from (to) it, without further involvement of the
-server’s CPU.
+server's CPU.
 
 However, the IB networking stack cannot be easily de
 
@@ -106,7 +106,7 @@ a coarse-grained mechanism. It operates at port (or, port
 plus priority) level, and does not distinguish between flows.
 This can cause congestion-spreading, leading to poor performance [1, 37].
 
-The fundamental solution to PFC’s limitations is a flowlevel congestion control protocol. In our environment, the
+The fundamental solution to PFC's limitations is a flowlevel congestion control protocol. In our environment, the
 protocol must meet the following requirements: ( _i_ ) function over lossless, L3 routed, datacenter networks, ( _ii_ ) incur
 low CPU overhead on end hosts, and ( _iii_ ) provide hyper-fast
 start in the common case of no congestion. Current proposals for congestion control in DC networks do not meet all our
@@ -139,7 +139,7 @@ practical issues such as non-congestion packet losses.
 To justify the need for DCQCN, we will show that TCP
 stacks cannot provide high bandwidth with low CPU overhead and ultra-low latency, while RDMA over RoCEv2 can.
 Next, we will show that PFC can hurt performance of RoCEv2.
-Finally, we will argue that existing solutions to cure PFC’s
+Finally, we will argue that existing solutions to cure PFC's
 ills are not suitable for our needs.
 
 ## **2.1 Conventional TCP stacks perform poorly**
@@ -233,7 +233,7 @@ TCP RDMA
 RDMA
 (send)
 
-(c) Mean Latency
+![Figure 1](images/Congestion%20Control%20for%20Large-Scale%20RDMA%20Deployments/fig_1.png)
 
 **Figure 1:** **Throughput, CPU consumption and latency of TCP and RDMA**
 
@@ -262,7 +262,7 @@ RDMA
 
 Host
 
-(b) Throughput of individual senders
+![Figure 3](images/Congestion%20Control%20for%20Large-Scale%20RDMA%20Deployments/fig_3.png)
 
 **Figure 3:** **PFC Unfairness**
 
@@ -284,12 +284,16 @@ H1 H2 H3 H4
 
 Number of senders under T3
 
-(b) Median throughput of victim flow
+![Figure 4](images/Congestion%20Control%20for%20Large-Scale%20RDMA%20Deployments/fig_4.png)
 
 **Figure 4:** **Victim flow problem**
 
 the problems using a 3-tier testbed (Figure 2) representative
 of modern datacenter networks.
+
+![Figure 2](images/Congestion%20Control%20for%20Large-Scale%20RDMA%20Deployments/fig_2.png)
+
+**Figure 2: Testbed topology. All links are 40Gbps. All switches are Arista 7050QX32. There are four ToRs (T1-T4), four leaves (L1-L4) and two spines (S1- S2). Each ToR represents a different IP subnet.**
 
 **Unfairness:** Consider Figure 3(a). Four senders (H1-H4)
 send data to the single receiver (R) using RDMA WRITE
@@ -304,13 +308,13 @@ This is known as the parking lot problem [14].
 
 This is shown in Figure 3(b), which shows the min, median and max throughput achieved by H1-H4, measured over
 1000 4MB data transfers. H4 gets as much as 20Gbps throughput, e.g. when ECMP maps all of H1-H3 to either P3 or
-P4. H4’s minimum throughput is higher than the maximum
+P4. H4's minimum throughput is higher than the maximum
 throughput of H1-H3.
 
 **Victim flow:** Because PAUSE frames can have a cascading
 effect, a flow can be hurt by congestion that is not even on
 its path. Consider Figure 4(a). Four senders (H11-H14),
-send data to R. In addition, we have a “victim flow” - VS
+send data to R. In addition, we have a "victim flow" - VS
 
 525
 
@@ -319,13 +323,13 @@ sending to VR. Figure 4(b) shows the median throughput
 
 When there are no senders under T3, in the median case
 (two of H11-H14 map to T1-L1, others to T1-L2. Each of
-H11-H14 gets 10Gbps throughput. VS maps to one of T1’s
+H11-H14 gets 10Gbps throughput. VS maps to one of T1's
 uplinks), one might expect VS to get 20Gbps throughput.
 However, we see that it only gets 10Gbps. This is due to
 cascading PAUSEs. As T4 is the bottleneck of H11-H14
 incast, it ends up PAUSEing its incoming links. This in turn
 leads to L3 and L4 to pause their incoming links, and so
-forth. Eventually, L1 and L2 end up pausing T1’s uplinks
+forth. Eventually, L1 and L2 end up pausing T1's uplinks
 to them, and T1 is forced to PAUSE the senders. The flows
 on T1 that use these uplinks are equally affected by these
 PAUSEs, regardless of their destinations – this is also known
@@ -340,20 +344,20 @@ S1 and S2 longer, and eventually make T1 PAUSE senders
 longer.
 
 **Summary:** These experiments show that flows in RoCEv2
-deployments may see lower throughput and/or high variability due to PFC’s congestion-spreading characteristics.
+deployments may see lower throughput and/or high variability due to PFC's congestion-spreading characteristics.
 
 ## **2.3 Existing proposals are inadequate**
 
-A number of proposals have tried to address PFC’s limitations. Some have argued that ECMP can mitigate the
+A number of proposals have tried to address PFC's limitations. Some have argued that ECMP can mitigate the
 problem by spreading traffic on multiple links. Experiments
 in previous section show that this is not always the case.
 The PFC standard itself includes a notion of priorities to address the head-of-the-line blocking problem. However, the
 standard supports only 8 priority classes, and both scenarios
 shown above can be made arbitrarily worse by expanding the
 topology and adding more senders. Moreover, flows within
-the same class will still suffer from PFC’s limitations.
+the same class will still suffer from PFC's limitations.
 
-The fundamental solution to the PFC’s problems is to use
+The fundamental solution to the PFC's problems is to use
 flow-level congestion control. If appropriate congestion control is applied on a per-flow basis, PFC will be rarely triggered, and thus the problems described earlier in this section
 will be avoided.
 
@@ -412,14 +416,19 @@ modern switches. To mimic DCTCP, we can set _Kmin_ =
 _Kmax_ = _K_, and _Pmax_ = 1. Later, we will see that this is
 not the optimal setting.
 
+![Figure 5](images/Congestion%20Control%20for%20Large-Scale%20RDMA%20Deployments/fig_5.png)
+
+**Figure 5: Switch packet marking al- gorithm**
+
 **NP Algorithm:** ECN-marked packets arriving at NP indicate congestion in the network. NP conveys this information
 back to the sender. The RoCEv2 standard defines explicit
 Congestion Notification Packets (CNP) [19] for this purpose.
 The NP algorithm specifies how and when CNPs should be
 generated.
 
-The algorithm follows the state machine in Figure 6 for
-each flow. If a marked packet arrives for a flow, and no
+The algorithm follows the state machine in ![Figure 6](images/Congestion%20Control%20for%20Large-Scale%20RDMA%20Deployments/fig_6.png)
+
+**Figure 6 for**each flow. If a marked packet arrives for a flow, and no
 CNP has been sent for the flow in last N microseconds, a
 CNP is sent immediately. Then, the NIC generates at most
 one CNP packet every N microseconds for the flow, if any
@@ -553,8 +562,9 @@ _RT_ = _RT_ + _RAI_ _,_
 (4)
 _RC_ = ( _RT_ + _RC_ ) _/_ 2 _,_
 
-There is also a hyper increase phase for fast ramp up. Figure 7 shows the state machine. See [17] for more details.
+There is also a hyper increase phase for fast ramp up. ![Figure 7](images/Congestion%20Control%20for%20Large-Scale%20RDMA%20Deployments/fig_7.png)
 
+**Figure 7 shows the state machine. See [17] for more details.**
 Note that there is no slow start phase. When a flow starts,
 it sends at full line rate, if there are no other active flows
 from the host. [2] This design decision optimizes the common
@@ -563,15 +573,21 @@ and the network is not congested [25].
 
 ## **3.2 Benefits**
 
-By providing per-flow congestion control, DCQCN alleviates PFC’s limitations. To illustrate this, we repeat the experiments in §2.2, with DCQCN enabled (parameters set according to guidelines in §4 and §5.
+By providing per-flow congestion control, DCQCN alleviates PFC's limitations. To illustrate this, we repeat the experiments in §2.2, with DCQCN enabled (parameters set according to guidelines in §4 and §5.
 
 2Otherwise, starting rate is defined by local QoS policies.
 
 **Figure 7:** **Pseudocode of the RP algorithm**
 
-Figure 8 shows that DCQCN solves the unfairness problem depicted in Figure 3. All four flows get equal share of
-the bottleneck bandwidth, and there is little variance. Figure 9 shows that DCQCN solves the victim flow problem
-depicted in Figure 4. With DCQCN, the throughput of VSVR flow does not change as we add senders under T3.
+![Figure 8](images/Congestion%20Control%20for%20Large-Scale%20RDMA%20Deployments/fig_8.png)
+
+**Figure 8 shows that DCQCN solves the unfairness problem depicted in Figure 3. All four flows get equal share of**the bottleneck bandwidth, and there is little variance. ![Figure 9](images/Congestion%20Control%20for%20Large-Scale%20RDMA%20Deployments/fig_9.png)
+
+**Figure 9 shows that DCQCN solves the victim flow problem**depicted in Figure 4. With DCQCN, the throughput of VSVR flow does not change as we add senders under T3.
+
+**Figure 9: Median throughput of "vic- tim" flow with DCQCN. Compare to Figure 4(b).**
+
+**Figure 8: Throughput of individual senders with DCQCN. Compare to Fig- ure 3(b).**
 
 ## **3.3 Discussion**
 
@@ -588,7 +604,7 @@ based approach, and allowed for finer-grained control.
 **Parameters:** DCQCN is based on DCTCP and QCN, but
 it differs from each in key respects. For example, unlike
 QCN, there is no quantized feedback, and unlike DCTCP
-there is no “per-ack” feedback. Thus, the parameter settings
+there is no "per-ack" feedback. Thus, the parameter settings
 recommended for DCTCP and QCN cannot be blindly used
 with DCQCN. In §5, we use a fluid model of the DCQCN to
 establish the optimal parameter settings.
@@ -640,9 +656,11 @@ Host
 **senders with DCQCN. Compare to Fig-**
 **ure 3(b).**
 
-**Figure** **9:** **Median** **throughput** **of** **“vic-**
-**tim”** **flow** **with** **DCQCN.** **Compare** **to**
+**Figure** **9:** **Median** **throughput** **of** **"vic-**
+**tim"** **flow** **with** **DCQCN.** **Compare** **to**
 **Figure 4(b).**
+
+![Figure 10](images/Congestion%20Control%20for%20Large-Scale%20RDMA%20Deployments/fig_10.png)
 
 **Figure 10:** **Fluid model closely matches**
 **implementation.**
@@ -770,7 +788,7 @@ following analysis.
 
 Equation (5) models the probability of a packet getting
 marked at the bottleneck. Setting _K_ min == _K_ max, gives
-DCTCP-like “cut-off”behavior. We model the more general
+DCTCP-like "cut-off"behavior. We model the more general
 behavior for reasons discussed later. Equation (6) models
 the evolution of queue at the bottleneck. We have assumed
 that all flows have equal rate. We will relax this assumption
@@ -782,7 +800,7 @@ in Figure 7, and QCN specification [17]. We model the rate
 decrease, as well as the rate increase due to byte counter
 and timer, but like [4], ignore the hyper additive increase
 phase. _τ_ _∗_ models the delay of the control loop. It includes
-the RTT and NP’s CNP generation interval. For simplicity,
+the RTT and NP's CNP generation interval. For simplicity,
 we use _τ_ _∗_ = 50 _µs_ (the maximum possible delay of CNP
 generation).
 
@@ -812,7 +830,7 @@ as we shall later see.
 To analyze convergence properties of DCQCN protocol, it
 is necessary to extend the fluid model to flows with different
 rates. Take two flows as an example. We model the evolution
-of each flow’s current and target sending rates, as well as
+of each flow's current and target sending rates, as well as
 their _α_ separately – i.e. we write Equations (7)-(9) for each
 flow. The flows are coupled by their impact on the queue:
 
@@ -822,7 +840,7 @@ _dq_
 _dt_ [=] _[ R][C]_ [1][(] _[t]_ [) +] _[ R][C]_ [2][(] _[t]_ [)] _[ −]_ _[C]_
 
 We solve this model numerically to understand the impact
-of various parameters (Table 2) on DCQCN’s behavior; particularly convergence and queue buildup.
+of various parameters (Table 2) on DCQCN's behavior; particularly convergence and queue buildup.
 
 Experiments show that the fluid model matches the implementation quite well. We show one example in Figure 10.
 We defer discussion to §6.
@@ -831,8 +849,9 @@ We defer discussion to §6.
 
 We focus on a two-flow system, where one flow starts at
 40Gbps, and the other starts at 0Gbps. For each parameter
-setting, we use numerical analysis to solve the first 200 milliseconds. The results are shown in Figure 11. The Z-axis
-shows difference in throughput of the two flows. For readability, we omit the first 10ms.
+setting, we use numerical analysis to solve the first 200 milliseconds. The results are shown in ![Figure 11](images/Congestion%20Control%20for%20Large-Scale%20RDMA%20Deployments/fig_11.png)
+
+**Figure 11. The Z-axis**shows difference in throughput of the two flows. For readability, we omit the first 10ms.
 
 We start with recommended parameters from QCN and
 DCTCP specifications. Specifically, _B_ = 150 _KB, T_ =
@@ -975,7 +994,7 @@ counter, or speed up the rate increase timer. Figure 11(a)
 shows that slowing down byte counter helps, but it reduces
 convergence speed. Speeding up the timer (Figure 11(b))
 is better. Note that the timer cannot be smaller than 50 _µ_ s,
-which is NP’s CNP generation interval. As the timer is
+which is NP's CNP generation interval. As the timer is
 set aggressively, the byte counter should be set large, _e.g.,_
 10MB, to avoid triggering the hyper increase phase too fast,
 which may harm convergence.
@@ -1005,6 +1024,10 @@ The queue length at the bottleneck depends on the value
 of _g_ . We tested different _g_ from 2:1 incast to 16:1 incast
 (Figure 12) and found smaller _g_ leads to lower queue length
 and lower variation. Lower _g_ leads to slightly slower convergence, but it is a price worth paying for lower oscillations.
+
+![Figure 12](images/Congestion%20Control%20for%20Large-Scale%20RDMA%20Deployments/fig_12.png)
+
+**Figure 12: Testing different g for best queue length and queue stability.**
 
 We now briefly discuss the remaining parameters. Recall that CNP generation interval is fixed at 50 _µ_ s, due to
 hardware limitations. We have assumed that feedback delay ( _τ_ _∗_ ) is equal to this value. We have verified that flows
@@ -1081,6 +1104,8 @@ Time (second)
 
 Time (second)
 
+![Figure 14](images/Congestion%20Control%20for%20Large-Scale%20RDMA%20Deployments/fig_14.png)
+
 **Figure 14: DCQCN Parameters used in**
 **our datacenters**
 
@@ -1123,6 +1148,8 @@ Time (second)
 **and without DCQCN**
 
 .
+
+![Figure 13](images/Congestion%20Control%20for%20Large-Scale%20RDMA%20Deployments/fig_13.png)
 
 **Figure 13:** **Validating parameter values with testbed microbenchmarks**
 
@@ -1167,7 +1194,7 @@ We also test the second solution – i.e. RED-like marking
 alleviates the unfairness problem, even without changing the
 timer. To test, we configure the switch with _K_ min = 5 _KB_,
 _K_ max = 200 _KB_ and _P_ max = 1%. Figure 13(c) shows
-that the two flows, on average get similar throughput. However, we see a drawback that isn’t shown by fluid model: the
+that the two flows, on average get similar throughput. However, we see a drawback that isn't shown by fluid model: the
 throughput is unstable due to the randomness in marking.
 
 These results would imply that in our deployment, we
@@ -1294,9 +1321,13 @@ Incast degree
 (d) 10th percentile throughput of incast
 flows.
 
+![Figure 17](images/Congestion%20Control%20for%20Large-Scale%20RDMA%20Deployments/fig_17.png)
+
 **Figure 17: DCQCN can handle higher**
 **user** **traffic** **without** **hurting** **perfor-**
 **mance**
+
+![Figure 16](images/Congestion%20Control%20for%20Large-Scale%20RDMA%20Deployments/fig_16.png)
 
 **Figure 16:** **DCQCN performance with Benchmark Traffic**
 
@@ -1312,7 +1343,7 @@ from over 10 million flows. The trace cannot be directly replayed on our testbed
 extract salient characteristics of the trace data, such as flow
 size distribution and generate synthetic traffic to match these
 characteristics. We model disk recovery traffic as incast. We
-don’t claim that this benchmark models the real traffic exactly - only that it is a reasonable proxy in a testbed setting.
+don't claim that this benchmark models the real traffic exactly - only that it is a reasonable proxy in a testbed setting.
 
 To simulate user traffic, each host communicates with one
 or more randomly selected host, and transfers data using distributions derived from traces. The number of communicating pairs is fixed at 20 (we will vary this in a later experiment). The traffic also includes a _single_ disk rebuild event
@@ -1335,7 +1366,7 @@ show that without DCQCN, the throughput of user traffic
 falls rapidly, as the degree of incast goes up. This result is
 surprising, because even though the degree of incast goes up,
 the total traffic generated by incast senders stays the same
-(because the bottleneck is always at the receiver). The reason is the “damage” caused by PFC. As the degree of incast
+(because the bottleneck is always at the receiver). The reason is the "damage" caused by PFC. As the degree of incast
 goes up, more PAUSE messages are generated. As these cascade through the network, they wreak havoc on user traffic.
 PAUSE messages that affect downlinks from spine switches
 can cause extensive damage, as many flows pass through
@@ -1349,6 +1380,10 @@ traffic is much better. Indeed, with DCQCN, as the degree
 of incast goes up, there is little change in the median and tail
 throughput of user traffic – exactly as one would hope for.
 
+![Figure 15](images/Congestion%20Control%20for%20Large-Scale%20RDMA%20Deployments/fig_15.png)
+
+**Figure 15: Total number of PAUSE messages received at S1 and S2, with and without DCQCN**
+
 The disk rebuild traffic also benefits from DCQCN because DCQCN helps divides the bandwidth fairly among
 competing flows. In the ideal case, the throughput of each
 incast flow should be equal to 40Gbps divided by degree
@@ -1359,19 +1394,7 @@ with incast degree of 10, 10th percentile throughput without DCQCN is less than 
 3.43Gbps. Note that the median throughput (Figure 16(c))
 with DCQCN appears to be lower. This, however, is deceptive: without DCQCN the tail end suffers, and other flows
 
-532
-
-10
-
-8
-
-6
-
-4
-
-2
-
-0
+![Figure 18](images/Congestion%20Control%20for%20Large-Scale%20RDMA%20Deployments/fig_18.png)
 
 **Figure 18:** **10th percentile throughput of four configura-**
 **tions for 8:1 incast**
@@ -1392,9 +1415,11 @@ with DCQCN appears to be lower. This, however, is deceptive: without DCQCN the t
 
 Instantaneous queue length (KB)
 
+![Figure 19](images/Congestion%20Control%20for%20Large-Scale%20RDMA%20Deployments/fig_19.png)
+
 **Figure 19:** **Queue length CDF**
 
-grab more than their “fair share”. Thus, the median seems
+grab more than their "fair share". Thus, the median seems
 higher. With DCQCN, median and 10th percentile values
 are nearly identical.
 
@@ -1415,7 +1440,7 @@ now demonstrate the need for PFC, and also the need for
 configuring correct buffer thresholds. To do so, we repeat the
 experiment of Figure 16 with two other settings. First, we
 disable PFC entirely, although we do use DCQCN. Second,
-we enable PFC, but deliberately “misconfigure” the buffer
+we enable PFC, but deliberately "misconfigure" the buffer
 thresholds as follows: instead of using dynamic _tP F C_, we
 use the static upper bound - i.e. _tP F C_ = 24 _._ 47 _KB_ and
 set _tECN_ = 120 _KB_, i.e. five times this value. With these
@@ -1509,6 +1534,8 @@ Packet Loss Rate
 **Figure** **21:** **Impact** **of** **packet** **loss** **rate** **on**
 **throughput**
 
+![Figure 20](images/Congestion%20Control%20for%20Large-Scale%20RDMA%20Deployments/fig_20.png)
+
 **Figure 20:** **Multi-bottleneck**
 
 plan to extend the fluid model to gain a better understanding
@@ -1521,14 +1548,15 @@ transport layer assumes that packet losses are rare. For example, when using REA
 packets were correctly received. The receiver can detect
 packet loss via break in sequence numbers, and must initiate any loss recovery. The ConnectX-3 Pro implements a
 simple go-back-N loss recovery scheme. This is sufficient
-for environments where packet loss rate low, as seen in Figure 21. Throughput degrades rapidly once the packet loss
-rate exceeds 0.1%. With go-back-n loss recovery model, the
+for environments where packet loss rate low, as seen in ![Figure 21](images/Congestion%20Control%20for%20Large-Scale%20RDMA%20Deployments/fig_21.png)
+
+**Figure 21. Throughput degrades rapidly once the packet loss**rate exceeds 0.1%. With go-back-n loss recovery model, the
 size of the message matters as well. In our deployment, most
 message transfers are expected to be less than 4MB in size.
 
 **Deadlock:** A commonly expressed concern is that use
 of PAUSE can lead to routing deadlocks [37]. Deadlock
-formation requires a set of flows that have a cyclic dependency on each other’s buffers, as shown in [37]. In a closstructured network servers are only connected to ToRs, and
+formation requires a set of flows that have a cyclic dependency on each other's buffers, as shown in [37]. In a closstructured network servers are only connected to ToRs, and
 traffic between a pair of servers never passes through another server, or more than two ToRs. Thus a cyclic buffer
 dependency cannot arise, without malfunctioning or misconfigured equipment. We omit detailed proof due to lack of
 space. We are currently studying how to avoid outages that
@@ -1560,11 +1588,11 @@ we only cover a few closely related ideas that we have not
 discussed elsewhere in the paper.
 
 Dynamic buffer allocation among output queued switches
-is discussed in [7]. A number of papers have discussed various aspects of QCN’s performance. For example, [9] discusses performance of a QCN in a TCP incast scenario. RECNIQ [32] is a congestion management proposal for input-queued
+is discussed in [7]. A number of papers have discussed various aspects of QCN's performance. For example, [9] discusses performance of a QCN in a TCP incast scenario. RECNIQ [32] is a congestion management proposal for input-queued
 switches. While related, ideas in these proposals are not directly applicable to our scenario.
 
 The iWarp standard [35] is an alternative to RoCEv2. It
-implements the full TCP stack on the NIC and builds a reliable connection using TCP’s end-to-end loss recovery. RDMA
+implements the full TCP stack on the NIC and builds a reliable connection using TCP's end-to-end loss recovery. RDMA
 can be enabled atop such a network. Due to end-to-end loss
 recovery, iWarp cannot offer ultra-low latency like RoCEv2.
 iWarp is also likely to suffer from well-known TCP problems in a datacenter environment, including poor incast performance [39]. In general, the iWarp technology has lagged
@@ -1572,7 +1600,7 @@ behind RoCEv2, because of the complexity involved in implementing the full TCP s
 iWarp hardware has only recently become available [43],
 RoCE2 vendors have started shipping 100Gbps NICs [44].
 
-TCP Bolt [37] is a solution to overcome PFC’s limitations.
+TCP Bolt [37] is a solution to overcome PFC's limitations.
 It also relies on flow-level congestion control, enabled by
 ECN. TCP Bolt is essentially DCTCP [2] without slow start.
 However, TCP-Bolt is implemented in end host stacks, and
@@ -1601,10 +1629,10 @@ compare the performance of DCQCN and TIMELY under
 various scenarios.
 
 User-level stacks such as Sandstorm [29] are one way to
-reduce TCP’s CPU overhead and latency. While they do
+reduce TCP's CPU overhead and latency. While they do
 have lower CPU overhead than conventional stacks, their
 overhead is significantly higher than RoCEv2. Some of these
-stacks also have to be closely integrated with individual applications to be effective. TCP’s latency can potentially also
+stacks also have to be closely integrated with individual applications to be effective. TCP's latency can potentially also
 be reduced using technologies such as Netmap [28], Intel
 Data Direct I/O [45] and mTCP [23].
 
@@ -1620,7 +1648,7 @@ will investigate this in the future.
 ## **9. CONCLUSION AND FUTURE WORK**
 
 The history of congestion control algorithms is the history of struggle between responsiveness and stability. While
-we have presented DCQCN as a solution to cure PFC’s ills,
+we have presented DCQCN as a solution to cure PFC's ills,
 it also represents a new way to address the tussle between
 responsiveness and stability, at least in the datacenter environment. DCQCN uses the blunt, but fast PFC flow control
 to prevent packet losses just in time, and uses a fine-grained

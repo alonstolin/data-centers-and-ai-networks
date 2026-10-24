@@ -120,7 +120,7 @@ oversubscription) transparent. Operators can use them to
 design topologies that meet their performance targets.
 
 We deploy two RNG-based production fabrics. Transport
-and application layer benchmarks confirm that RNG’s performance is on par with fat trees, unimpacted by the peculiarities of expanders such as variable path lengths between
+and application layer benchmarks confirm that RNG's performance is on par with fat trees, unimpacted by the peculiarities of expanders such as variable path lengths between
 endpoint pairs. Such end-to-end validation is a first for expander topologies.
 
 Our analysis reveals that RNG topologies are 9–45% cheaper
@@ -139,6 +139,8 @@ lead out of _𝑆_, called the cut, is large. Edge expansion provides
 capacity fungibility because every _𝑆_ has large bandwidth toward other nodes. In contrast, in hierarchical topologies such
 as fat trees, the cut of a subtree only leads to parents, so the
 expansion is poor. We illustrate with an example.
+
+![Figure 1](images/RNG%20-%20Flat%20Datacenter%20Networks%20at%20Scale/fig_1.png)
 
 **Figure 1: Example fat tree (a) and expander topologies**
 
@@ -296,9 +298,11 @@ _ℓ_ # of levels
 **ShuffleBoxes** _𝑑𝑟_, _𝑑𝑐_ # of r-ports, c-ports
 _𝑓𝑟_, _𝑓𝑐_ # of fiber pairs in r-port, c-port
 
+![Figure 2](images/RNG%20-%20Flat%20Datacenter%20Networks%20at%20Scale/fig_2.png)
+
 **Figure 2: Key design parameters of** **RNG**
 
-The control plane and load balancing in RNG follows today’s common paradigm. The routing protocol, Spraypoint,
+The control plane and load balancing in RNG follows today's common paradigm. The routing protocol, Spraypoint,
 computes next hops at each router for all destinations; and
 routers use ECMP (equal cost multipath) to spread traffic
 across all next hops for the destination. Figure 2 summarizes
@@ -335,8 +339,9 @@ previous levels.
 
 (4) _𝑂𝑅_ ( _𝑡_ ): _Outer ring_ with all nodes not in any level above.
 
-Figure 3 shows an example graph for _ℓ_ =1 and _𝑝_ =2. _𝑊𝑃_ 0( _𝑡_ )
-has all neighbors of _𝑡_ : { _𝑣_ 1 _, 𝑣_ 2 _, 𝑣_ 3 _, 𝑣_ 4}. _𝑊𝑃_ 1( _𝑡_ ) has two randomly selected neighbors of each _𝑣𝑖_ . In the example, _𝑤_ 1 _,𝑤_ 2
+![Figure 3](images/RNG%20-%20Flat%20Datacenter%20Networks%20at%20Scale/fig_3.png)
+
+**Figure 3 shows an example graph for _ℓ_ =1 and _𝑝_ =2. _𝑊𝑃_ 0( _𝑡_ )**has all neighbors of _𝑡_ : { _𝑣_ 1 _, 𝑣_ 2 _, 𝑣_ 3 _, 𝑣_ 4}. _𝑊𝑃_ 1( _𝑡_ ) has two randomly selected neighbors of each _𝑣𝑖_ . In the example, _𝑤_ 1 _,𝑤_ 2
 are selected from _𝑣_ 1, _𝑤_ 3 _,𝑤_ 4 are selected from _𝑣_ 2, and so on.
 Node _𝑣_ 1 ends up with three neighbors in _𝑊𝑃_ 1( _𝑡_ ), because
 
@@ -430,9 +435,9 @@ source (at most once) without looping indefinitely.
 
 _f_ r FPs each
 
-|d<br>f<br>. . . .|Col2|Col3|Col4|
-|---|---|---|---|
-|||||
+|d<br>f<br>. . . .
+
+![Figure 4](images/RNG%20-%20Flat%20Datacenter%20Networks%20at%20Scale/fig_4.png)
 
 **Figure 4: A ShuffleBox.**
 
@@ -500,6 +505,10 @@ The c-ports of panels in different rooms are also randomly
 connected. If there are _𝑅_ panels, each with _𝐶_ ShuffleBoxes,
 we connect approximately [(] _[𝑅]_ [−][1] _𝑅_ [)] _[𝐶𝑑][𝑐]_ c-ports of each panel to
 
+![Figure 5](images/RNG%20-%20Flat%20Datacenter%20Networks%20at%20Scale/fig_5.png)
+
+**Figure 5: Cabling in a datacenter with three rooms. Routers connect to r-ports of ShuffleBoxes in the room, and ShuffleBoxes inter-connect via c-ports.**
+
 other panels, essentially building a random graph between
 panels. Unconnected c-ports of a panel have a _ShuffleBack_, a
 special connector that bridges pairs of FPs coming into the
@@ -509,12 +518,15 @@ have a ShuffleBack that bridges c-port FP pairs. Routers connect only to the Shu
 modifications are achieved by changing only connections
 between the ShuffleBoxes (as explained below).
 
-Figure 6 shows three ways in which two routers can logically connect: (a) routers in the same room connect to the
-same ShuffleBoxe and their FPs are shuffled to a c-port with
+![Figure 6](images/RNG%20-%20Flat%20Datacenter%20Networks%20at%20Scale/fig_6.png)
+
+**Figure 6 shows three ways in which two routers can logically connect: (a) routers in the same room connect to the**same ShuffleBoxe and their FPs are shuffled to a c-port with
 a ShuffleBack; [6] (b) routers in different rooms whose FPs are
 shuffled to connected c-ports; (c) routers whose FPs end up
 at the same ShuffleBacked r-port in another room. In the
 final pattern, the two ToRs may be in the same room.
+
+**Figure 6: Physical connectivity patterns that enable logical connectivity. The hats denote ShuffleBacks.**
 
 Connecting via ShuffleBoxes has higher optical loss than
 direct connectivity, but this loss is within the margins of
@@ -535,7 +547,7 @@ probability of self-edges is negligible since each ShuffleBox is small.
 
 will extend and go back out via a c-port. We disable paths
 with over seven connectors to maintain optical signal quality.
-**Incrementally deploying rooms and racks** . RNG’s physical connectivity can be done incrementally. §A describes
+**Incrementally deploying rooms and racks** . RNG's physical connectivity can be done incrementally. §A describes
 the process. To summarize the key steps: (1) install a new
 shuffle panel when a new room is prepared; (2) if it is not the
 first room, rebalance inter-panel connectivity by removing
@@ -554,7 +566,7 @@ get _𝑑𝑟_ =32. With this configuration, the shuffling pattern of
 ShuffleBoxes is simple: each c-port FP goes to a different
 r-port, and each r-port FP goes to a different c-port (full
 bipartite).
-**Cabling** **complexity** . RNG’s cabling has low complexity
+**Cabling** **complexity** . RNG's cabling has low complexity
 per the three factors outlined earlier. With _𝑛_ routers and _𝑅_
 rooms, the number of physically-connected endpoint pairs
 is _𝑛_ + _[𝑅]_ [(] _[𝑅]_ 2 [−][1][)] as opposed to _𝑛_ [2] logically-connected pairs. We
@@ -582,6 +594,8 @@ Model, p=16
 0 1 2 3 4 5
 Path length
 
+![Figure 7](images/RNG%20-%20Flat%20Datacenter%20Networks%20at%20Scale/fig_7.png)
+
 **Figure 7: Path length distribution.**
 
 similar to traditional patch panels [14] and loopbacks [15]
@@ -596,7 +610,7 @@ same spectral gap [53], a measure of expansion, as unconstrained random graphs.
 ## 7 MODELING PERFORMANCE
 
 Following the standard practice for quasi-random graphs, our
-analysis assumes that the graphs are truly random. The combination of random graphs and spraying-induced decorrelation enables modeling of RNG’s performance. Our models
+analysis assumes that the graphs are truly random. The combination of random graphs and spraying-induced decorrelation enables modeling of RNG's performance. Our models
 inevitably make simplifying assumptions but predict performance quite accurately (§9). We summarize the key results in
 this section and include details in the appendix. Our models
 give approximate formulas that give accurate predictions
@@ -666,14 +680,14 @@ a version of the balls and bins game.
 the number of edge disjoint paths compared to the maximum
 possible value of _𝑑_ is proportional to exp(− _ℎ_ ). Thus, a low
 value of _ℎ_ _>_ 1 suffices for good performance. The change in
-exp(− _ℎ_ ) from _ℎ_ =1 (0.37) to _ℎ_ =2 (0.13) is large, but it tapers
+exp(− _ℎ_ ) from _ℎ_ =1 (§0.37) to _ℎ_ =2 (§0.13) is large, but it tapers
 off rapidly as _ℎ_ increases. (2) For neighboring sources, high
 values of _𝑝_ reduce the number of edge disjoint paths.
 
 ### 7.2 Path length
 
 Path lengths in RNG depend on the sizes of various Spraypoint levels. A packet is sprayed to a random node, and the
-number of pointing hops depends on the node’s level. We
+number of pointing hops depends on the node's level. We
 can bound the resulting path length distribution.
 
 Model 7.2. _With high probability, the fraction of paths of_
@@ -698,7 +712,7 @@ length.
 
 ### 7.3 Throughput (oversubscription ratio)
 
-A key measure of a network’s throughput is oversubscription ratio. It is the minimum fraction of traffic that the network can deliver, without exceeding link capacities, across
+A key measure of a network's throughput is oversubscription ratio. It is the minimum fraction of traffic that the network can deliver, without exceeding link capacities, across
 all possible traffic matrices. Unlike for fat trees, one cannot
 determine oversubscription for expander topologies through
 a simple analysis of the graph structure.
@@ -732,7 +746,7 @@ an assumption that paths do not overlap, we can show that
 almost every such path carries a single unit of flow.
 
 Estimating _𝜇_ 3 is more challenging because we cannot assume that paths do not overlap. We first estimate _𝜙_ 3, the
-fraction of a source _𝑠_ ’s capacity along 3-hop paths after removing the _𝑑_ / _𝑛_ edges used by 2-hop paths, using the facts
+fraction of a source _𝑠_ 's capacity along 3-hop paths after removing the _𝑑_ / _𝑛_ edges used by 2-hop paths, using the facts
 that 3-hop paths are of the form _𝑠_ → _𝑊𝑃_ 1( _𝑡_ ) → _𝑁𝑏𝑟_ ( _𝑡_ ) → _𝑡_
 and there are _𝑝𝑑_ waypoints. We then estimate _𝜅_ 3, the amount
 of source-destination flow that such a path can carry, using
@@ -820,15 +834,16 @@ and it provides transit between these networks. Ports that
 interconnect the two RNG fabrics are spread across their
 routers. We build separate fabrics because they have different
 oversubscription targets. The edge mesh is non-blocking and
-server mesh has the same oversubscription ratio as Amazon’s
+server mesh has the same oversubscription ratio as Amazon's
 latest fat tree fabrics. We elide the oversubscription level and
 mesh sizes for confidentiality.
 
 At the time of deploying these fabrics, we did not have
 manufactured ShuffleBoxes. We emulated shuffling with a
-traditional patch panel that bridges individual FPs and custom ShuffleBacks. See Figure 8.
-**Spraypoint performance** . We implemented Spraypoint by
-extending Amazon’s shortest-paths based link-state protocol.
+traditional patch panel that bridges individual FPs and custom ShuffleBacks. See ![Figure 8](images/RNG%20-%20Flat%20Datacenter%20Networks%20at%20Scale/fig_8.png)
+
+**Figure 8.****Spraypoint performance** . We implemented Spraypoint by
+extending Amazon's shortest-paths based link-state protocol.
 We reused the topology dissemination component and modified next hop computation. For similarly-sized topologies,
 Spraypoint performs similarly to the current protocol along
 key metrics such as convergence time after a failure.
@@ -845,7 +860,7 @@ Due to a lack of structure and physically identifiable patterns, a concern with 
 connecting ports not intended to be connected [45, 49]. The
 incidence of such miscabling in RNG was below 1.5%.
 **Operational challenges** . We give a short preview of these
-challenges, even though it is not a focus of this paper. Operationalizing random graphs required upgrading many software tools that manage Amazon’s networks. The hierarchy
+challenges, even though it is not a focus of this paper. Operationalizing random graphs required upgrading many software tools that manage Amazon's networks. The hierarchy
 of fat trees was embedded deeply into these tools, starting
 from device names itself to managing redundancy during
 maintenance. For instance, ToRs in fat trees do not rely on
@@ -867,14 +882,16 @@ fabric with identical oversubscription and identical server
 specs. We normalized results by the mean values observed
 for the fat tree to preserve confidentiality.
 
-Figure 9 shows the throughput distribution based on an
-experiment with 127 concurrent flows with infinite demand
+![Figure 9](images/RNG%20-%20Flat%20Datacenter%20Networks%20at%20Scale/fig_9.png)
+
+**Figure 9 shows the throughput distribution based on an**experiment with 127 concurrent flows with infinite demand
 between pairs of random servers. The results are identical
 for RNG and fat tree. Any differences in path latencies of the
 two networks are immaterial for application performance.
 
-Figure 10 (left) compares the packets per second (PPS)
-for small, 64-byte packets between pairs of servers. RNG is
+![Figure 10](images/RNG%20-%20Flat%20Datacenter%20Networks%20at%20Scale/fig_10.png)
+
+**Figure 10 (left) compares the packets per second (PPS)**for small, 64-byte packets between pairs of servers. RNG is
 slightly higher because it has less background traffic. Figure 10 (right) shows I/O operations per second (IOPS) for
 
 8If this bound were breached, we plan to treat the remaining racks as belonging to a new logical room and perform the room-addition activity. Analogous
@@ -935,7 +952,7 @@ RNG Fat tree
 
 **reads (right). The error bars are standard deviations.**
 
-storage reads from clients to multiple servers. RNG’s performance matches fat trees for this workload as well.
+storage reads from clients to multiple servers. RNG's performance matches fat trees for this workload as well.
 
 These benchmarks, and the absence of user-reported performance issues, confirm that RNG matches fat tree performance (at lower cost and higher fault tolerance).
 
@@ -943,7 +960,7 @@ These benchmarks, and the absence of user-reported performance issues, confirm t
 
 Production fabric benchmarks can validate the performance
 of real applications but we need simulations to evaluate a
-broad range of design parameters and workloads. We benchmark RNG’s oversubscription ratio and the number of edge
+broad range of design parameters and workloads. We benchmark RNG's oversubscription ratio and the number of edge
 disjoint paths that Spraypoint produces. We also compare
 its throughput and cost relative to fat trees.
 
@@ -971,8 +988,9 @@ minimizes _𝑟_ under link capacity constraints. These LPs are
 huge and each takes multiple hours to solve, which limits
 the largest fabrics we can practically study.
 
-Figure 11 shows the results of simulations ("RNG") and
-our model (§7.3). The line denotes the minimum value of
+![Figure 11](images/RNG%20-%20Flat%20Datacenter%20Networks%20at%20Scale/fig_11.png)
+
+**Figure 11 shows the results of simulations ("RNG") and**our model (§7.3). The line denotes the minimum value of
 _𝑟_ for each setting. There is a shadow for the max but it is
 barely visible because the variance is near zero. To study a
 broad range of settings, we vary one parameter while the
@@ -994,8 +1012,9 @@ regime.
 ### 9.2 Edge disjoint paths
 
 Spraypoint aims to find many edge disjoint paths. We evaluate this ability by computing the min cut across paths between endpoint pairs, which equals the number of edge
-disjoint paths [55]. Figure 12 shows the CDF of min cut
-across endpoint pairs for the same default fabric parameters
+disjoint paths [55]. ![Figure 12](images/RNG%20-%20Flat%20Datacenter%20Networks%20at%20Scale/fig_12.png)
+
+**Figure 12 shows the CDF of min cut**across endpoint pairs for the same default fabric parameters
 as above ( _𝑛_ =1000, _𝑑_ =64, _𝑝_ =4, _ℎ_ =2). For comparison, it also
 shows _𝑘_ -shortest-path routing (which is not implementable
 at scale with commodity switches). We consider _𝑘_ =8 [45, 49]
@@ -1131,8 +1150,9 @@ _𝑟_ as before—the network can carry at least 1/ _𝑟_ fraction of
 each flow. Thus, we are computing the oversubscription ratio
 of each matrix, instead of worst-case oversubscription ratio.
 
-Figure 13 shows the results for RNG and fat tree. The lines
-denote the mean and the shaded area denotes the min and
+![Figure 13](images/RNG%20-%20Flat%20Datacenter%20Networks%20at%20Scale/fig_13.png)
+
+**Figure 13 shows the results for RNG and fat tree. The lines**denote the mean and the shaded area denotes the min and
 max. Both topologies are designed to support 61.4K servers
 across 960 ToRs, with a worst-case oversubscription of 3:1.
 In this configuration, RNG uses 45% fewer switches.
@@ -1230,6 +1250,8 @@ Oversub.
 3:1
 7:1
 15:1
+
+![Figure 14](images/RNG%20-%20Flat%20Datacenter%20Networks%20at%20Scale/fig_14.png)
 
 **Figure 14: Reduction in number of switches in RNG**
 
@@ -1381,7 +1403,7 @@ Hamid Hajabdolali Bazzaz, Vikram Subramanya, Yeshaiahu Fainman,
 George Papen, and Amin Vahdat. 2010. Helios: a hybrid electrical/optical switch architecture for modular data centers. In _Proc. ACM SIG-_
 _COMM Conference on Data Communication_ . 339–350.
 
-[12] Joel Friedman. 2008. A proof of Alon’s second eigenvalue conjecture
+[12] Joel Friedman. 2008. A proof of Alon's second eigenvalue conjecture
 
 and related problems. _J. of the American Mathematical Society_ 195, 910
 (2008).
@@ -1556,7 +1578,7 @@ tead, Roy Bannon, Seb Boving, Gaurav Desai, Bob Felderman, Paulie
 Germano, Anand Kanagala, Jeff Provost, Jason Simmons, Eiichi Tanda,
 Jim Wanderer, Urs Hölzle, Stephen Stuart, and Amin Vahdat. 2015.
 Jupiter Rising: A Decade of Clos Topologies and Centralized Control
-in Google’s Datacenter Network. In _Proc. ACM SIGCOMM Conference_
+in Google's Datacenter Network. In _Proc. ACM SIGCOMM Conference_
 _on Data Communication_ . 183–197. doi:10 _._ [1145/2785956](https://doi.org/10.1145/2785956.2787508) _._ 2787508
 
 [44] Arjun Singhvi, Nandita Dukkipati, Prashant Chandra, Hassan M. G.
@@ -1624,7 +1646,7 @@ _COMM_ _Conference_ _on_ _Data_ _Communication_ . 327–338. [doi:10](https://do
 
 [wiki/K_shortest_path_routing](https://en.wikipedia.org/wiki/K_shortest_path_routing) [Retrieved: 6-Feb-2026].
 
-[55] Wikipedia. 2026. Menger’s Theorem. https://en _._ [wikipedia](https://en.wikipedia.org/wiki/Menger%27s_theorem) _._ org/wiki/
+[55] Wikipedia. 2026. Menger's Theorem. https://en _._ [wikipedia](https://en.wikipedia.org/wiki/Menger%27s_theorem) _._ org/wiki/
 
 [Menger%27s_theorem](https://en.wikipedia.org/wiki/Menger%27s_theorem) [Retrieved: 6-Feb-2026].
 
@@ -1679,7 +1701,7 @@ pattern for some ToRs may go from Figure 6(a) to Figure 6(c),
 except that both ToRs are in the same room.
 
 When racks can land in the second room, those ToRs
-connect to random r-ports in the second room’s panel. Some
+connect to random r-ports in the second room's panel. Some
 of these ToR uplinks will connect to ToRs in the first room
 via c-port connections, as in Figure 6(b); some will connect
 
@@ -1709,13 +1731,15 @@ m 5
 0.0 0.1 0.2 0.3 0.4 0.5
 Fraction of ToRs deployed
 
+![Figure 15](images/RNG%20-%20Flat%20Datacenter%20Networks%20at%20Scale/fig_15.png)
+
 **Figure 15: Matched uplinks as the datacenter grows.**
 
 to other ToRs in the same room via c-port ShuffleBacks; and,
 at least initially, some will fail to find a match.
 
 When the third room starts, we land its panel and rebalance c-port connectivity. When there were two rooms, half
-of the first room’s c-ports connected to the second room.
+of the first room's c-ports connected to the second room.
 When the third room starts, a third must go to the second
 room and a third to the third room (and a third have ShuffleBacks). To rebalance c-port connectivity, we break some
 existing c-port connections (selected randomly) between the
@@ -1734,7 +1758,7 @@ of that operation is much smaller ( _𝑓𝑟_ =4 versus _𝑓𝑐_ =32).
 An artifact of our incremental construction is that early in
 the growth of the datacenter, not all ToR uplinks form valid
 adjacencies. For an uplink in room 1 to form an adjacency, it
-must connect to an r-port FP that is bridged (by the ShuffleBox’s c-port ShuffleBack) to an r-port connected to another
+must connect to an r-port FP that is bridged (by the ShuffleBox's c-port ShuffleBack) to an r-port connected to another
 uplink. When only a small fraction of r-ports are populated,
 this probability is low. A similar effect occurs for the second
 room but is less severe because half of ToR uplinks connect
@@ -1786,6 +1810,8 @@ m 5
 
 Fraction of ToRs deployed
 
+![Figure 16](images/RNG%20-%20Flat%20Datacenter%20Networks%20at%20Scale/fig_16.png)
+
 **Figure 16: Oversubscription as the datacenter grows.**
 
 We present a model of datacenter expansion that accurately predicts the average degree at each point in the datacenter growth. Operators can use the model to predict the
@@ -1798,7 +1824,7 @@ for fast-growing datacenters. The window of poor performance is short and they c
 But the poor early performance can be problematic for
 slow-growing datacenters. For these cases, we propose a
 modified cabling scheme. We partition the ShuffleBoxes of
-the first room’s shuffle panel into two or more phases. Initial
+the first room's shuffle panel into two or more phases. Initial
 ToRs connect only to phase 1 ShuffleBoxes. When these
 ShuffleBoxes are full, we connect the c-ports of phase 1 and
 phase 2 ShuffleBoxes and start mapping future ToRs to phase
@@ -1824,7 +1850,7 @@ that stage. A stage could be a room or a phase within a room,
 and the analysis makes no assumption about the number or
 relative sizes of various stages.
 
-We model datacenter expansion using “time" _𝑡_ as the primary variable, where _𝑡_ ∈[0 _,_ 1] is the fraction (relative to the
+We model datacenter expansion using "time" _𝑡_ as the primary variable, where _𝑡_ ∈[0 _,_ 1] is the fraction (relative to the
 full DC) of routers currently landed. We denote a stage that
 
 begins at _𝑡_ 1 and ends at _𝑡_ 2 as [ _𝑡_ 1 _,𝑡_ 2]. Abusing notation, we
@@ -1840,7 +1866,7 @@ The average degree of the fabric at time _𝑡_ is d _𝑇_ _[𝑡]_ 0 [, where]
 the size of the first stage.
 
 For subsequent stages, the following invariants hold about
-RNG’s datacenter expansion:
+RNG's datacenter expansion:
 
 (1) At the end of any stage, the graph degree is _𝑑_ because
 
@@ -1858,8 +1884,9 @@ connections when it lands.
 
 Based on these invariants, we can prove:
 
-Figure 17 compares Model A.1 with a simulated fabric
-from Figure 16. We see that the model matches simulations
+![Figure 17](images/RNG%20-%20Flat%20Datacenter%20Networks%20at%20Scale/fig_17.png)
+
+**Figure 17 compares Model A.1 with a simulated fabric**from Figure 16. We see that the model matches simulations
 well, and the curves are virtually indistinguishable.
 
 **A.3** **Computing optimal phases**
@@ -1994,6 +2021,8 @@ _minimum possible 𝛽_ _is 𝛼_ (1 − 1 − _𝛼_ ) [2] _. Further, the mini
 
 0.0
 0.0 0.2 0.4 0.6 0.8 1.0
+
+![Figure 18](images/RNG%20-%20Flat%20Datacenter%20Networks%20at%20Scale/fig_18.png)
 
 **Figure 18: The minimum** _𝛽_ **achievable, for a given** _𝛼_ **in**
 
@@ -2137,6 +2166,8 @@ waypoints)
 RNG (biased
 waypoints, cabling)
 
+![Figure 20](images/RNG%20-%20Flat%20Datacenter%20Networks%20at%20Scale/fig_20.png)
+
 **Figure 20: Latency distribution of ToR-to-ToR paths**
 
 where the bottom tier connects to ToRs and the top tier to
@@ -2144,9 +2175,12 @@ spine routers. Aggregation pods are located in the center
 of each room to serve the ToRs in the room, and all spine
 routers are in one room in the middle of the datacenter [10].
 For both topologies, the link speed is 100 Gbps and cables
-travel along cable trays [46]. Figure 19 validates the accuracy of our latency estimation methodology by comparing
-what it estimates for the production server mesh (§8) with
+travel along cable trays [46]. ![Figure 19](images/RNG%20-%20Flat%20Datacenter%20Networks%20at%20Scale/fig_19.png)
+
+**Figure 19 validates the accuracy of our latency estimation methodology by comparing**what it estimates for the production server mesh (§8) with
 measurements on the fabric.
+
+**Figure 19: Comparison between estimated latency based on datacenter layout and measurements on the production fabric. Units omitted for confidentiality.**
 
 While the fat tree has 6 hops and RNG has 4 hops for
 the vast majority of ToR pairs in the simulated datacenter,
@@ -2249,7 +2283,7 @@ We model its construction as a random configuration graph
 in the configuration model, all of which are statistically equivalent and provide convenient analytical tools.
 
  - The standard method: consider each node as incident
-to _𝑑_ “half-edges". Paired half-edges result in a proper edge.
+to _𝑑_ "half-edges". Paired half-edges result in a proper edge.
 We generate a pairing with a uniform random permutation
 of all half-edges, and matching the first to the second, the
 third to the fourth, and so on.
@@ -2282,7 +2316,7 @@ _collection_ _of_ _random_ _variables 𝑋_ 1 _,𝑋_ 2 _, . . .,𝑋𝑘_ _,_ E
 
 - _𝑖_ ≤ _𝑘_ [E][[] _[𝑋]_ _𝑖_ []] _[.]_
 
-The next theorem is convenient for dealing with “error
+The next theorem is convenient for dealing with "error
 bounds" and bounding the probability of bad events.
 
 Theorem D.2. _[Union bound] Given a finite collection of_
@@ -2293,7 +2327,7 @@ upper bound the probability of a random variable deviating
 significantly from its expectation.
 
 Theorem D.3. _[The Chernoff bound] (Theorem 1.1 of [9])_
-_Let_ _𝑋_ =  _𝑖_ ≤ _𝑘_ _[𝑋]_ _𝑖_ _[,]_ _[where]_ _[the]_ _[𝑋]_ _𝑖_ _[’s]_ _[are]_ _[independent]_ _[random]_
+_Let_ _𝑋_ =  _𝑖_ ≤ _𝑘_ _[𝑋]_ _𝑖_ _[,]_ _[where]_ _[the]_ _[𝑋]_ _𝑖_ _['s]_ _[are]_ _[independent]_ _[random]_
 
 _variables in_ [0 _,_ 1] _. Then,_
 
@@ -2872,7 +2906,7 @@ _oversub bound. For the corresponding optimal flow, let 𝛿𝑖_ _be the_
 _fraction of the flow that takes length 𝑖_ _paths. Then, the oversub_
 _is at least_  _𝑖_ _[𝑖𝛿]_ _𝑖_ _[.]_
 
-Proof. The proof goes via a simple “total capacity" argument. Suppose the oversub is _𝜔_ . This means that the corresponding demand multiplier is _𝑑_ / _𝜔_, which is the total flow
+Proof. The proof goes via a simple "total capacity" argument. Suppose the oversub is _𝜔_ . This means that the corresponding demand multiplier is _𝑑_ / _𝜔_, which is the total flow
 that each node sends/receives. The total flow in the network
 is _𝑛𝑑_ / _𝜔_, since each node is a source.
 
@@ -3129,7 +3163,7 @@ used to route flow. We compute a fraction _𝜙_ 3 such that each
 source-destination pair has _𝜙_ 3 _𝑑_ viable length 3 paths to route
 flow. By Theorem E.4, a typical source _𝑠_ has a _𝑝𝑑_ / _𝑛_ = _𝑝𝜇_ 2
 fraction of neighbors in _𝑊𝑃_ 1( _𝑡_ ). (For extreme large values
-of _𝑝_, _𝑝𝜇_ 2 could be larger than one, so we “correct" by making
+of _𝑝_, _𝑝𝜇_ 2 could be larger than one, so we "correct" by making
 this fraction min( _𝑝𝜇_ 2 _,_ 1 − _𝜇_ 2). The latter term just assumes
 that everything that is not in _𝑁𝑏𝑟_ ( _𝑡_ ) is in _𝑊𝑃_ 1( _𝑡_ ).) Of these
 corresponding edges incident to _𝑠_, some of them might be
@@ -3151,7 +3185,7 @@ at least one of _ℎ_ edge disjoint paths survives is 1 −(4 _𝜇_ 2) _[ℎ]_ 
 Overall, the probability that _𝑣_ ∈ _𝑊𝑃_ 1( _𝑡_ ) still has a path to _𝑡_
 is 1 −(4 _𝜇_ 2) _[ℎ]_ .
 
-Combining with the number of such _𝑣_ ’s, we get that there
+Combining with the number of such _𝑣_ 's, we get that there
 are _𝜙_ 3 _𝑑_ neighbors of _𝑠_ that lead to viable 3 length flows,
 where:
 
@@ -3190,7 +3224,7 @@ Spraypoint levels, based on Theorem E.4.
 
 _𝜎_ 4 = 1 −( _𝑝_ + 1) _𝑑_ / _𝑛_ - exp(− _𝑝𝑑_ [2] / _𝑛_ ) _𝜎_ 5 = exp(− _𝑝𝑑_ [2] / _𝑛_ ) (8)
 
-Let us start with _𝜇_ 4. The quantity _𝜎_ 4 is the fraction of _𝑠_ ’s
+Let us start with _𝜇_ 4. The quantity _𝜎_ 4 is the fraction of _𝑠_ 's
 neighbors that lead to a length 4 flow path. The probability
 that these corresponding edges are removed by previous
 flows is _𝜇_ 2 + 2 _𝜇_ 3. (This edge can take up the last position in
@@ -3200,7 +3234,7 @@ flows.)
 Consider a neighbor _𝑣_ of _𝑠_ leading to length 4 path. As
 in the previous _𝜇_ 3 calculations, we need to compute the
 probability that _𝑣_ still has a path to _𝑡_ after the deletions. We
-will model _𝑣_ ’s pointing paths as follows. It has _ℎ_ neighbors in
+will model _𝑣_ 's pointing paths as follows. It has _ℎ_ neighbors in
 _𝑊𝑃_ 1( _𝑡_ ), each of which has _ℎ_ edge disjoint paths to _𝑡_ . Since
 
 Each _𝑋𝑖_ takes value 2 with probability _𝜙_ [2]
