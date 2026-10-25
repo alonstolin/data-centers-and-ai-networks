@@ -2,7 +2,7 @@
 
 One-paragraph summaries of the papers and lecture material in this folder, organized by course units and themes. Each entry provides the core problem, proposed solution, headline results, and direct links to both the original **[PDF]** and full-text audited **[MD]** conversion (with high-resolution extracted figures, architecture diagrams, and tables embedded inline).
 
-**AI usage:** the summaries were written with Claude (Anthropic) from each paper's abstract, introduction and conclusion, not from a full read. Numbers are the ones the authors report. Check the PDF before quoting one.
+**AI usage:** the summaries and markdown conversions were prepared, audited, and formatted with Claude (Anthropic) and Gemini (Google) from each paper's full text, abstract, and figures. Numbers are the ones the authors report. Check the PDF before quoting one.
 
 For the Hebrew overview of the NVIDIA AI-factory podcast, see [notes/topic1-podcast-ai-factory.md](notes/topic1-podcast-ai-factory.md).
 

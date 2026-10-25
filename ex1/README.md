@@ -300,7 +300,7 @@ Dependencies are listed in `requirements.txt` in the course folder (one level up
 
 ## AI usage
 
-Claude (Anthropic) was used to help draft this README from the assignment hints and outline, and to write the topology generator, the failure model, metrics, experiments and tests. The generated code was checked with the unit tests and against the closed-form formulas and models in section 5.
+Claude (Anthropic) and Gemini (Google) were used to help draft and refine this README from the assignment hints and outline, to implement and verify the topology generator, the failure model, metrics, experiments, and tests, and to audit the analytical models. The generated code and outputs were thoroughly verified against unit tests and closed-form formulas.
 
 ## References
 
