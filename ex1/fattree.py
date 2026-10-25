@@ -387,8 +387,6 @@ def plot_failures(rows, ks, rates, figures_dir):
         for k in ks:
             means, stds = series(k, key, scale)
             ax.plot(rates, means, "o-", ms=3, color=colors[k], label=f"k={k}")
-            ax.fill_between(rates, [m - s for m, s in zip(means, stds)],
-                            [min(m + s, cap) for m, s in zip(means, stds)], color=colors[k], alpha=0.2)
             if model is not None and not shared_model:
                 ax.plot(dense, [model(k, p) * scale for p in dense], ":", color=colors[k])
         if model is not None and shared_model:
