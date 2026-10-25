@@ -242,7 +242,7 @@ All numbers below come from `python fattree.py --experiment all --seed 42`, whic
 | Seed | 42 |
 | Host pairs | all pairs for connectivity; BFS from 64 sampled source hosts for path metrics |
 
-Figures show the mean over trials with a ±1 std band. Dotted lines are the simple models explained below.
+Figures show the mean over 20 independent trials. Dotted lines are the analytical models explained below.
 
 ![Connectivity vs. failure rate](figures/exp2_connectivity.png)
 ![Path length vs. failure rate](figures/exp2_path_length.png)
@@ -297,15 +297,6 @@ README.md
 ```
 
 Dependencies are listed in `requirements.txt` in the course folder (one level up), shared by all exercises.
-
-## Status
-
-- [x] Topology generator and counts (verified against the formulas for k = 2 … 32)
-- [x] Full CLI with input validation, plus the `CONFIG` block for defaults
-- [x] Failure injection with a seed (nested, reproducible)
-- [x] Metrics and experiments
-- [x] Plots and discussion
-- [x] Unit tests
 
 ## AI usage
 
