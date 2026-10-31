@@ -6,30 +6,12 @@ For the Hebrew overview of the NVIDIA AI-factory podcast, see [notes/topic1-podc
 
 ---
 
-## Contents
-
-| # | Unit | Topic | Paper | Theme Tags |
-|:---:|:---:|---|---|---|
-| 1 | **Unit 1** | Clos Topologies & Fat-Trees | [A Scalable, Commodity Data Center Network Architecture (Fat-Tree)](#1-a-scalable-commodity-data-center-network-architecture-fat-tree) | `#topology` `#fat-tree` |
-| 2 | **Unit 1** | Clos Topologies & Fat-Trees | [VL2: A Scalable and Flexible Data Center Network](#2-vl2-a-scalable-and-flexible-data-center-network) | `#topology` `#clos` `#vlb` |
-| 3 | **Unit 1** | Clos Topologies & Fat-Trees | [Jupiter Rising: A Decade of Clos Topologies in Google's Datacenter Network](#3-jupiter-rising-a-decade-of-clos-topologies-in-googles-datacenter-network) | `#topology` `#sdn` `#clos` |
-| 4 | **Unit 2** | Traffic in the Wild | [Network Traffic Characteristics of Data Centers in the Wild](#4-network-traffic-characteristics-of-data-centers-in-the-wild) | `#traffic` `#measurement` |
-| 5 | **Unit 3** | Low-Latency Transport | [Data Center TCP (DCTCP)](#5-data-center-tcp-dctcp) | `#congestion-control` `#ecn` |
-| 6 | **Unit 4** | Lossless & RDMA Transport | [DCQCN: Congestion Control for Large-Scale RDMA Deployments](#6-dcqcn-congestion-control-for-large-scale-rdma-deployments) | `#lossless` `#rdma` `#rocev2` |
-| 7 | **Unit 4** | Lossless & RDMA Transport | [TIMELY: RTT-based Congestion Control for the Datacenter](#7-timely-rtt-based-congestion-control-for-the-datacenter) | `#congestion-control` `#rtt` |
-| 8 | **Unit 5** | In-Network Load Balancing | [FlowBender: Flow-level Adaptive Routing in Datacenter Networks](#8-flowbender-flow-level-adaptive-routing-in-datacenter-networks) | `#routing` `#dynamic-rehashing` |
-| 9 | **Unit 5** | In-Network Load Balancing | [WCMP: Weighted Cost Multipathing for Improved Fairness in Data Centers](#9-wcmp-weighted-cost-multipathing-for-improved-fairness-in-data-centers) | `#routing` `#asymmetry` |
-| 10 | **Unit 5** | In-Network Load Balancing | [CONGA: Distributed Congestion-Aware Load Balancing for Datacenters](#10-conga-distributed-congestion-aware-load-balancing-for-datacenters) | `#load-balancing` `#flowlets` |
-| 11 | **Unit 6** | AI Training Workloads | [Alibaba HPN: A Data Center Network for LLM Training](#11-alibaba-hpn-a-data-center-network-for-llm-training) | `#ai-infrastructure` `#dual-plane` |
-| 12 | **Unit 6** | AI Training Workloads | [Load Balancing for AI Training Workloads](#12-load-balancing-for-ai-training-workloads) | `#ai-training` `#packet-spraying` |
-| 13 | **Unit 7** | Collective Communications | [Collective Operations in Distributed Machine Learning (Lecture Slides)](#13-collective-operations-in-distributed-machine-learning-lecture-slides) | `#collectives` `#all-reduce` |
-| 14 | **Unit 8** | Distributed LLM Clusters | [Efficient Large-Scale Language Model Training on GPU Clusters Using Megatron-LM](#14-efficient-large-scale-language-model-training-on-gpu-clusters-using-megatron-lm) | `#distributed-training` `#megatron-lm` |
-| 15 | **Unit 8** | Distributed LLM Clusters | [RDMA over Ethernet for Distributed AI Training at Meta Scale](#15-rdma-over-ethernet-for-distributed-ai-training-at-meta-scale) | `#rocev2` `#scale-out` `#meta` |
-| 16 | **Unit 9** | Deadlocks & Buffer Management | [Deadlocks in Datacenter Networks: Why Do They Form, and How to Avoid Them](#16-deadlocks-in-datacenter-networks-why-do-they-form-and-how-to-avoid-them) | `#lossless` `#deadlocks` `#pfc` |
-| 17 | **Unit 10** | Flat & Non-Clos Topologies | [RNG: Flat Datacenter Networks at Scale](#17-rng-flat-datacenter-networks-at-scale) | `#flat-topologies` `#random-graphs` |
+**Jump to Unit:**  
+[Unit 1](#unit-1) · [Unit 2](#unit-2) · [Unit 3](#unit-3) · [Unit 4](#unit-4) · [Unit 5](#unit-5) · [Unit 6](#unit-6) · [Unit 7](#unit-7) · [Unit 8](#unit-8) · [Unit 9](#unit-9) · [Unit 10](#unit-10)
 
 ---
 
+<a id="unit-1"></a>
 ## Unit 1: Clos Topologies & Fat-Trees
 
 <a id="al-fares-et-al-2008"></a>
@@ -66,6 +48,7 @@ Singh et al. (Google). SIGCOMM 2015 / CACM 2016. [PDF](Jupiter%20Rising%20-%20De
 
 ---
 
+<a id="unit-2"></a>
 ## Unit 2: Traffic Characteristics in the Wild
 
 <a id="kandula-et-al-2009"></a>
@@ -83,6 +66,7 @@ Benson, Akella, Maltz. IMC 2010. [PDF](Network%20Traffic%20Characteristics%20of%
 
 ---
 
+<a id="unit-3"></a>
 ## Unit 3: Low-Latency Transport & DCTCP
 
 <a id="alizadeh-et-al-2010"></a>
@@ -96,6 +80,7 @@ Alizadeh et al. (Microsoft Research, Stanford). SIGCOMM 2010. [PDF](Data%20Cente
 
 ---
 
+<a id="unit-4"></a>
 ## Unit 4: Lossless Ethernet & RDMA Transport
 
 <a id="zhu-et-al-2015"></a>
@@ -120,6 +105,7 @@ Mittal et al. (Google, Berkeley). SIGCOMM 2015. [PDF](TIMELY%20-%20RTT-based%20C
 
 ---
 
+<a id="unit-5"></a>
 ## Unit 5: In-Network Load Balancing
 
 <a id="kabbani-et-al-2014"></a>
@@ -155,6 +141,7 @@ Alizadeh et al. (Cisco). SIGCOMM 2014. [PDF](CONGA%20-%20Distributed%20Congestio
 
 ---
 
+<a id="unit-6"></a>
 ## Unit 6: AI Training Workloads & Dual-Plane Fabrics
 
 <a id="fu-et-al-2024"></a>
@@ -183,6 +170,7 @@ McClure et al. (Berkeley, Technion, NVIDIA). arXiv 2025. [PDF](Load%20Balancing%
 
 ---
 
+<a id="unit-7"></a>
 ## Unit 7: Collective Communications
 
 <a id="collectives-slide-deck"></a>
@@ -196,6 +184,7 @@ Chen Avin. [PDF](Collectives-plain.pdf) · [MD](markdown/Collectives-plain.md)
 
 ---
 
+<a id="unit-8"></a>
 ## Unit 8: Distributed LLM Clusters & Scale
 
 <a id="narayanan-et-al-2021"></a>
@@ -222,6 +211,7 @@ Gangidi, Choudhury et al. (Meta). SIGCOMM 2024. [PDF](RDMA%20over%20Ethernet%20f
 
 ---
 
+<a id="unit-9"></a>
 ## Unit 9: Deadlocks in Lossless Fabrics
 
 <a id="gupta-et-al-2021"></a>
@@ -236,6 +226,7 @@ Hu, Gupta et al. (Microsoft, HKUST). HotNets 2016 / 2021. [PDF](Deadlocks%20in%2
 
 ---
 
+<a id="unit-10"></a>
 ## Unit 10: Flat & Non-Clos Topologies
 
 <a id="zhao-et-al-2024"></a>
