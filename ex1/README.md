@@ -1,9 +1,5 @@
 # HW1: Fat-Tree Topology Generation and Analysis
 
-[![Python 3.9+](https://img.shields.io/badge/python-3.9+-3776AB.svg?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)
-[![Tests](https://img.shields.io/badge/pytest-32%20passed-success?style=flat-square&logo=pytest&logoColor=white)](test_fattree.py)
-[![Course](https://img.shields.io/badge/course-361.2.2460-blue?style=flat-square)](../README.md)
-
 Course 361.2.2460 (Data Center Networks & AI), Semester A 2026.
 
 A Python tool that generates a k-ary fat-tree data center topology [1], injects random link failures, and measures how the network degrades.
