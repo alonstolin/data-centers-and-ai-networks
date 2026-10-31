@@ -11,7 +11,7 @@ Course 361.2.2460, Semester A 2026. Covers scalable data center architectures, h
 
 | Unit | Topic | Foundational Literature | Labs & Notes |
 |:---:|---|---|:---:|
-| **1** | Clos Topologies & Fat-Trees | • [Al-Fares Fat-Tree (2008)](articles/README.md#al-fares-et-al-2008)<br>• [VL2 (2009)](articles/README.md#greenberg-et-al-2009)<br>• [Jupiter Rising (2015)](articles/README.md#singh-et-al-2015) | [HW1: Fat-Tree Sim](ex1/README.md)<br>[Topic 1 Notes](articles/notes/topic1-podcast-ai-factory.md) |
+| **1** | Clos Topologies & Fat-Trees | • [Al-Fares Fat-Tree (2008)](articles/README.md#al-fares-et-al-2008)<br>• [VL2 (2009)](articles/README.md#greenberg-et-al-2009)<br>• [Jupiter Rising (2015)](articles/README.md#singh-et-al-2015) | • [HW1: Fat-Tree Topology Generation and Analysis](ex1/README.md)<br>• [Topic 1: AI Factory Networking Overview](articles/notes/topic1-podcast-ai-factory.md) |
 | **2** | Traffic Characteristics in the Wild | • [Kandula et al. (2009)](articles/README.md#kandula-et-al-2009) | — |
 | **3** | Low-Latency Transport & DCTCP | • [DCTCP (2010)](articles/README.md#alizadeh-et-al-2010) | — |
 | **4** | Lossless Ethernet & RDMA Transport | • [DCQCN (2015)](articles/README.md#zhu-et-al-2015)<br>• [TIMELY (2015)](articles/README.md#mittal-et-al-2015) | — |
