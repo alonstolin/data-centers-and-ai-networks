@@ -1,6 +1,11 @@
 # HW1: Fat-Tree Topology Generation and Analysis
 
-Course 361.2.2460 (Data center networks & AI), Semester A 2026.
+[![Python 3.9+](https://img.shields.io/badge/python-3.9+-3776AB.svg?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)
+[![Tests](https://img.shields.io/badge/pytest-32%20passed-success?style=flat-square&logo=pytest&logoColor=white)](test_fattree.py)
+[![Course](https://img.shields.io/badge/course-361.2.2460-blue?style=flat-square)](../README.md)
+[![Status](https://img.shields.io/badge/status-complete-brightgreen?style=flat-square)](#)
+
+Course 361.2.2460 (Data Center Networks & AI), Semester A 2026.
 
 A Python tool that generates a k-ary fat-tree data center topology [1], injects random link failures, and measures how the network degrades.
 
@@ -122,6 +127,16 @@ flowchart TB
   classDef edge fill:#d6eaf8,stroke:#2e86c1
   classDef host fill:#e8f8f5,stroke:#17a589
 ```
+
+### 1.1 Full Bisection Bandwidth Demonstration ($k = 4$)
+
+A defining property of the $k$-ary fat-tree is that it provides **1:1 full bisection bandwidth**: any arbitrary cut that partitions the $N$ hosts into two equal sets of $N/2$ hosts can sustain simultaneous full-bandwidth communication between the halves without oversubscription or bottleneck.
+
+For $k = 4$ ($N = 16$ hosts), partitioning the network into Pods 0–1 vs. Pods 2–3 yields 8 communicating inter-pod host pairs across the bisection. As visualized below, all 8 pairs transmit concurrently over **8 strictly edge-disjoint 6-hop paths** traversing the 4 core switches (`c1`–`c4`), with each distinct color tracing an independent end-to-end path:
+
+![Full Bisection Bandwidth on k=4 Fat-Tree](figures/bisection_bandwidth_k4.png)
+
+*(Generated via `python plot_bisection.py --k 4`)*
 
 ## 2. Run
 
@@ -290,7 +305,8 @@ python -m pytest -q
 
 ```
 fattree.py        # CONFIG block, topology, failures, metrics, experiments, plots, CLI
-test_fattree.py   # pytest unit tests
+plot_bisection.py # visualizer for edge-disjoint bisection bandwidth paths
+test_fattree.py   # pytest unit tests (32 tests)
 results/          # CSVs written by --experiment
 figures/          # PNGs written by --experiment, embedded above
 README.md
