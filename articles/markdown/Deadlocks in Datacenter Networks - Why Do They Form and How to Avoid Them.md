@@ -54,7 +54,7 @@ DOI: http://dx.doi.org/10.1145/3005745.3005760
 92
 
 Switch B buffer Switch C buffer
-![Figure 1](images/Deadlocks%20in%20Datacenter%20Networks%20-%20Why%20Do%20They%20Form%20and%20How%20to%20Avoid%20Them/fig_1.png)
+*[Figure 1 — see PDF]*
 
 **Figure 1:** **PFC-induced deadlock:** **simple illustration**
 
@@ -195,7 +195,7 @@ work correctly.
 
 Topology and flows (b) Buffer dependency graph (c) Stable state model
 
-![Figure 2](images/Deadlocks%20in%20Datacenter%20Networks%20-%20Why%20Do%20They%20Form%20and%20How%20to%20Avoid%20Them/fig_2.png)
+*[Figure 2 — see PDF]*
 
 **Figure 2:** **Single looping flow creates CBD but may not create deadlock.**
 
@@ -384,7 +384,7 @@ Time/ms
 
 Time/ms
 
-![Figure 3](images/Deadlocks%20in%20Datacenter%20Networks%20-%20Why%20Do%20They%20Form%20and%20How%20to%20Avoid%20Them/fig_3.png)
+*[Figure 3 — see PDF]*
 
 **Figure 3:** **There is no deadlock even though two flows create CBD among four switches.**
 
@@ -485,7 +485,7 @@ egress bandwidth.
 
 Time/ms
 
-![Figure 4](images/Deadlocks%20in%20Datacenter%20Networks%20-%20Why%20Do%20They%20Form%20and%20How%20to%20Avoid%20Them/fig_4.png)
+*[Figure 4 — see PDF]*
 
 **Figure 4:** **Slightly different traffic matrix leads to deadlock, even though the flow-level analysis shows that the average**
 **throughput of flow 1 and flow 2 should not be affected.**
@@ -550,7 +550,7 @@ Time/ms
 
 Time/ms
 
-![Figure 5](images/Deadlocks%20in%20Datacenter%20Networks%20-%20Why%20Do%20They%20Form%20and%20How%20to%20Avoid%20Them/fig_5.png)
+*[Figure 5 — see PDF]*
 
 **Figure 5:** **Different rate limiting determines whether the deadlock forms.**
 

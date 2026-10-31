@@ -158,7 +158,7 @@ levels of latency and loss [15,35,37]. We argue that network
 
 RTT (µs)
 
-![Figure 2](images/TIMELY%20-%20RTT-based%20Congestion%20Control%20for%20the%20Datacenter/fig_2.png)
+*[Figure 2 — see PDF]*
 
 **Figure 2: RTTs measured at end-system track closely the queue**
 **occupancy at congested link.**
@@ -236,7 +236,7 @@ RTT Range (µs)
 queues. The following experiment shows this behavior: we
 connect two hosts to the same network via 10 Gbps links
 and send 16 KB ping-pong messages without any cross traffic and on a quiescent network. Since there is no congestion, we expect the RTT measurements to be low and stable.
-![Figure 1](images/TIMELY%20-%20RTT-based%20Congestion%20Control%20for%20the%20Datacenter/fig_1.png)
+*[Figure 1 — see PDF]*
 
 **Figure 1 compares the CDF of RTTs measured using NIC**hardware timestamps and RTTs measured via the OS TCP
 stack. The CDF for RTTs using NIC timestamps is nearly a
@@ -295,7 +295,7 @@ round-trip time, using the advance of _SND_UNA_ [41] to
 mark the end of an RTT round. We also measure the minimum RTT sample in every round, as prior work has found
 it to be a robust descriptor untainted by delayed ACKs and
 send/receive offload schemes. Both the scatter and box plots
-1 [4] in ![Figure 3](images/TIMELY%20-%20RTT-based%20Congestion%20Control%20for%20the%20Datacenter/fig_3.png)
+1 [4] in *[Figure 3 — see PDF]*
 
 **Figure 3 show only a weak correlation between the**fraction of ECN marks and RTTs.
 **Limitations** **of** **RTTs.** While we have found the RTT signal valuable, an effective design must use it carefully. RTT
@@ -313,9 +313,9 @@ We conducted an experiment to verify the efficacy of
 ACK prioritization: we started two incasts ( _primary_ and _sec-_
 _ondary_ ) such that the ACKs of the primary incast share the
 same congested queue as the data segments of the secondary
-incast, as shown in ![Figure 4](images/TIMELY%20-%20RTT-based%20Congestion%20Control%20for%20the%20Datacenter/fig_4.png)
+incast, as shown in *[Figure 4 — see PDF]*
 
-**Figure 4. ![Figure 5](images/TIMELY%20-%20RTT-based%20Congestion%20Control%20for%20the%20Datacenter/fig_5.png)
+**Figure 4. *[Figure 5 — see PDF]*
 
 **Figure 5 shows the CDF of****1Whiskers extend to the most distant point within 1 _._ 2 _X_ interquartile range. Points outside these limits are drawn individually.
 
@@ -326,7 +326,7 @@ incast, as shown in ![Figure 4](images/TIMELY%20-%20RTT-based%20Congestion%20Con
 0.4
 0.2
 
-![Figure 6](images/TIMELY%20-%20RTT-based%20Congestion%20Control%20for%20the%20Datacenter/fig_6.png)
+*[Figure 6 — see PDF]*
 
 **Figure 6:** **TIMELY overview.**
 
@@ -375,7 +375,7 @@ components: 1) the serialization delay to transmit all packets
 in the segment, typically up to 64 KB; 2) the round-trip wire
 delay for the segment and its ACK to propagate across the
 
-![Figure 7](images/TIMELY%20-%20RTT-based%20Congestion%20Control%20for%20the%20Datacenter/fig_7.png)
+*[Figure 7 — see PDF]*
 
 **Figure 7:** **Finding RTT from completion time.**
 
@@ -595,7 +595,7 @@ measured error of [(] _[y]_ [(] _[t]_ [)] _[−][C]_ [)] = _[dq]_ [(] _[t]_ [)] 
 using RTT samples. It employs gradient tracking, adjusting
 the rate using a smoothed delay gradient as the error signal
 to keep throughput close to the available bandwidth. Additionally, we employ thresholds to detect and respond to
-extreme cases of under utilization or overly high packet latencies. ![Figure 8](images/TIMELY%20-%20RTT-based%20Congestion%20Control%20for%20the%20Datacenter/fig_8.png)
+extreme cases of under utilization or overly high packet latencies. *[Figure 8 — see PDF]*
 
 **Figure 8 shows the gradient zone along with the two**thresholds. When the RTT is in the nominal operating range,
 the gradient tracking algorithm computes the delay gradient
@@ -698,7 +698,7 @@ Target RTT=50us
 
 Time (s)
 
-![Figure 9](images/TIMELY%20-%20RTT-based%20Congestion%20Control%20for%20the%20Datacenter/fig_9.png)
+*[Figure 9 — see PDF]*
 
 **Figure 9:** **Comparison of gradient (low and high thresholds of**
 **50** _µ_ **s and 500** _µ_ **s) with target-based approach (** _Ttarget_ **of 50** _µ_ **s**
@@ -796,7 +796,7 @@ that of a low target.
 
 RTT (µs)
 
-![Figure 11](images/TIMELY%20-%20RTT-based%20Congestion%20Control%20for%20the%20Datacenter/fig_11.png)
+*[Figure 11 — see PDF]*
 
 **Figure 11:** **Comparison of the accuracy of NIC and SW times-**
 **tamps.**
@@ -807,7 +807,7 @@ RTT up and down towards the target queue size. The gradient approach maintains a
 Similar results are shown in control theory terms for AQMs
 using the queue-size approach and gradient approach [28].
 
-![Figure 10](images/TIMELY%20-%20RTT-based%20Congestion%20Control%20for%20the%20Datacenter/fig_10.png)
+*[Figure 10 — see PDF]*
 
 **Figure 10: Per-connection rates in the gradient approach are smooth (top) while those in the queue-size based approach (with Ttarget = 50µs) are more oscillatory (bottom).**
 
@@ -903,7 +903,7 @@ If the rate has decreased, we recompute the send time, and
 
 Average Added RTT Noise (µs)
 
-![Figure 12](images/TIMELY%20-%20RTT-based%20Congestion%20Control%20for%20the%20Datacenter/fig_12.png)
+*[Figure 12 — see PDF]*
 
 **Figure 12:** **Impact of RTT noise on TIMELY throughput.**
 
@@ -993,7 +993,7 @@ RDMA deployment over PFC. While the throughput is
 slightly lower with TIMELY, the median and tail RTTs are
 lower by more than order of magnitude and pauses are not
 triggered at all. Next, we break out connections to show
-that TIMELY also delivers excellent performance for individual connections. ![Figure 13](images/TIMELY%20-%20RTT-based%20Congestion%20Control%20for%20the%20Datacenter/fig_13.png)
+that TIMELY also delivers excellent performance for individual connections. *[Figure 13 — see PDF]*
 
 **Figure 13 shows a timeline of the observed RTT and throughput for a sample for four individual connections using TIMELY. Each datapoint represents**a single completion event. The fair share for each connection is 500 Mbps. We see that the throughput is close to the
 
@@ -1013,7 +1013,7 @@ that TIMELY also delivers excellent performance for individual connections. ![Fi
 
 RTT (µs)
 
-![Figure 14](images/TIMELY%20-%20RTT-based%20Congestion%20Control%20for%20the%20Datacenter/fig_14.png)
+*[Figure 14 — see PDF]*
 
 **Figure 14:** **CDF of RTT distribution**
 
@@ -1056,7 +1056,7 @@ achieves better throughput and latency trade-offs.
 **Varying** _Tlow_ **.** Our performance is influenced by algorithm
 parameters, which we explore starting with the low threshold. Our purpose is to highlight factors that affect the thresholds, not to tune parameters. By design no more than a default setting is necessary. The low threshold exists to absorb the RTT variation during uncongested network use. The
 expected variation is related to the maximum segment size,
-since as segments grow larger the effect on the RTT of occasional segment collisions increases. ![Figure 15](images/TIMELY%20-%20RTT-based%20Congestion%20Control%20for%20the%20Datacenter/fig_15.png)
+since as segments grow larger the effect on the RTT of occasional segment collisions increases. *[Figure 15 — see PDF]*
 
 **Figure 15 shows how**the bottleneck throughput and RTT times vary with different values of _Tlow_ for segments of size 16 KB, 32 KB and
 64 KB.
@@ -1103,7 +1103,7 @@ this time with NIC pacing, with two values of _Tlow_ : 0 _µ_ s
 and 50 _µ_ s. We are not able to implement a dynamic finegrained pacing rate at this time and so use static rates. When
 computing RTTs from the completion times, we subtract the
 serialization delay introduced by NIC pacers to allow for
-comparison, e.g., pacing a 64 KB message at 1 Gbps introduces a serialization delay of 512 _µ_ s. ![Figure 16](images/TIMELY%20-%20RTT-based%20Congestion%20Control%20for%20the%20Datacenter/fig_16.png)
+comparison, e.g., pacing a 64 KB message at 1 Gbps introduces a serialization delay of 512 _µ_ s. *[Figure 16 — see PDF]*
 
 **Figure 16 shows the**results for different NIC pacing rates. As expected, the reduced burstiness due to pacing leads to increase in throughput and decrease in delay, with larger throughput increases
 for greater pacing. The most benefit is seen at 700 Mbps:
@@ -1125,7 +1125,7 @@ segments.
 the low threshold because it only comes into play for large
 RTTs, but it becomes useful as the level of connection multiplexing grows and the likelihood of RTT spikes increase.
 
-![Figure 17](images/TIMELY%20-%20RTT-based%20Congestion%20Control%20for%20the%20Datacenter/fig_17.png)
+*[Figure 17 — see PDF]*
 
 **Figure 17 shows the effect on throughput as the high**threshold is reduced for different numbers of competing con
 
@@ -1135,7 +1135,7 @@ RTTs, but it becomes useful as the level of connection multiplexing grows and th
 
 Time (ms)
 
-![Figure 18](images/TIMELY%20-%20RTT-based%20Congestion%20Control%20for%20the%20Datacenter/fig_18.png)
+*[Figure 18 — see PDF]*
 
 **Figure 18:** **HAI quickly acquires available bandwidth.**
 
@@ -1200,7 +1200,7 @@ Offered Load (normalized)
 
 Offered Load (normalized)
 
-![Figure 19](images/TIMELY%20-%20RTT-based%20Congestion%20Control%20for%20the%20Datacenter/fig_19.png)
+*[Figure 19 — see PDF]*
 
 **Figure 19:** **Accepted versus offered load (64 KB messages).**
 
@@ -1225,7 +1225,7 @@ Offered Load (normalized)
 
 Offered Load (normalized)
 
-![Figure 21](images/TIMELY%20-%20RTT-based%20Congestion%20Control%20for%20the%20Datacenter/fig_21.png)
+*[Figure 21 — see PDF]*
 
 **Figure 21:** **Median and 99-percentile RPC latencies.**
 
@@ -1261,7 +1261,7 @@ load is less than the offered load) is higher for TIMELY as
 it is able to send more traffic by minimizing queueing and
 thereby also pause frames per second.
 
-![Figure 20](images/TIMELY%20-%20RTT-based%20Congestion%20Control%20for%20the%20Datacenter/fig_20.png)
+*[Figure 20 — see PDF]*
 
 **Figure 20 shows RTT versus load. TIMELY reduces the**median and 99-percentile RTT by 2 _X_ and 5 _X_ respectively
 compared to PFC. This results in a corresponding reduction of RPC median latency of about 2 _X_ (shown in Figure 21). Without TIMELY, beyond saturation the network
@@ -1275,7 +1275,7 @@ to mitigate congestion, we designed an experiment with a
 background load of longest path uniform random traffic and
 then added an incast load. We use three levels of background
 load: low (0.167 of the maximum offered load in Figure 19),
-medium (§0.3) and high (§0.5). ![Figure 22](images/TIMELY%20-%20RTT-based%20Congestion%20Control%20for%20the%20Datacenter/fig_22.png)
+medium (§0.3) and high (§0.5). *[Figure 22 — see PDF]*
 
 **Figure 22 shows the normal**
 
@@ -1299,7 +1299,7 @@ rate limiting only the flows passing along the congested path.
 The overall throughput for TIMELY remained the same during the incast.
 **Application level benchmark.**
 
-![Figure 23](images/TIMELY%20-%20RTT-based%20Congestion%20Control%20for%20the%20Datacenter/fig_23.png)
+*[Figure 23 — see PDF]*
 
 **Figure 23 shows RPC latency of a datacenter storage**benchmark (note that the y-axis is on a log-scale). Without TIMELY, the application is limited in the amount of
 data it can push through the network while keeping the 99th

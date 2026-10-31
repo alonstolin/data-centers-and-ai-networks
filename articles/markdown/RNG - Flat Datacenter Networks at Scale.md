@@ -140,7 +140,7 @@ capacity fungibility because every _𝑆_ has large bandwidth toward other nodes
 as fat trees, the cut of a subtree only leads to parents, so the
 expansion is poor. We illustrate with an example.
 
-![Figure 1](images/RNG%20-%20Flat%20Datacenter%20Networks%20at%20Scale/fig_1.png)
+*[Figure 1 — see PDF]*
 
 **Figure 1: Example fat tree (a) and expander topologies**
 
@@ -298,7 +298,7 @@ _ℓ_ # of levels
 **ShuffleBoxes** _𝑑𝑟_, _𝑑𝑐_ # of r-ports, c-ports
 _𝑓𝑟_, _𝑓𝑐_ # of fiber pairs in r-port, c-port
 
-![Figure 2](images/RNG%20-%20Flat%20Datacenter%20Networks%20at%20Scale/fig_2.png)
+*[Figure 2 — see PDF]*
 
 **Figure 2: Key design parameters of** **RNG**
 
@@ -339,7 +339,7 @@ previous levels.
 
 (4) _𝑂𝑅_ ( _𝑡_ ): _Outer ring_ with all nodes not in any level above.
 
-![Figure 3](images/RNG%20-%20Flat%20Datacenter%20Networks%20at%20Scale/fig_3.png)
+*[Figure 3 — see PDF]*
 
 **Figure 3 shows an example graph for _ℓ_ =1 and _𝑝_ =2. _𝑊𝑃_ 0( _𝑡_ )**has all neighbors of _𝑡_ : { _𝑣_ 1 _, 𝑣_ 2 _, 𝑣_ 3 _, 𝑣_ 4}. _𝑊𝑃_ 1( _𝑡_ ) has two randomly selected neighbors of each _𝑣𝑖_ . In the example, _𝑤_ 1 _,𝑤_ 2
 are selected from _𝑣_ 1, _𝑤_ 3 _,𝑤_ 4 are selected from _𝑣_ 2, and so on.
@@ -437,7 +437,7 @@ _f_ r FPs each
 
 |d<br>f<br>. . . .
 
-![Figure 4](images/RNG%20-%20Flat%20Datacenter%20Networks%20at%20Scale/fig_4.png)
+*[Figure 4 — see PDF]*
 
 **Figure 4: A ShuffleBox.**
 
@@ -505,7 +505,7 @@ The c-ports of panels in different rooms are also randomly
 connected. If there are _𝑅_ panels, each with _𝐶_ ShuffleBoxes,
 we connect approximately [(] _[𝑅]_ [−][1] _𝑅_ [)] _[𝐶𝑑][𝑐]_ c-ports of each panel to
 
-![Figure 5](images/RNG%20-%20Flat%20Datacenter%20Networks%20at%20Scale/fig_5.png)
+*[Figure 5 — see PDF]*
 
 **Figure 5: Cabling in a datacenter with three rooms. Routers connect to r-ports of ShuffleBoxes in the room, and ShuffleBoxes inter-connect via c-ports.**
 
@@ -518,7 +518,7 @@ have a ShuffleBack that bridges c-port FP pairs. Routers connect only to the Shu
 modifications are achieved by changing only connections
 between the ShuffleBoxes (as explained below).
 
-![Figure 6](images/RNG%20-%20Flat%20Datacenter%20Networks%20at%20Scale/fig_6.png)
+*[Figure 6 — see PDF]*
 
 **Figure 6 shows three ways in which two routers can logically connect: (a) routers in the same room connect to the**same ShuffleBoxe and their FPs are shuffled to a c-port with
 a ShuffleBack; [6] (b) routers in different rooms whose FPs are
@@ -594,7 +594,7 @@ Model, p=16
 0 1 2 3 4 5
 Path length
 
-![Figure 7](images/RNG%20-%20Flat%20Datacenter%20Networks%20at%20Scale/fig_7.png)
+*[Figure 7 — see PDF]*
 
 **Figure 7: Path length distribution.**
 
@@ -840,7 +840,7 @@ mesh sizes for confidentiality.
 
 At the time of deploying these fabrics, we did not have
 manufactured ShuffleBoxes. We emulated shuffling with a
-traditional patch panel that bridges individual FPs and custom ShuffleBacks. See ![Figure 8](images/RNG%20-%20Flat%20Datacenter%20Networks%20at%20Scale/fig_8.png)
+traditional patch panel that bridges individual FPs and custom ShuffleBacks. See *[Figure 8 — see PDF]*
 
 **Figure 8.****Spraypoint performance** . We implemented Spraypoint by
 extending Amazon's shortest-paths based link-state protocol.
@@ -882,14 +882,14 @@ fabric with identical oversubscription and identical server
 specs. We normalized results by the mean values observed
 for the fat tree to preserve confidentiality.
 
-![Figure 9](images/RNG%20-%20Flat%20Datacenter%20Networks%20at%20Scale/fig_9.png)
+*[Figure 9 — see PDF]*
 
 **Figure 9 shows the throughput distribution based on an**experiment with 127 concurrent flows with infinite demand
 between pairs of random servers. The results are identical
 for RNG and fat tree. Any differences in path latencies of the
 two networks are immaterial for application performance.
 
-![Figure 10](images/RNG%20-%20Flat%20Datacenter%20Networks%20at%20Scale/fig_10.png)
+*[Figure 10 — see PDF]*
 
 **Figure 10 (left) compares the packets per second (PPS)**for small, 64-byte packets between pairs of servers. RNG is
 slightly higher because it has less background traffic. Figure 10 (right) shows I/O operations per second (IOPS) for
@@ -988,7 +988,7 @@ minimizes _𝑟_ under link capacity constraints. These LPs are
 huge and each takes multiple hours to solve, which limits
 the largest fabrics we can practically study.
 
-![Figure 11](images/RNG%20-%20Flat%20Datacenter%20Networks%20at%20Scale/fig_11.png)
+*[Figure 11 — see PDF]*
 
 **Figure 11 shows the results of simulations ("RNG") and**our model (§7.3). The line denotes the minimum value of
 _𝑟_ for each setting. There is a shadow for the max but it is
@@ -1012,7 +1012,7 @@ regime.
 ### 9.2 Edge disjoint paths
 
 Spraypoint aims to find many edge disjoint paths. We evaluate this ability by computing the min cut across paths between endpoint pairs, which equals the number of edge
-disjoint paths [55]. ![Figure 12](images/RNG%20-%20Flat%20Datacenter%20Networks%20at%20Scale/fig_12.png)
+disjoint paths [55]. *[Figure 12 — see PDF]*
 
 **Figure 12 shows the CDF of min cut**across endpoint pairs for the same default fabric parameters
 as above ( _𝑛_ =1000, _𝑑_ =64, _𝑝_ =4, _ℎ_ =2). For comparison, it also
@@ -1150,7 +1150,7 @@ _𝑟_ as before—the network can carry at least 1/ _𝑟_ fraction of
 each flow. Thus, we are computing the oversubscription ratio
 of each matrix, instead of worst-case oversubscription ratio.
 
-![Figure 13](images/RNG%20-%20Flat%20Datacenter%20Networks%20at%20Scale/fig_13.png)
+*[Figure 13 — see PDF]*
 
 **Figure 13 shows the results for RNG and fat tree. The lines**denote the mean and the shaded area denotes the min and
 max. Both topologies are designed to support 61.4K servers
@@ -1251,7 +1251,7 @@ Oversub.
 7:1
 15:1
 
-![Figure 14](images/RNG%20-%20Flat%20Datacenter%20Networks%20at%20Scale/fig_14.png)
+*[Figure 14 — see PDF]*
 
 **Figure 14: Reduction in number of switches in RNG**
 
@@ -1731,7 +1731,7 @@ m 5
 0.0 0.1 0.2 0.3 0.4 0.5
 Fraction of ToRs deployed
 
-![Figure 15](images/RNG%20-%20Flat%20Datacenter%20Networks%20at%20Scale/fig_15.png)
+*[Figure 15 — see PDF]*
 
 **Figure 15: Matched uplinks as the datacenter grows.**
 
@@ -1810,7 +1810,7 @@ m 5
 
 Fraction of ToRs deployed
 
-![Figure 16](images/RNG%20-%20Flat%20Datacenter%20Networks%20at%20Scale/fig_16.png)
+*[Figure 16 — see PDF]*
 
 **Figure 16: Oversubscription as the datacenter grows.**
 
@@ -1884,7 +1884,7 @@ connections when it lands.
 
 Based on these invariants, we can prove:
 
-![Figure 17](images/RNG%20-%20Flat%20Datacenter%20Networks%20at%20Scale/fig_17.png)
+*[Figure 17 — see PDF]*
 
 **Figure 17 compares Model A.1 with a simulated fabric**from Figure 16. We see that the model matches simulations
 well, and the curves are virtually indistinguishable.
@@ -2022,7 +2022,7 @@ _minimum possible 𝛽_ _is 𝛼_ (1 − 1 − _𝛼_ ) [2] _. Further, the mini
 0.0
 0.0 0.2 0.4 0.6 0.8 1.0
 
-![Figure 18](images/RNG%20-%20Flat%20Datacenter%20Networks%20at%20Scale/fig_18.png)
+*[Figure 18 — see PDF]*
 
 **Figure 18: The minimum** _𝛽_ **achievable, for a given** _𝛼_ **in**
 
@@ -2166,7 +2166,7 @@ waypoints)
 RNG (biased
 waypoints, cabling)
 
-![Figure 20](images/RNG%20-%20Flat%20Datacenter%20Networks%20at%20Scale/fig_20.png)
+*[Figure 20 — see PDF]*
 
 **Figure 20: Latency distribution of ToR-to-ToR paths**
 
@@ -2175,7 +2175,7 @@ spine routers. Aggregation pods are located in the center
 of each room to serve the ToRs in the room, and all spine
 routers are in one room in the middle of the datacenter [10].
 For both topologies, the link speed is 100 Gbps and cables
-travel along cable trays [46]. ![Figure 19](images/RNG%20-%20Flat%20Datacenter%20Networks%20at%20Scale/fig_19.png)
+travel along cable trays [46]. *[Figure 19 — see PDF]*
 
 **Figure 19 validates the accuracy of our latency estimation methodology by comparing**what it estimates for the production server mesh (§8) with
 measurements on the fabric.

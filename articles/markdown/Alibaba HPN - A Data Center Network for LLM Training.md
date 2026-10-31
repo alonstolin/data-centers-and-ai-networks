@@ -123,7 +123,7 @@ work high entropy. Each flow is continuous and low-utilization
 
 ( _e.g._, typically below 20% of the NIC capacity), as shown in 
 
-![Figure 1](images/Alibaba%20HPN%20-%20A%20Data%20Center%20Network%20for%20LLM%20Training/fig_1.png)
+*[Figure 1 — see PDF]*
 
 **Figure 1.**
 
@@ -314,10 +314,10 @@ continuous and steady, which slowly changes on the hourly scale
 
 (as shown in Figure 1). On the contrary, the LLM training generates
 
-very few, but periodically bursty flows, as shown in ![Figure 2](images/Alibaba%20HPN%20-%20A%20Data%20Center%20Network%20for%20LLM%20Training/fig_2.png)
+very few, but periodically bursty flows, as shown in *[Figure 2 — see PDF]*
 
 **Figure 2 and**
-![Figure 3](images/Alibaba%20HPN%20-%20A%20Data%20Center%20Network%20for%20LLM%20Training/fig_3.png)
+*[Figure 3 — see PDF]*
 
 **Figure 3. More specifically, Figure 2 shows the throughput of a NIC**
 
@@ -401,7 +401,7 @@ Time (s)
 **Figure 3: Number of connections per**
 **host.**
 
-![Figure 4](images/Alibaba%20HPN%20-%20A%20Data%20Center%20Network%20for%20LLM%20Training/fig_4.png)
+*[Figure 4 — see PDF]*
 
 **Figure 4: Checkpoint intervals of rep-**
 
@@ -530,7 +530,7 @@ build a new network architecture specifically for LLM training. We
 
 should meet the following goals.
 
-**G1: Scalability.** ![Figure 6](images/Alibaba%20HPN%20-%20A%20Data%20Center%20Network%20for%20LLM%20Training/fig_6.png)
+**G1: Scalability.** *[Figure 6 — see PDF]*
 
 **Figure 6 shows that the number of GPUs required**
 
@@ -561,7 +561,7 @@ able to support the scale at 100K GPUs.
 
 0.00
 
-![Figure 5](images/Alibaba%20HPN%20-%20A%20Data%20Center%20Network%20for%20LLM%20Training/fig_5.png)
+*[Figure 5 — see PDF]*
 
 **Figure 5: Monthly link failure**
 
@@ -660,7 +660,7 @@ ToR2
 
 NIC
 
-![Figure 7](images/Alibaba%20HPN%20-%20A%20Data%20Center%20Network%20for%20LLM%20Training/fig_7.png)
+*[Figure 7 — see PDF]*
 
 **Figure 7: HPN overview. A solid parallelogram represents a segment (containing 1024 active GPUs and 64 backup GPUs). Two**
 
@@ -827,7 +827,7 @@ ARP Proxy
 
 |ToR1 MAC: 1:1:1:1:1:1 IP: 1.0.1.1
 
-![Figure 8](images/Alibaba%20HPN%20-%20A%20Data%20Center%20Network%20for%20LLM%20Training/fig_8.png)
+*[Figure 8 — see PDF]*
 
 **Figure 8: Dual-ToR solutions. In stacked dual-ToR (a), the malfunction of ToR1's data plane would eventually trigger the offline**
 
@@ -1201,7 +1201,7 @@ Wicked pillar Cooper pillar
 
 |ToR1 ToR2<br>GP1U1 GP1U1 GP1U1 GP1U1<br>ToR3 ToR4<br>GP2U2 GP2U2 GP2U2 GP2U2<br>ToR15 ToR16<br>GP8U8 GP8U8 GP8U8 GP8U8
 
-![Figure 10](images/Alibaba%20HPN%20-%20A%20Data%20Center%20Network%20for%20LLM%20Training/fig_10.png)
+*[Figure 10 — see PDF]*
 
 **Figure 10: Customized 51.2Tbps single-chip switch. In (b) and**
 
@@ -1249,7 +1249,7 @@ handled per unit area, leading to increased power consumption
 
 in practice. As shown in Figure 9a, the power consumption of the
 
-![Figure 9](images/Alibaba%20HPN%20-%20A%20Data%20Center%20Network%20for%20LLM%20Training/fig_9.png)
+*[Figure 9 — see PDF]*
 
 **Figure 9: Power consumption of 51.2Tbps single-chip switch and the efficiency of different cooling solutions.**
 
@@ -1317,7 +1317,7 @@ rails can communicate via a combination of intra-host + inter-host
 
 forwarding. For example, in Figure 11, if GPU1 in host1 wants to
 
-![Figure 11](images/Alibaba%20HPN%20-%20A%20Data%20Center%20Network%20for%20LLM%20Training/fig_11.png)
+*[Figure 11 — see PDF]*
 
 **Figure 11: Rail-optimized network under dual-ToR.**
 
@@ -1344,7 +1344,7 @@ traffic crossing the Aggregation layer, lowering the possibility of
 
 load imbalance in the network.
 
-![Figure 13](images/Alibaba%20HPN%20-%20A%20Data%20Center%20Network%20for%20LLM%20Training/fig_13.png)
+*[Figure 13 — see PDF]*
 
 **Figure 13: Traffic on ToRs' ports towards the same NIC.**
 
@@ -1360,7 +1360,7 @@ With dual-ToR in tier1 network, if we simply deploy a typical Clos
 
 topology between ToR and Aggregation, as shown in Figure 12a,
 
-![Figure 12](images/Alibaba%20HPN%20-%20A%20Data%20Center%20Network%20for%20LLM%20Training/fig_12.png)
+*[Figure 12 — see PDF]*
 
 **Figure 12: Tier2 network architecture.**
 
@@ -1415,7 +1415,7 @@ becomes even and the average queue length is 20KB.
 
 solving the load imbalance caused by ECMP [54, 56, 57, 60, 61, 64,
 
-![Figure 14](images/Alibaba%20HPN%20-%20A%20Data%20Center%20Network%20for%20LLM%20Training/fig_14.png)
+*[Figure 14 — see PDF]*
 
 **Figure 14: Queue length at downstream ports of ToR.**
 
@@ -1767,7 +1767,7 @@ ACM SIGCOMM '24, August 4–8, 2024, Sydney, NSW, Australia Kun Qian et al.
 0.**(c) Queue length in Aggregation switches (max**
 **every 10s).**
 
-![Figure 15](images/Alibaba%20HPN%20-%20A%20Data%20Center%20Network%20for%20LLM%20Training/fig_15.png)
+*[Figure 15 — see PDF]*
 
 **Figure 15: Model training performance on 2300+ GPUs under different network architectures.**
 
@@ -1787,7 +1787,7 @@ ACM SIGCOMM '24, August 4–8, 2024, Sydney, NSW, Australia Kun Qian et al.
 
 1**(c) GPT-175B.**
 
-![Figure 16](images/Alibaba%20HPN%20-%20A%20Data%20Center%20Network%20for%20LLM%20Training/fig_16.png)
+*[Figure 16 — see PDF]*
 
 **Figure 16: Performance of training representative LLMs on**
 
@@ -1912,7 +1912,7 @@ with NCCL 2.18.3 [46].
 
 of typical collective communication operations (AllReduce and All
 Gather) with 448 GPUs (56 hosts), where AllReduce is the predomi
-nant operation in LLM training jobs. ![Figure 17](images/Alibaba%20HPN%20-%20A%20Data%20Center%20Network%20for%20LLM%20Training/fig_17.png)
+nant operation in LLM training jobs. *[Figure 17 — see PDF]*
 
 **Figure 17 lists the results. HPN**
 increases the performance of AllReduce by up to 59.3%. Since a seg
@@ -1991,7 +1991,7 @@ typical single-ToR design to validate the reliability improvement.
 
 **Case study1: Link failure and repair.** As shown in Figure 18a,
 
-![Figure 18](images/Alibaba%20HPN%20-%20A%20Data%20Center%20Network%20for%20LLM%20Training/fig_18.png)
+*[Figure 18 — see PDF]*
 
 **Figure 18: Performance under different types of NIC-ToR link malfunctions.**
 
@@ -2762,7 +2762,7 @@ _21)_ . USENIX Association, 855–862. [https://www.usenix.org/conference/atc21/
 
 [presentation/zhang-zhehui](https://www.usenix.org/conference/atc21/presentation/zhang-zhehui)
 
-![Figure 19](images/Alibaba%20HPN%20-%20A%20Data%20Center%20Network%20for%20LLM%20Training/fig_19.png)
+*[Figure 19 — see PDF]*
 
 **Figure 19: AllReduce performance of dual-plane.**
 
@@ -2844,7 +2844,7 @@ the _𝑐𝑜𝑛𝑛𝑖_ with the minimal _𝑊𝑄𝐸𝑖_ .
 
 **C** **DCN+ Topology**
 
-![Figure 20](images/Alibaba%20HPN%20-%20A%20Data%20Center%20Network%20for%20LLM%20Training/fig_20.png)
+*[Figure 20 — see PDF]*
 
 **Figure 20 illustrates the DCN+ network architecture, which is Al**ibaba Cloud's previous version of network architecture deployed
 
@@ -2867,7 +2867,7 @@ remains the same compared with that in HPN.
 
 **D** **Data Center Layout**
 
-![Figure 21](images/Alibaba%20HPN%20-%20A%20Data%20Center%20Network%20for%20LLM%20Training/fig_21.png)
+*[Figure 21 — see PDF]*
 
 **Figure 21 visualizes the layout of buildings in Alibaba Cloud's data**
 center. In the backend network, a Pod ( containing 15K GPUs) is

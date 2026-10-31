@@ -82,7 +82,7 @@ lab experiments using working hardware together with simulations
 and mathematical analysis, customer trials are scheduled in a few
 months as of the time of this writing.
 
-![Figure 1](images/CONGA%20-%20Distributed%20Congestion-Aware%20Load%20Balancing/fig_1.png)
+*[Figure 1 — see PDF]*
 
 **Figure 1 surveys the design space for load balancing and places**CONGA in context by following the thick red lines through the design tree. At the highest level, CONGA is a distributed scheme to
 allow rapid round-trip timescale reaction to congestion to cope with
@@ -258,7 +258,7 @@ optimally for 2-tier _Leaf-Spine_ topologies (Figure 4) that cover
 the needs of most enterprise datacenter deployments, though
 it should also benefit larger topologies.
 
-![Figure 4](images/CONGA%20-%20Distributed%20Congestion-Aware%20Load%20Balancing/fig_4.png)
+*[Figure 4 — see PDF]*
 
 **Figure 4: CONGA architecture. The source leaf switch de- tects flowlets and routes them via the least congested path to the destination using congestion metrics obtained from leaf-to- leaf feedback. N**
 
@@ -299,7 +299,7 @@ Local Only
 
 Global (CONGA)
 
-![Figure 2](images/CONGA%20-%20Distributed%20Congestion-Aware%20Load%20Balancing/fig_2.png)
+*[Figure 2 — see PDF]*
 
 **Figure 2:** **Congestion-aware load balancing needs non-local in-**
 **formation with asymmetry. Here, L0 has 100Gbps of TCP traf-**
@@ -372,7 +372,7 @@ form of oblivious routing [32] such as weighted random load balancing with weigh
 the weight of the upper path and achieve the same traffic split as
 CONGA. While this works in this case, it fails in general because
 the "right" traffic splits in asymmetric topologies depend also on
-the traffic matrix, as shown by the example in ![Figure 3](images/CONGA%20-%20Distributed%20Congestion-Aware%20Load%20Balancing/fig_3.png)
+the traffic matrix, as shown by the example in *[Figure 3 — see PDF]*
 
 **Figure 3. Here, depending on how much L0 _→_ L2 traffic there is, the optimal split for**L1 _→_ L2 traffic changes. Hence, static weights cannot handle both
 cases in Figure 3. Note that in this example, the two L1 _→_ L2 paths
@@ -483,7 +483,7 @@ and business intelligence services. The captures are obtained by
 having a few leaf switches mirror traffic to an analyzer without disrupting production traffic. Overall, we analyze more than 150GB
 of compressed packet trace data.
 
-**Flowlet size:** ![Figure 5](images/CONGA%20-%20Distributed%20Congestion-Aware%20Load%20Balancing/fig_5.png)
+**Flowlet size:** *[Figure 5 — see PDF]*
 
 **Figure 5 shows the distribution of the data bytes versus flowlet size for three choices of flowlet inactivity gap: 250ms,**500 _µ_ s, and 100 _µ_ s. Since it is unlikely that we would see a gap
 larger than 250ms in the same application-level flow, the line "Flow
@@ -508,7 +508,7 @@ a table for tracking 64K flowlets is feasible at low cost ( _§_ 3.4).
 
 ## 3. DESIGN
 
-![Figure 6](images/CONGA%20-%20Distributed%20Congestion-Aware%20Load%20Balancing/fig_6.png)
+*[Figure 6 — see PDF]*
 
 **Figure 6 shows the system diagram of CONGA. The majority of**the functionality resides at the leaf switches. The source leaf makes
 load balancing decisions based on per uplink congestion metrics,
@@ -707,7 +707,7 @@ in 28nm technology. CONGA's implementation requires roughly
 
 Spine 0 Spine 1
 
-![Figure 7](images/CONGA%20-%20Distributed%20Congestion-Aware%20Load%20Balancing/fig_7.png)
+*[Figure 7 — see PDF]*
 
 **Figure 7:** **Topologies used in testbed experiments.**
 
@@ -743,7 +743,7 @@ Spine 0 Spine 1
 **Size 
  (Bytes)**
 
-![Figure 8](images/CONGA%20-%20Distributed%20Congestion-Aware%20Load%20Balancing/fig_8.png)
+*[Figure 8 — see PDF]*
 
 **Figure 8: Empirical traffic distributions. The Bytes CDF shows**
 **the distribution of traffic bytes across different flow sizes.**
@@ -864,7 +864,7 @@ The second distribution is from a large cluster running data mining
 
 0.2
 
-![Figure 9](images/CONGA%20-%20Distributed%20Congestion-Aware%20Load%20Balancing/fig_9.png)
+*[Figure 9 — see PDF]*
 
 **Figure 9:** **FCT statistics for the enterprise workload with the baseline topology.** **Note that part (a) is normalized to the optimal FCT,**
 **while parts (b) and (c) are normalized to the value achieved by ECMP. The results are the average of 5 runs.**
@@ -947,7 +947,7 @@ The second distribution is from a large cluster running data mining
 
 0.2
 
-![Figure 10](images/CONGA%20-%20Distributed%20Congestion-Aware%20Load%20Balancing/fig_10.png)
+*[Figure 10 — see PDF]*
 
 **Figure 10:** **FCT statistics for the data-mining workload with the baseline topology.**
 
@@ -1022,7 +1022,7 @@ _5.2.2_ _Impact of link failure_
 
 We now repeat both workloads for the asymmetric topology when
 a fabric link fails (Figure 7(b)). The overall average FCT for both
-workloads is shown in ![Figure 11](images/CONGA%20-%20Distributed%20Congestion-Aware%20Load%20Balancing/fig_11.png)
+workloads is shown in *[Figure 11 — see PDF]*
 
 **Figure 11. Note that since in this case the**bisection bandwidth between Leaf 0 and Leaf 1 is 75% of the original capacity (3 _×_ 40Gbps links instead of 4), we only consider
 offered loads up to 70%. As expected, ECMP's performance drastically deteriorates as the offered load increases beyond 50%. This
@@ -1123,7 +1123,7 @@ is because with ECMP, half of the traffic from Leaf 0 to Leaf 1
  MIN)/AVG 
  (%)**
 
-![Figure 12](images/CONGA%20-%20Distributed%20Congestion-Aware%20Load%20Balancing/fig_12.png)
+*[Figure 12 — see PDF]*
 
 **Figure 12:** **Extent of imbalance between throughput of leaf up-**
 **links for both workloads at 60% load.**
@@ -1185,7 +1185,7 @@ not stress the fabric load balancing since the total traffic crossing
 the fabric is limited by the client's 10Gbps access link. The performance here is predominantly determined by the Incast behavior for
 the TCP or MPTCP transports.
 
-The results are shown in ![Figure 13](images/CONGA%20-%20Distributed%20Congestion-Aware%20Load%20Balancing/fig_13.png)
+The results are shown in *[Figure 13 — see PDF]*
 
 **Figure 13. We consider two minimum retransmission timeout ( _minRTO_ ) values: 200ms (the default value in Linux) and 1ms (recommended by Vasudevan _et al._ [47]**to cope with Incast); and two packet sizes ( _MTU_ ): 1500B (the
 standard Ethernet frame size) and 9000B (jumbo frames). The plots
@@ -1281,7 +1281,7 @@ the absence of servers with more or faster disks, we also generate
 some background traffic using the empirical enterprise workload
 described in _§_ 5.2.
 
-![Figure 14](images/CONGA%20-%20Distributed%20Congestion-Aware%20Load%20Balancing/fig_14.png)
+*[Figure 14 — see PDF]*
 
 **Figure 14 shows the job completion times for all trials. We**find that for the baseline topology (without failures), ECMP and
 CONGA have nearly identical performance. MPTCP has some outlier trials with much higher job completion times. For the asymmetric topology with link failure, the job completion times for ECMP
@@ -1367,7 +1367,7 @@ in the latter case, each fabric link can support multiple (at least 4)
 flows without congestion. Therefore, the impact of hash collisions
 in ECMP is less pronounced in this case (see also [41]).
 
-![Figure 15](images/CONGA%20-%20Distributed%20Congestion-Aware%20Load%20Balancing/fig_15.png)
+*[Figure 15 — see PDF]*
 
 **(b) 40Gbps access links Figure 15: Overall average FCT for a simulated workload based on web search [4] for two topologies with 40Gbps fab- ric links, 3:1 oversubscription, and: (a) 384 10Gbps servers, (b) 96 40Gbps servers.**
 
@@ -1379,7 +1379,7 @@ shown in Figure 16, the queues at links 10 and 12 in the spine
 (which are adjacent to the failed link 11) are _∼_ 10 _×_ larger with
 ECMP than CONGA.
 
-![Figure 16](images/CONGA%20-%20Distributed%20Congestion-Aware%20Load%20Balancing/fig_16.png)
+*[Figure 16 — see PDF]*
 
 **Figure 16: Multiple link failure scenario in a 288-port fabric with 6 leaves and 4 spines. Each leaf and spine connect with 3 × 40Gbps links and 9 randomly chosen links fail. The plots show the averag**
 
@@ -1429,7 +1429,7 @@ PROOF. An upper bound of 2 can be derived for the PoA using
 a similar argument to that of Corollary 2 (Section V-B) in Banner _et_
 _al._ [6]. The proof leverages the fact that the paths in the Leaf-Spine
 network have length 2. The corresponding lower bound of 2 for the
-PoA follows from the example shown in ![Figure 17](images/CONGA%20-%20Distributed%20Congestion-Aware%20Load%20Balancing/fig_17.png)
+PoA follows from the example shown in *[Figure 17 — see PDF]*
 
 **Figure 17. Refer to the**longer version of this paper for details [3].
 

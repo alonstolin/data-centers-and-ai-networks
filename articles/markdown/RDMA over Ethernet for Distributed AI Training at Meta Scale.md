@@ -251,11 +251,11 @@ per GPU
 Buffer occupancy
 per leaf switch (MB)
 
-![Figure 1](images/RDMA%20over%20Ethernet%20for%20Distributed%20AI%20Training%20at%20Meta%20Scale/fig_1.png)
+*[Figure 1 — see PDF]*
 
 **Figure 1: Distribution of job characteristics.** [2]
 
-![Figure 2](images/RDMA%20over%20Ethernet%20for%20Distributed%20AI%20Training%20at%20Meta%20Scale/fig_2.png)
+*[Figure 2 — see PDF]*
 
 **Figure 2: Collective message size distribution.**
 
@@ -337,7 +337,7 @@ achieve optimal performance (Section 4).
 produces unique full mesh and hierarchical traffic patterns (like
 Ring or Tree) that both produce different modes of congestion, as
 shown in buffer occupancy in Table 2. These traffic patterns can be
-seen in ![Figure 3](images/RDMA%20over%20Ethernet%20for%20Distributed%20AI%20Training%20at%20Meta%20Scale/fig_3.png)
+seen in *[Figure 3 — see PDF]*
 
 **Figure 3. There is no standard best practice for dealing with**congestion for such traffic patterns with prior RDMA deployments
 (Section 5).
@@ -354,7 +354,7 @@ ACM SIGCOMM '24, August 4–8, 2024, Sydney, NSW, Australia A. Gangidi et al.
 
 |UPI<br>400G NIC CPU0 PCH 400G NIC CPU1<br>CPU Tray PCIe Gen5x16
 
-![Figure 4](images/RDMA%20over%20Ethernet%20for%20Distributed%20AI%20Training%20at%20Meta%20Scale/fig_4.png)
+*[Figure 4 — see PDF]*
 
 **Figure 4: Grand Teton platform**
 
@@ -383,7 +383,7 @@ also requires increased compute and memory, placing significant
 demands on the network, thus lending themselves to a specially
 designed scale up system.
 
-![Figure 5](images/RDMA%20over%20Ethernet%20for%20Distributed%20AI%20Training%20at%20Meta%20Scale/fig_5.png)
+*[Figure 5 — see PDF]*
 
 **Figure 5: Frontend and Backend networks**
 
@@ -438,7 +438,7 @@ Host
 
 |2
 
-![Figure 6](images/RDMA%20over%20Ethernet%20for%20Distributed%20AI%20Training%20at%20Meta%20Scale/fig_6.png)
+*[Figure 6 — see PDF]*
 
 **Figure 6: Backend Network Topology**
 
@@ -548,12 +548,12 @@ remained identical for different QP packets as expected, in some
 
 ACM SIGCOMM '24, August 4–8, 2024, Sydney, NSW, Australia A. Gangidi et al.
 
-![Figure 7](images/RDMA%20over%20Ethernet%20for%20Distributed%20AI%20Training%20at%20Meta%20Scale/fig_7.png)
+*[Figure 7 — see PDF]*
 
 **Figure 7: Performance Impact on AllReduce Benchmark: E-**
 **ECMP and Queue Pair Scaling**
 
-![Figure 8](images/RDMA%20over%20Ethernet%20for%20Distributed%20AI%20Training%20at%20Meta%20Scale/fig_8.png)
+*[Figure 8 — see PDF]*
 
 **Figure 8: QPs per NIC in production with QP Scaling**
 
@@ -589,7 +589,7 @@ _4.2.5_ _Motivation to Look Beyond E-ECMP:._ While we improved
 ECMP performance with QP scaling, the underlying probabilistic
 nature of hashing was a persistent downside of this routing scheme.
 
-![Figure 9](images/RDMA%20over%20Ethernet%20for%20Distributed%20AI%20Training%20at%20Meta%20Scale/fig_9.png)
+*[Figure 9 — see PDF]*
 
 **Figure 9: Centralized Traffic Engineering architecture**
 
@@ -638,7 +638,7 @@ by the hardware to override the default routes. BGP-determined
 
 RDMA over Ethernet for Distributed AI Training at Meta Scale ACM SIGCOMM '24, August 4–8, 2024, Sydney, NSW, Australia
 
-![Figure 10](images/RDMA%20over%20Ethernet%20for%20Distributed%20AI%20Training%20at%20Meta%20Scale/fig_10.png)
+*[Figure 10 — see PDF]*
 
 **Figure 10: Collective benchmark: Normalized Performance**
 **Comparison between E-ECMP and TE (128 GPU)**
@@ -683,7 +683,7 @@ much-increased size of the network. Computationally, there was
 also increased load to handle another layer of switches (ATSWs)
 and the accompanying path diversity. E-ECMP, hence presented a
 
-![Figure 11](images/RDMA%20over%20Ethernet%20for%20Distributed%20AI%20Training%20at%20Meta%20Scale/fig_11.png)
+*[Figure 11 — see PDF]*
 
 **Figure 11: Out-of-order packets under flowlet interval**
 
@@ -789,7 +789,7 @@ on the order of milliseconds. Therefore, quickly recognizing and
 isolating unhealthy network elements and links and carefully tuning LAT duration, are important for predictable training workload
 performance.
 
-![Figure 12](images/RDMA%20over%20Ethernet%20for%20Distributed%20AI%20Training%20at%20Meta%20Scale/fig_12.png)
+*[Figure 12 — see PDF]*
 
 **Figure 12: ECN impact on performance: Allreduce comple-**
 **tion** **time(ms)** **on** **32** **GPUs** **comparison** **with** **CTSW** **ECN**
@@ -797,7 +797,7 @@ performance.
 **thresholds. A tighter threshold of 300KB low and 600KB high**
 **leads to lower performance.**
 
-![Figure 13](images/RDMA%20over%20Ethernet%20for%20Distributed%20AI%20Training%20at%20Meta%20Scale/fig_13.png)
+*[Figure 13 — see PDF]*
 
 **Figure 13: Tuning DCQCN for AlltoAll collective**
 
@@ -836,7 +836,7 @@ RDMA over Ethernet for Distributed AI Training at Meta Scale ACM SIGCOMM '24, Au
 
 |SENDER CPU proxy CPU proxy RECEIVER<br>Free RDMA write CTS Complete Flush<br>Copy Channel DMARDMA RDMA DMA Channel Copy<br>Buffer NIC RDMA NIC Buffer<br>Compute Channel network Channel Compute<br>Buffer Buffer Buffer Buffer<br>● ● ● ● ● ●<br>GPU HBM GPU HBM
 
-![Figure 14](images/RDMA%20over%20Ethernet%20for%20Distributed%20AI%20Training%20at%20Meta%20Scale/fig_14.png)
+*[Figure 14 — see PDF]*
 
 **Figure 14: GPU to GPU communication architecture.**
 
@@ -943,7 +943,7 @@ congestion.
 
 ACM SIGCOMM '24, August 4–8, 2024, Sydney, NSW, Australia A. Gangidi et al.
 
-![Figure 15](images/RDMA%20over%20Ethernet%20for%20Distributed%20AI%20Training%20at%20Meta%20Scale/fig_15.png)
+*[Figure 15 — see PDF]*
 
 **Figure 15: Network/Collective Co-Tuning performance**
 
@@ -1032,7 +1032,7 @@ for small sizes.
 
 RDMA over Ethernet for Distributed AI Training at Meta Scale ACM SIGCOMM '24, August 4–8, 2024, Sydney, NSW, Australia
 
-![Figure 16](images/RDMA%20over%20Ethernet%20for%20Distributed%20AI%20Training%20at%20Meta%20Scale/fig_16.png)
+*[Figure 16 — see PDF]*
 
 **Figure 16: Performance in various Network Stages**
 

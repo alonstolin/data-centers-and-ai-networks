@@ -307,12 +307,12 @@ above 80%utilization.
 To uncover the exact nature of traffic inside a data center, we
 instrumented a highly utilized 1,500node cluster in a data center
 that supports data mining on petabytes of data. Te servers are
-distributed roughly evenly across 75ToR switches, which are connected hierarchically as shown in ![Figure 1](images/VL2%20-%20A%20Scalable%20and%20Flexible%20Data%20Center%20Network/fig_1.png)
+distributed roughly evenly across 75ToR switches, which are connected hierarchically as shown in *[Figure 1 — see PDF]*
 
 **Figure 1. We collected socket-level**event logs from all machines over two months.
 
 ### 3.2 Flow Distribution Analysis
-**Distribution** **of** **flow** **sizes:** ![Figure 2](images/VL2%20-%20A%20Scalable%20and%20Flexible%20Data%20Center%20Network/fig_2.png)
+**Distribution** **of** **flow** **sizes:** *[Figure 2 — see PDF]*
 
 **Figure 2 illustrates the nature of**flows within the monitored data center. Te flow size statistics
 (marked as '+'s) show that the majority of flows are small (a few
@@ -383,7 +383,7 @@ Flow Size (Bytes)
 
 Number of Concurrent flows in/out of each Machine
 
-![Figure 3](images/VL2%20-%20A%20Scalable%20and%20Flexible%20Data%20Center%20Network/fig_3.png)
+*[Figure 3 — see PDF]*
 
 **Figure 3: Number of concurrent connections has two modes: (1)**
 **10flows per node more than 50%of the time and (2) 80flows per**
@@ -510,7 +510,7 @@ downtimes can be significant: 95%of failures are resolved in 10min,
 
 Time in 100s intervals Run Length log(Time to Repeat)
 
-![Figure 4](images/VL2%20-%20A%20Scalable%20and%20Flexible%20Data%20Center%20Network/fig_4.png)
+*[Figure 4 — see PDF]*
 
 **Figure 4: Lack of short-term predictability: Te cluster to which**
 **a** **traffic** **matrix** **belongs,** **i.e.,** **the** **type of** **traffic** **mix** **in** **the** **TM,**
@@ -524,7 +524,7 @@ Run Length
 
 |Link-state network<br>carrying only LAs<br>(e.g., 10/8)
 
-![Figure 5](images/VL2%20-%20A%20Scalable%20and%20Flexible%20Data%20Center%20Network/fig_5.png)
+*[Figure 5 — see PDF]*
 
 **Figure 5: An example Clos network between Aggregation and In-**
 **termediate switches provides a richly-connected backbone well-**
@@ -629,7 +629,7 @@ IP subnet with AAs (20/8)
 
 IP subnet with AAs (20/8)
 
-![Figure 6](images/VL2%20-%20A%20Scalable%20and%20Flexible%20Data%20Center%20Network/fig_6.png)
+*[Figure 6 — see PDF]*
 
 **Figure 6: VLB in an example VL2 network. Sender** S **sends pack-**
 **ets to destination** D **via a randomly-chosen intermediate switch**
@@ -764,7 +764,7 @@ S
 
 |BCD
 
-![Figure 7](images/VL2%20-%20A%20Scalable%20and%20Flexible%20Data%20Center%20Network/fig_7.png)
+*[Figure 7 — see PDF]*
 
 **Figure 7: VL2Directory System Architecture**
 
@@ -913,7 +913,7 @@ objectives described in Section 1.
 
 Time (s)
 
-![Figure 8](images/VL2%20-%20A%20Scalable%20and%20Flexible%20Data%20Center%20Network/fig_8.png)
+*[Figure 8 — see PDF]*
 
 **Figure 8: VL2 testbed comprising 80servers and 10switches.**
 
@@ -959,7 +959,7 @@ We create an all-to-all data shuffle traffic matrix involving 75
 servers. Each of 75servers must deliver 500MB of data to each of
 the 74other servers - a shuffle of 2.7TB from memory to memory.
 
-![Figure 9](images/VL2%20-%20A%20Scalable%20and%20Flexible%20Data%20Center%20Network/fig_9.png)
+*[Figure 9 — see PDF]*
 
 **Figure 9 shows how the sum of the goodput over all flows varies**with time during a typical run of the 2.7TB data shuffle. All data is
 carried over TCP connections, all of which attempt to connect be
@@ -1043,7 +1043,7 @@ time scales. To evaluate the effectiveness of VL2's implementation
 
 Time (s)
 
-![Figure 10](images/VL2%20-%20A%20Scalable%20and%20Flexible%20Data%20Center%20Network/fig_10.png)
+*[Figure 10 — see PDF]*
 
 **Figure 10: Fairness measures how evenly flows are split to inter-**
 **mediate switches from aggregation switches.**
@@ -1096,7 +1096,7 @@ share of its bottleneck.
 
 Time (s)
 
-![Figure 11](images/VL2%20-%20A%20Scalable%20and%20Flexible%20Data%20Center%20Network/fig_11.png)
+*[Figure 11 — see PDF]*
 
 **Figure 11: Aggregate goodput of two services with servers inter-**
 **mingled on the ToRs. Service one's goodput is unaffected as ser-**
@@ -1122,7 +1122,7 @@ Time (s)
 
 Time (s)
 
-![Figure 12](images/VL2%20-%20A%20Scalable%20and%20Flexible%20Data%20Center%20Network/fig_12.png)
+*[Figure 12 — see PDF]*
 
 **Figure 12:** **Aggregate goodput of service one as service two cre-**
 **ates bursts containing successively more short TCP connections.**
@@ -1187,7 +1187,7 @@ partition the network. According to our study of failures, this type
 of mass link failure has never occurred in our data centers, but we
 use it as an illustrative stress test.
 
-![Figure 13](images/VL2%20-%20A%20Scalable%20and%20Flexible%20Data%20Center%20Network/fig_13.png)
+*[Figure 13 — see PDF]*
 
 **Figure 13 shows a time series of the aggregategoodput achieved**by the flows in the data shuffle, with the times at which links were
 disconnected and then reconnected marked by vertical lines. Te
@@ -1269,7 +1269,7 @@ pattern on the curves is due to a batching of updates (occurring every 50ms). We
 
 | ¬ª«<br> ®¯°±±²³´µ<br><br> ¬ª« ­ª«<br> <br> ©ª«
 
-![Figure 14](images/VL2%20-%20A%20Scalable%20and%20Flexible%20Data%20Center%20Network/fig_14.png)
+*[Figure 14 — see PDF]*
 
 **Figure 14: Te directory system provides high throughput and fast response time for lookups and updates**
 
@@ -1375,7 +1375,7 @@ much more complex traffic engineering schemes.
 **Cost and Scale:** With the range of low-cost commodity devices
 currently available, the VL2 topology can scale to create networks
 
-![Figure 15](images/VL2%20-%20A%20Scalable%20and%20Flexible%20Data%20Center%20Network/fig_15.png)
+*[Figure 15 — see PDF]*
 
 **Figure 15: CDFof normalizedlinkutilizations forVLB,adaptive,**
 **and best oblivious routing schemes, showing that VLB (and best**

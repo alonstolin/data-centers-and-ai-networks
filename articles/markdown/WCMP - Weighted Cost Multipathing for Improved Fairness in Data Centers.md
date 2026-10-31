@@ -86,7 +86,7 @@ static topology imbalance rather than from dynamic communication patterns. It is
 should be able to correct for such imbalance as they typically
 already collect all the state necessary to do so. Based on
 
-![Figure 1](images/WCMP%20-%20Weighted%20Cost%20Multipathing%20for%20Improved%20Fairness%20in%20Data%20Centers/fig_1.png)
+*[Figure 1 — see PDF]*
 
 **Figure 1:** 2-stage Clos network
 
@@ -171,7 +171,7 @@ load balancing and unfair bandwidth distribution.
 
 |3
 
-![Figure 2](images/WCMP%20-%20Weighted%20Cost%20Multipathing%20for%20Improved%20Fairness%20in%20Data%20Centers/fig_2.png)
+*[Figure 2 — see PDF]*
 
 **Figure 2:** Multipath flow hashing in an asymmetric topology
 
@@ -382,7 +382,7 @@ interface with their software development kit (SDK) [6, 18].
 This allows us to realize weight assignment by replicating a
 port entry in the multipath table in proportion to its weight.
 
-![Figure 3](images/WCMP%20-%20Weighted%20Cost%20Multipathing%20for%20Improved%20Fairness%20in%20Data%20Centers/fig_3.png)
+*[Figure 3 — see PDF]*
 
 **Figure 3 shows the packet processing pipeline for multipath forwarding in a commodity switch. The switch's multipath table contains two groups. The first four entries in**the table store an ECMP group for traffic destined to prefix
 1.1.2.0/24. The next 12 entries in the table store a WCMP
@@ -829,7 +829,7 @@ _Rjk_ = _p_ or _p_ + 1 _,_ (5)
 
 8: _Q_ = _⌊_ _[L]_
 
-![Figure 4](images/WCMP%20-%20Weighted%20Cost%20Multipathing%20for%20Improved%20Fairness%20in%20Data%20Centers/fig_4.png)
+*[Figure 4 — see PDF]*
 
 **Figure 4:** Striping Alternatives
 
@@ -975,7 +975,7 @@ and large flows in the network.
 
 We base our architecture and implementation for supporting
 WCMP around the Onix OpenFlow Controller[22] as shown
-in ![Figure 5](images/WCMP%20-%20Weighted%20Cost%20Multipathing%20for%20Improved%20Fairness%20in%20Data%20Centers/fig_5.png)
+in *[Figure 5 — see PDF]*
 
 **Figure 5. The Network Controller is the central entity**that computes the routes between switches (hosts) and the
 
@@ -1070,13 +1070,13 @@ ECMP and WCMP hashing. To vary the striping imbalance,
 we increase the number of oversubscribed S2 switches, to
 which a pair of S1 switches is asymmetrically connected.
 We manually rewire the topology using our group striping
-algorithm into the three topologies shown in ![Figure 6](images/WCMP%20-%20Weighted%20Cost%20Multipathing%20for%20Improved%20Fairness%20in%20Data%20Centers/fig_6.png)
+algorithm into the three topologies shown in *[Figure 6 — see PDF]*
 
 **Figure 6 and**generate traffic between asymmetrically connected switches
 _S_ 10 and _S_ 15. Each of the nine hosts connected to source
 switch _S_ 10 transmit data over four parallel TCP connections
 to a unique host on destination switch _S_ 15 over long flows.
-We plot the CDF for the flow bandwidths in ![Figure 7](images/WCMP%20-%20Weighted%20Cost%20Multipathing%20for%20Improved%20Fairness%20in%20Data%20Centers/fig_7.png)
+We plot the CDF for the flow bandwidths in *[Figure 7 — see PDF]*
 
 **Figure 7.**
 Figure 7(b) shows that WCMP effectively load balances
@@ -1113,7 +1113,7 @@ pairs for topology shown in Figure 8(a). The flow sizes
 and flow inter-arrival times have a lognormal distribution as
 described in [7].
 
-![Figure 9](images/WCMP%20-%20Weighted%20Cost%20Multipathing%20for%20Improved%20Fairness%20in%20Data%20Centers/fig_9.png)
+*[Figure 9 — see PDF]*
 
 **Figure 9 shows the standard deviation (std. dev.) in the**completion time of flows as a function of the flow size.
 Though both ECMP and WCMP are quite effective for small
@@ -1204,7 +1204,7 @@ traffic from [7]
 
 Flow size (in bytes)
 
-![Figure 8](images/WCMP%20-%20Weighted%20Cost%20Multipathing%20for%20Improved%20Fairness%20in%20Data%20Centers/fig_8.png)
+*[Figure 8 — see PDF]*
 
 **Figure 8:** Evaluation topologies
 
@@ -1281,7 +1281,7 @@ Flow Bandwidth (in Mbps)
 
 0.2
 
-![Figure 10](images/WCMP%20-%20Weighted%20Cost%20Multipathing%20for%20Improved%20Fairness%20in%20Data%20Centers/fig_10.png)
+*[Figure 10 — see PDF]*
 
 **Figure 10:** Evaluating MPTCP performance with WCMP
 
@@ -1295,7 +1295,7 @@ Number of S1 switches (L)
 
 Number of S1 switches (L)
 
-![Figure 11](images/WCMP%20-%20Weighted%20Cost%20Multipathing%20for%20Improved%20Fairness%20in%20Data%20Centers/fig_11.png)
+*[Figure 11 — see PDF]*
 
 **Figure 11:** Table entries before and after running Algorithm 1 for reducing WCMP groups at the switch requiring maximum table entries
 
@@ -1355,7 +1355,7 @@ The remaining seven S1 switches are asymmetrically connected to all the other S1
 different oversubscription limits to create WCMP groups
 with reduced weights. We generate traffic using a random
 permutation traffic matrix, where each host sends data to
-another host on a remote switch with long flows. ![Figure 12](images/WCMP%20-%20Weighted%20Cost%20Multipathing%20for%20Improved%20Fairness%20in%20Data%20Centers/fig_12.png)
+another host on a remote switch with long flows. *[Figure 12 — see PDF]*
 
 **Figure 12
 shows the results of this experiment. With a oversubscription**limit of 1.05, we achieve a 70% reduction in the maximum

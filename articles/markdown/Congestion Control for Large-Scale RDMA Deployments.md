@@ -233,7 +233,7 @@ TCP RDMA
 RDMA
 (send)
 
-![Figure 1](images/Congestion%20Control%20for%20Large-Scale%20RDMA%20Deployments/fig_1.png)
+*[Figure 1 — see PDF]*
 
 **Figure 1:** **Throughput, CPU consumption and latency of TCP and RDMA**
 
@@ -262,7 +262,7 @@ RDMA
 
 Host
 
-![Figure 3](images/Congestion%20Control%20for%20Large-Scale%20RDMA%20Deployments/fig_3.png)
+*[Figure 3 — see PDF]*
 
 **Figure 3:** **PFC Unfairness**
 
@@ -284,14 +284,14 @@ H1 H2 H3 H4
 
 Number of senders under T3
 
-![Figure 4](images/Congestion%20Control%20for%20Large-Scale%20RDMA%20Deployments/fig_4.png)
+*[Figure 4 — see PDF]*
 
 **Figure 4:** **Victim flow problem**
 
 the problems using a 3-tier testbed (Figure 2) representative
 of modern datacenter networks.
 
-![Figure 2](images/Congestion%20Control%20for%20Large-Scale%20RDMA%20Deployments/fig_2.png)
+*[Figure 2 — see PDF]*
 
 **Figure 2: Testbed topology. All links are 40Gbps. All switches are Arista 7050QX32. There are four ToRs (T1-T4), four leaves (L1-L4) and two spines (S1- S2). Each ToR represents a different IP subnet.**
 
@@ -416,7 +416,7 @@ modern switches. To mimic DCTCP, we can set _Kmin_ =
 _Kmax_ = _K_, and _Pmax_ = 1. Later, we will see that this is
 not the optimal setting.
 
-![Figure 5](images/Congestion%20Control%20for%20Large-Scale%20RDMA%20Deployments/fig_5.png)
+*[Figure 5 — see PDF]*
 
 **Figure 5: Switch packet marking al- gorithm**
 
@@ -426,7 +426,7 @@ Congestion Notification Packets (CNP) [19] for this purpose.
 The NP algorithm specifies how and when CNPs should be
 generated.
 
-The algorithm follows the state machine in ![Figure 6](images/Congestion%20Control%20for%20Large-Scale%20RDMA%20Deployments/fig_6.png)
+The algorithm follows the state machine in *[Figure 6 — see PDF]*
 
 **Figure 6 for**each flow. If a marked packet arrives for a flow, and no
 CNP has been sent for the flow in last N microseconds, a
@@ -562,7 +562,7 @@ _RT_ = _RT_ + _RAI_ _,_
 (4)
 _RC_ = ( _RT_ + _RC_ ) _/_ 2 _,_
 
-There is also a hyper increase phase for fast ramp up. ![Figure 7](images/Congestion%20Control%20for%20Large-Scale%20RDMA%20Deployments/fig_7.png)
+There is also a hyper increase phase for fast ramp up. *[Figure 7 — see PDF]*
 
 **Figure 7 shows the state machine. See [17] for more details.**
 Note that there is no slow start phase. When a flow starts,
@@ -579,9 +579,9 @@ By providing per-flow congestion control, DCQCN alleviates PFC's limitations. To
 
 **Figure 7:** **Pseudocode of the RP algorithm**
 
-![Figure 8](images/Congestion%20Control%20for%20Large-Scale%20RDMA%20Deployments/fig_8.png)
+*[Figure 8 — see PDF]*
 
-**Figure 8 shows that DCQCN solves the unfairness problem depicted in Figure 3. All four flows get equal share of**the bottleneck bandwidth, and there is little variance. ![Figure 9](images/Congestion%20Control%20for%20Large-Scale%20RDMA%20Deployments/fig_9.png)
+**Figure 8 shows that DCQCN solves the unfairness problem depicted in Figure 3. All four flows get equal share of**the bottleneck bandwidth, and there is little variance. *[Figure 9 — see PDF]*
 
 **Figure 9 shows that DCQCN solves the victim flow problem**depicted in Figure 4. With DCQCN, the throughput of VSVR flow does not change as we add senders under T3.
 
@@ -660,7 +660,7 @@ Host
 **tim"** **flow** **with** **DCQCN.** **Compare** **to**
 **Figure 4(b).**
 
-![Figure 10](images/Congestion%20Control%20for%20Large-Scale%20RDMA%20Deployments/fig_10.png)
+*[Figure 10 — see PDF]*
 
 **Figure 10:** **Fluid model closely matches**
 **implementation.**
@@ -849,7 +849,7 @@ We defer discussion to §6.
 
 We focus on a two-flow system, where one flow starts at
 40Gbps, and the other starts at 0Gbps. For each parameter
-setting, we use numerical analysis to solve the first 200 milliseconds. The results are shown in ![Figure 11](images/Congestion%20Control%20for%20Large-Scale%20RDMA%20Deployments/fig_11.png)
+setting, we use numerical analysis to solve the first 200 milliseconds. The results are shown in *[Figure 11 — see PDF]*
 
 **Figure 11. The Z-axis**shows difference in throughput of the two flows. For readability, we omit the first 10ms.
 
@@ -1025,7 +1025,7 @@ of _g_ . We tested different _g_ from 2:1 incast to 16:1 incast
 (Figure 12) and found smaller _g_ leads to lower queue length
 and lower variation. Lower _g_ leads to slightly slower convergence, but it is a price worth paying for lower oscillations.
 
-![Figure 12](images/Congestion%20Control%20for%20Large-Scale%20RDMA%20Deployments/fig_12.png)
+*[Figure 12 — see PDF]*
 
 **Figure 12: Testing different g for best queue length and queue stability.**
 
@@ -1104,7 +1104,7 @@ Time (second)
 
 Time (second)
 
-![Figure 14](images/Congestion%20Control%20for%20Large-Scale%20RDMA%20Deployments/fig_14.png)
+*[Figure 14 — see PDF]*
 
 **Figure 14: DCQCN Parameters used in**
 **our datacenters**
@@ -1149,7 +1149,7 @@ Time (second)
 
 .
 
-![Figure 13](images/Congestion%20Control%20for%20Large-Scale%20RDMA%20Deployments/fig_13.png)
+*[Figure 13 — see PDF]*
 
 **Figure 13:** **Validating parameter values with testbed microbenchmarks**
 
@@ -1321,13 +1321,13 @@ Incast degree
 (d) 10th percentile throughput of incast
 flows.
 
-![Figure 17](images/Congestion%20Control%20for%20Large-Scale%20RDMA%20Deployments/fig_17.png)
+*[Figure 17 — see PDF]*
 
 **Figure 17: DCQCN can handle higher**
 **user** **traffic** **without** **hurting** **perfor-**
 **mance**
 
-![Figure 16](images/Congestion%20Control%20for%20Large-Scale%20RDMA%20Deployments/fig_16.png)
+*[Figure 16 — see PDF]*
 
 **Figure 16:** **DCQCN performance with Benchmark Traffic**
 
@@ -1380,7 +1380,7 @@ traffic is much better. Indeed, with DCQCN, as the degree
 of incast goes up, there is little change in the median and tail
 throughput of user traffic – exactly as one would hope for.
 
-![Figure 15](images/Congestion%20Control%20for%20Large-Scale%20RDMA%20Deployments/fig_15.png)
+*[Figure 15 — see PDF]*
 
 **Figure 15: Total number of PAUSE messages received at S1 and S2, with and without DCQCN**
 
@@ -1394,7 +1394,7 @@ with incast degree of 10, 10th percentile throughput without DCQCN is less than 
 3.43Gbps. Note that the median throughput (Figure 16(c))
 with DCQCN appears to be lower. This, however, is deceptive: without DCQCN the tail end suffers, and other flows
 
-![Figure 18](images/Congestion%20Control%20for%20Large-Scale%20RDMA%20Deployments/fig_18.png)
+*[Figure 18 — see PDF]*
 
 **Figure 18:** **10th percentile throughput of four configura-**
 **tions for 8:1 incast**
@@ -1415,7 +1415,7 @@ with DCQCN appears to be lower. This, however, is deceptive: without DCQCN the t
 
 Instantaneous queue length (KB)
 
-![Figure 19](images/Congestion%20Control%20for%20Large-Scale%20RDMA%20Deployments/fig_19.png)
+*[Figure 19 — see PDF]*
 
 **Figure 19:** **Queue length CDF**
 
@@ -1534,7 +1534,7 @@ Packet Loss Rate
 **Figure** **21:** **Impact** **of** **packet** **loss** **rate** **on**
 **throughput**
 
-![Figure 20](images/Congestion%20Control%20for%20Large-Scale%20RDMA%20Deployments/fig_20.png)
+*[Figure 20 — see PDF]*
 
 **Figure 20:** **Multi-bottleneck**
 
@@ -1548,7 +1548,7 @@ transport layer assumes that packet losses are rare. For example, when using REA
 packets were correctly received. The receiver can detect
 packet loss via break in sequence numbers, and must initiate any loss recovery. The ConnectX-3 Pro implements a
 simple go-back-N loss recovery scheme. This is sufficient
-for environments where packet loss rate low, as seen in ![Figure 21](images/Congestion%20Control%20for%20Large-Scale%20RDMA%20Deployments/fig_21.png)
+for environments where packet loss rate low, as seen in *[Figure 21 — see PDF]*
 
 **Figure 21. Throughput degrades rapidly once the packet loss**rate exceeds 0.1%. With go-back-n loss recovery model, the
 size of the message matters as well. In our deployment, most

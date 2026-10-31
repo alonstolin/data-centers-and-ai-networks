@@ -515,7 +515,7 @@ CCT Increase (%)
 1 10 100
 CCT Increase (%)
 
-![Figure 1](images/Load%20Balancing%20for%20AI%20Training%20Workloads/fig_1.png)
+*[Figure 1 — see PDF]*
 
 **Figure 1: Completion times (increase over ideal) for different**
 **load** **balancing** **schemes** **with** **a** **perfect** **loss** **recovery** **protocol.**
@@ -670,7 +670,7 @@ CCT Increase (%)
 1 10 100
 CCT Increase (%)
 
-![Figure 3](images/Load%20Balancing%20for%20AI%20Training%20Workloads/fig_3.png)
+*[Figure 3 — see PDF]*
 
 **Figure 3: CCT increase for randomized failures with a per-link**
 **failure rate of 1%, with** _𝑮_ = **∞** **(** _**i.e.,**_ **convergence time** _>_ **CCT).**
@@ -689,7 +689,7 @@ transmitted over the failed link are silently dropped.
 In addition, all _other_ switches in the network must be
 notified of the failure so that they can update their routes and
 weighted ECMP (W-ECMP) configuration accordingly. An
-example of this process is shown in ![Figure 2](images/Load%20Balancing%20for%20AI%20Training%20Workloads/fig_2.png)
+example of this process is shown in *[Figure 2 — see PDF]*
 
 **Fig. 2 in which route**updates are propagated to all aggregation switches connected
 to the same core router and all ToRs update how they weight
@@ -724,7 +724,7 @@ Our results in Fig. 3 now show a clear winner: HOST PKT
 AR. This is because, on the timescale of a small number of
 RTTs, HOST PKT AR is able to detect the failure (via timeouts
 
-![Figure 4](images/Load%20Balancing%20for%20AI%20Training%20Workloads/fig_4.png)
+*[Figure 4 — see PDF]*
 
 **Figure 4: CCT increase over best possible under random link**
 **failures** **(1%** **fail** **rate)** **for** **host** **adaptive** **(dashed** **and** **shaded)**
@@ -780,7 +780,7 @@ converged before the collective even begins) both approaches
 perform similarly. Thus, in-switch and end-host based packet
 spraying are similar in the no-failure case and under failures
 if the routes have converged.
-**Varying failure rate;** _𝑮_ = 0 **.** Finally, ![Figure 5](images/Load%20Balancing%20for%20AI%20Training%20Workloads/fig_5.png)
+**Varying failure rate;** _𝑮_ = 0 **.** Finally, *[Figure 5 — see PDF]*
 
 **Fig. 5 plots performance**under increasing link failure rates when routing state has
 converged ( _𝐺_ = 0). We see that, as expected, performance
@@ -949,7 +949,7 @@ our packet-based leading contenders. For completeness, we
 also show the performance of HOST DR and OFAN (discussed
 in the next section).
 
-![Figure 6](images/Load%20Balancing%20for%20AI%20Training%20Workloads/fig_6.png)
+*[Figure 6 — see PDF]*
 
 **Figure 6 shows that max queue size correlates well with the**CCT metric from our earlier sections. We also see the general
 trends revealed by our theoretical analysis. Specifically,
@@ -1126,7 +1126,7 @@ their southbound path.
 
 ,
 
-![Figure 7](images/Load%20Balancing%20for%20AI%20Training%20Workloads/fig_7.png)
+*[Figure 7 — see PDF]*
 
 **Figure 7: Worst-case link overload at each stage as a function**
 **of packet size for** 1MB **and small** 32KB **messages.**
@@ -1188,7 +1188,7 @@ Number of Nodes
 
 |0.8 (%)<br>Increase<br>0.6<br>CCT<br>0.4<br>50 100 150 200 25<br>Number of Nodes
 
-![Figure 8](images/Load%20Balancing%20for%20AI%20Training%20Workloads/fig_8.png)
+*[Figure 8 — see PDF]*
 
 **Figure 8: CCT increase as the network size increases.**
 
@@ -1200,7 +1200,7 @@ Number of Nodes
 
 ~~.6~~
 
-![Figure 9](images/Load%20Balancing%20for%20AI%20Training%20Workloads/fig_9.png)
+*[Figure 9 — see PDF]*
 
 **Figure 9: CCT increase with short (20 pkt) buffers.**
 
@@ -1246,7 +1246,7 @@ AR, presumably because of its ability to more directly control
 
 Load Balancing for AI Training Workloads
 
-![Figure 10](images/Load%20Balancing%20for%20AI%20Training%20Workloads/fig_10.png)
+*[Figure 10 — see PDF]*
 
 **Figure 10: CCT increase as the message size increases.**
 
@@ -1261,7 +1261,7 @@ differences get smaller. Interestingly, we see that HOST PKT AR
 gets notably worse at very large message size. We conjecture
 that this is due to the "freezing mode" in REPS triggering as
 queues become long enough to cause a timeout [11].
-**Packet** **Size.** ![Figure 11](images/Load%20Balancing%20for%20AI%20Training%20Workloads/fig_11.png)
+**Packet** **Size.** *[Figure 11 — see PDF]*
 
 **Figure 11 repeats our default test, now with**varying packet size and two different message sizes. The
 impact of packet size as a parameter in AI training is one that,
@@ -1311,7 +1311,7 @@ CCT Increase (%)
 
 CCT Increase (%)
 
-![Figure 12](images/Load%20Balancing%20for%20AI%20Training%20Workloads/fig_12.png)
+*[Figure 12 — see PDF]*
 
 **Figure 12: CCT increase for each LB scheme with SACK-based**
 **loss recovery protocol.**
@@ -1339,7 +1339,7 @@ CCT Increase (%)
 
 CCT Increase (%)
 
-![Figure 13](images/Load%20Balancing%20for%20AI%20Training%20Workloads/fig_13.png)
+*[Figure 13 — see PDF]*
 
 **Figure 13: Packet-based LB algorithms with MSwift CCA.**
 
@@ -1423,7 +1423,7 @@ McClure et al.
 
 |Host Pkt AR 15.3<br>Switch Pkt AR 12.6<br>Ofan 0.99<br>1 3 10 30<br>CCT Increase (%)
 
-![Figure 14](images/Load%20Balancing%20for%20AI%20Training%20Workloads/fig_14.png)
+*[Figure 14 — see PDF]*
 
 **Figure 14: FSDP with Llama 7B, 70B and 405B parameters.**
 
@@ -2069,7 +2069,7 @@ schemes are still differentiated by it.
 
 **B** **Permutation CCT Lower-Bound**
 
-**Outline.** ![Figure 15](images/Load%20Balancing%20for%20AI%20Training%20Workloads/fig_15.png)
+**Outline.** *[Figure 15 — see PDF]*
 
 **Figure 15 illustrates how permutation collectives in**fat trees exhibit interesting interactions between data and ACK
 packets, as each host is at the same time a sender and a receiver.
@@ -2518,7 +2518,7 @@ Load Balancing for AI Training Workloads
 **(a) Synchronized pairs** **(b) Aggregation-edge synchro-**
 **nization**
 
-![Figure 16](images/Load%20Balancing%20for%20AI%20Training%20Workloads/fig_16.png)
+*[Figure 16 — see PDF]*
 
 **Figure 16: Synchronization mode for aggregation-edge links**
 
@@ -2786,7 +2786,7 @@ We then apply the same model. Note that the fit is not exact anymore, as traffic
 _model is only an approximation_ . Downlinks are an even coarser
 approximation,sinceeachlayermakestrafficlessperiodic. 
 
-![Figure 17](images/Load%20Balancing%20for%20AI%20Training%20Workloads/fig_17.png)
+*[Figure 17 — see PDF]*
 
 **Fig. 17 uses _𝑛_ =1 _,_ 024 hosts with a 4MB message to show the**behavior of HOST DR at scale. It shows the average queue sizes
 at each of the 5 switch queueing layers: (i) edge to aggregation
@@ -2884,7 +2884,7 @@ _𝑘_ [2] /4 flows, corresponding to the _𝑘_ [2] /4 hosts in the destination
 pod. Thus, the consolidation gain in the number of pointers is
 at least _𝑘_ [2] /(4( _𝑘_ −1)) _>𝑘_ /4 _,_ increasing with the network size.
 **Scaling** **impact** **on** **queue** **sizes.** To illustrate how consolidation improves SWITCH DR (OFAN) _vs._ HOST DR, consider
-a random permutation with inter-pod traffic only. ![Figure 18](images/Load%20Balancing%20for%20AI%20Training%20Workloads/fig_18.png)
+a random permutation with inter-pod traffic only. *[Figure 18 — see PDF]*
 
 **Figure 18
 plots the ratio of the maximum queue size of OFAN by that**of HOST DR as a function of network size, with 30 runs per
@@ -2936,7 +2936,7 @@ _._
 
 ,
 
-![Figure 19](images/Load%20Balancing%20for%20AI%20Training%20Workloads/fig_19.png)
+*[Figure 19 — see PDF]*
 
 **Figure 19: Queue models for SWITCH DR (OFAN). The average**
 **queue** **size** **at** **each** **of** **the** **5** **switch** **layers** **is** **compared** **against**

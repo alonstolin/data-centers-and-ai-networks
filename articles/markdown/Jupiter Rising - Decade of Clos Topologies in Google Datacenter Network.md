@@ -71,7 +71,7 @@ an external customer may in turn be running third party
 software that is difficult to modify. We have found that
 our data center network architecture substantially eases
 
-![Figure 1](images/Jupiter%20Rising%20-%20Decade%20of%20Clos%20Topologies%20in%20Google%20Datacenter%20Network/fig_1.png)
+*[Figure 1 — see PDF]*
 
 **Figure 1. Aggregate server traffic in our datacenter fleet.**
 
@@ -173,7 +173,7 @@ leveraging Clos topologies (Figure 2) and the then-emerging
 (ca. 2003) merchant switching silicon industry. [11] Table 1 summarizes a number of the top-level challenges we faced in
 constructing and managing building-scale network fabrics.
 
-![Figure 2](images/Jupiter%20Rising%20-%20Decade%20of%20Clos%20Topologies%20in%20Google%20Datacenter%20Network/fig_2.png)
+*[Figure 2 — see PDF]*
 
 **Figure 2. A generic three tier Clos architecture with edge switches**
 **(ToRs), aggregation blocks and spine blocks. All generations of Clos**
@@ -200,7 +200,7 @@ powerful CPUs.
 Table 2 summarizes the multiple generations of our cluster
 network. With our initial approach, Firehose 1.0 (or FH1.0), our
 nominal goal was to deliver 1Gbps of nonblocking bisection
-bandwidth to each of 10K servers. ![Figure 3](images/Jupiter%20Rising%20-%20Decade%20of%20Clos%20Topologies%20in%20Google%20Datacenter%20Network/fig_3.png)
+bandwidth to each of 10K servers. *[Figure 3 — see PDF]*
 
 **Figure 3 details the FH1.0**topology using 8x10G switches in both the aggregation blocks
 as well as the spine blocks. The ToR switch delivered 2x10GE
@@ -231,7 +231,7 @@ Our first production deployment of a custom datacenter
 cluster fabric was Firehose 1.1 (FH1.1). We had learned from
 FH1.0 not to use servers to house switch chips. Thus, we
 built custom enclosures that standardized around the compact PCI chassis each with six independent linecards and a
-dedicated Single-Board Computer (SBC) to control the linecards using PCI. See insets in ![Figure 4](images/Jupiter%20Rising%20-%20Decade%20of%20Clos%20Topologies%20in%20Google%20Datacenter%20Network/fig_4.png)
+dedicated Single-Board Computer (SBC) to control the linecards using PCI. See insets in *[Figure 4 — see PDF]*
 
 **Figure 4. The fabric chassis did**
 **Table 1. High-level summary of challenges we faced and our approach to address them.**
@@ -284,7 +284,7 @@ All ports connected to external copper cables.
 
 A major concern with FH1.1 in production was deploying
 an unproven new network technology for our mission critical applications. To mitigate risk, we deployed Firehose 1.1
-in conjunction with our legacy networks as shown in ![Figure 5](images/Jupiter%20Rising%20-%20Decade%20of%20Clos%20Topologies%20in%20Google%20Datacenter%20Network/fig_5.png)
+in conjunction with our legacy networks as shown in *[Figure 5 — see PDF]*
 
 **Figure 5.**We maintained a simple configuration; the ToR would forward default traffic to the legacy network (e.g., for connectivity to external clusters/data centers) while more specific
 intra-­cluster traffic would use the uplinks to Firehose 1.1.
@@ -311,7 +311,7 @@ Firehose 1.1 was the deployment challenges with the external copper cabling.
 We used these experiences to design Watchtower, our
 third-generation cluster fabric. The key idea was to leverage the next-generation merchant silicon switch chips,
 16x10G, to build a traditional switch chassis with a backplane.
-![Figure 6](images/Jupiter%20Rising%20-%20Decade%20of%20Clos%20Topologies%20in%20Google%20Datacenter%20Network/fig_6.png)
+*[Figure 6 — see PDF]*
 
 **Figure 6 shows the half rack Watchtower chassis along with**its internal topology and cabling. Watchtower consists of
 eight line cards, each with three switch chips. Two chips
@@ -342,7 +342,7 @@ SEPTEMBER 2016 | VOL. 59 | NO. 9 | **COMMUNICATIONS OF THE ACM** **91**
 merchant silicon building blocks. A Saturn chassis supports
 12-linecards to provide a 288 port non-blocking switch.
 These chassis are coupled with new Pluto single-chip ToR
-switches; see ![Figure 7](images/Jupiter%20Rising%20-%20Decade%20of%20Clos%20Topologies%20in%20Google%20Datacenter%20Network/fig_7.png)
+switches; see *[Figure 7 — see PDF]*
 
 **Figure 7. In the default configuration, Pluto**supports 20 servers with 4x10G provisioned to the cluster
 fabric for an average bandwidth of 2 Gbps for each server.
@@ -373,7 +373,7 @@ technology would need to be introduced into the network
 _in situ_ . Hence, the fabric must support heterogeneous
 hardware and speeds.
 
-At Jupiter scale, we had to design the fabric through individual building blocks, see ![Figure 8](images/Jupiter%20Rising%20-%20Decade%20of%20Clos%20Topologies%20in%20Google%20Datacenter%20Network/fig_8.png)
+At Jupiter scale, we had to design the fabric through individual building blocks, see *[Figure 8 — see PDF]*
 
 **Figure 8. Our unit of deployment**is a Centauri chassis, a 4RU chassis housing two linecards,
 each with two switch chips with 16x40G ports controlled by
@@ -404,12 +404,12 @@ redundant 10G links. The dual redundancy aids fast
 
 **Figure 8. Building blocks used in the Jupiter topology.**
 
-![Figure 9](images/Jupiter%20Rising%20-%20Decade%20of%20Clos%20Topologies%20in%20Google%20Datacenter%20Network/fig_9.png)
+*[Figure 9 — see PDF]*
 
 **Figure 9. Jupiter Middle blocks housed in racks.**
 
 reconvergence for the common case of single link failure
-![Figure 10](images/Jupiter%20Rising%20-%20Decade%20of%20Clos%20Topologies%20in%20Google%20Datacenter%20Network/fig_10.png)
+*[Figure 10 — see PDF]*
 
 **Figure 10. Two-stage fabrics used for inter-cluster and intra-campus**
 or maintenance. Each aggregation block exposes up to **connectivity.**
@@ -546,10 +546,10 @@ Firepath implements centralized topology state distribution, but distributed for
 two main components. A Firepath client runs on each fabric
 switch, and a set of redundant Firepath masters run on a
 selected subset of spine switches. Clients communicate
-with the elected master over the CPN. ![Figure 11](images/Jupiter%20Rising%20-%20Decade%20of%20Clos%20Topologies%20in%20Google%20Datacenter%20Network/fig_11.png)
+with the elected master over the CPN. *[Figure 11 — see PDF]*
 
 **Figure 11 shows**the interaction between the Firepath client and the rest of
-the switch stack. ![Figure 12](images/Jupiter%20Rising%20-%20Decade%20of%20Clos%20Topologies%20in%20Google%20Datacenter%20Network/fig_12.png)
+the switch stack. *[Figure 12 — see PDF]*
 
 **Figure 12 illustrates the protocol message**exchange between various routing components.
 

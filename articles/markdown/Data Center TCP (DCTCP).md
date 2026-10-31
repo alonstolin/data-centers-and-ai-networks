@@ -104,7 +104,7 @@ DCTCP combines Explicit Congestion Notification (ECN) with
 a novel control scheme at the sources. It extracts multibit feedback on congestion in the network from the single bit stream of
 ECN marks. Sources estimate the fraction of marked packets, and
 use that estimate as a signal for the extent of congestion. This allows DCTCP to operate with very low buffer occupancies while
-still achieving high throughput. ![Figure 1](images/Data%20Center%20TCP%20%28DCTCP%29/fig_1.png)
+still achieving high throughput. *[Figure 1 — see PDF]*
 
 **Figure 1 illustrates the effectiveness of DCTCP in achieving full throughput while taking up a very**small footprint in the switch packet buffer, as compared to TCP.
 
@@ -134,7 +134,7 @@ congestion control protocols that attempt to control queue lengths:
 sign of growing queueing delay, and hence of congestion. These
 protocols rely heavily on accurate RTT measurement, which is susceptible to noise in the very low latency environment of data centers. Small noisy fluctuations of latency become indistinguishable from congestion and the algorithm can over-react. (ii) Active
 
-![Figure 2](images/Data%20Center%20TCP%20%28DCTCP%29/fig_2.png)
+*[Figure 2 — see PDF]*
 
 **Figure 2:** **The partition/aggregate design pattern**
 
@@ -184,7 +184,7 @@ percentiles for worker latencies matter. For example, high latencies at the 99 _
 (or both) for at least 1 in 1000 responses, potentially impacting
 large numbers of users who then may not come back. Therefore,
 latencies are typically tracked to 99 _._ 9 _[th]_ percentiles, and deadlines
-are associated with high percentiles. ![Figure 8](images/Data%20Center%20TCP%20%28DCTCP%29/fig_8.png)
+are associated with high percentiles. *[Figure 8 — see PDF]*
 
 **Figure 8 shows a screen shot**from a production monitoring tool, tracking high percentiles.
 
@@ -228,7 +228,7 @@ secs
 
 secs
 
-![Figure 3](images/Data%20Center%20TCP%20%28DCTCP%29/fig_3.png)
+*[Figure 3 — see PDF]*
 
 **Figure 3:** **Time** **between** **arrival** **of** **new** **work** **for** **the** **Aggrega-**
 **tor** **(queries)** **and** **between** **background** **flows** **between** **servers**
@@ -273,7 +273,7 @@ queries at mid-level aggregators. The size of the query flows is extremely regul
 and responses from workers to MLAs being 1.6 to 2KB.
 
 **Background Traffic.** Concurrent with the query traffic is a complex mix of _background traffic_, consisting of both large and small
-flows. ![Figure 4](images/Data%20Center%20TCP%20%28DCTCP%29/fig_4.png)
+flows. *[Figure 4 — see PDF]*
 
 **Figure 4 presents the PDF of background flow size, illustrating how most background flows are small, but most of the bytes in**background traffic are part of large flows. Key among background
 flows are large, 1MB to 50MB, _update_ flows that copy fresh data to
@@ -318,7 +318,7 @@ Concurrent Connections
 
 Concurrent Connections
 
-![Figure 5](images/Data%20Center%20TCP%20%28DCTCP%29/fig_5.png)
+*[Figure 5 — see PDF]*
 
 **Figure 5:** **Distribution of number of concurrent connections.**
 
@@ -365,7 +365,7 @@ Key:
 
 = large flow = small flow
 
-![Figure 6](images/Data%20Center%20TCP%20%28DCTCP%29/fig_6.png)
+*[Figure 6 — see PDF]*
 
 **Figure 6:** **Three ways in which flows interact on a multi-ported**
 **switch that result in performance problems.**
@@ -441,7 +441,7 @@ do happen in production environments and they matter — degrading both performa
 problem is that a response that incurs incast will almost certainly
 miss the aggregator deadline and be left out of the final results.
 
-We capture incast instances via packet-level monitoring. ![Figure 7](images/Data%20Center%20TCP%20%28DCTCP%29/fig_7.png)
+We capture incast instances via packet-level monitoring. *[Figure 7 — see PDF]*
 
 **Figure 7 shows timeline of an observed instance. Since the size of**each individual response in this application is only 2KB (2 packets) [1], loss of a packet almost invariably results in a TCP time out.
 In our network stack, the _RTO_ min is set to 300ms. Thus, whenever
@@ -494,7 +494,7 @@ a TCP ACK from the aggregator labeled as "RTT+Queue" in
 **Figure 7. We measured the intra-rack RTT to approximately 100 _µ_ s in**absence of queuing, while inter-rack RTTs are under 250 _µ_ s. This
 means "RTT+queue" is a good measure of the the length of the
 packet queue headed to the aggregator during the times at which
-the aggregator is collecting responses. The CDF in ![Figure 9](images/Data%20Center%20TCP%20%28DCTCP%29/fig_9.png)
+the aggregator is collecting responses. The CDF in *[Figure 9 — see PDF]*
 
 **Figure 9 is the**distribution of queue length for 19K measurements. It shows that
 90% of the time a response packet sees _<_ 1ms of queueing, and
@@ -570,7 +570,7 @@ it receives ECN notification. In effect, TCP reacts to presence of
 
 ACK with ECN=1
 
-![Figure 10](images/Data%20Center%20TCP%20%28DCTCP%29/fig_10.png)
+*[Figure 10 — see PDF]*
 
 **Figure 10:** **Two state ACK generation state machine.**
 
@@ -720,7 +720,7 @@ The most important of these is the amplitude of oscillations, which
 quantifies how well DCTCP is able to maintain steady queues, due
 to its gentle proportionate reaction to congestion indications.
 
-![Figure 11](images/Data%20Center%20TCP%20%28DCTCP%29/fig_11.png)
+*[Figure 11 — see PDF]*
 
 **Figure 11: Window size of a single DCTCP sender, and the queue size process.**
 
@@ -889,7 +889,7 @@ $(
 **rameters are set to** _K_ = 40 **packets, and** _g_ = 1 _/_ 16 **.**
 
 We have evaluated the accuracy of the above results using NS-2
-simulations in a variety of scenarios. ![Figure 12](images/Data%20Center%20TCP%20%28DCTCP%29/fig_12.png)
+simulations in a variety of scenarios. *[Figure 12 — see PDF]*
 
 **Figure 12 shows the results**for _N_ = 2 _,_ 10 _,_ and 40 long-lived DCTCP flows sharing a 10Gbps
 bottleneck, with a 100 _µs_ round-trip time. As seen, the analysis
@@ -1000,7 +1000,7 @@ length at the receiver's switch port every 125ms. We repeat the experiment for b
 as recommended before. For TCP, the switch operates in standard,
 drop-tail mode.
 
-We find that both TCP and DCTCP achieve the maximum throughput of 0.95Gbps, and link utilization is nearly 100%. The key difference is queue length at the receiver interface. The CDF in ![Figure 13](images/Data%20Center%20TCP%20%28DCTCP%29/fig_13.png)
+We find that both TCP and DCTCP achieve the maximum throughput of 0.95Gbps, and link utilization is nearly 100%. The key difference is queue length at the receiver interface. The CDF in *[Figure 13 — see PDF]*
 
 **Figure 13 shows that DCTCP queue length is stable around 20 packets**(i.e., equal to _K_ + _n_, as predicted in _§_ 3), while the TCP queue
 length is 10X larger and varies widely. In fact, Figure 1 is based
@@ -1014,7 +1014,7 @@ maintains a stable, low queue length.
 
 We also tried various other values of _K_, and found that the performance is insensitive to value of _K_ at 1Gbps, even for values
 as low as _K_ = 5. We then repeated the experiment with 10Gbps
-link. ![Figure 14](images/Data%20Center%20TCP%20%28DCTCP%29/fig_14.png)
+link. *[Figure 14 — see PDF]*
 
 **Figure 14 shows the throughput results. Once the value of**
 
@@ -1024,7 +1024,7 @@ link. ![Figure 14](images/Data%20Center%20TCP%20%28DCTCP%29/fig_14.png)
 
 Queue Length (KB)
 
-![Figure 15](images/Data%20Center%20TCP%20%28DCTCP%29/fig_15.png)
+*[Figure 15 — see PDF]*
 
 **Figure 15:** **DCTCP versus RED at 10Gbps**
 
@@ -1193,7 +1193,7 @@ K
 
 **Number of Servers**
 
-![Figure 16](images/Data%20Center%20TCP%20%28DCTCP%29/fig_16.png)
+*[Figure 16 — see PDF]*
 
 **Figure 16:** **Convergence test**
 
@@ -1239,7 +1239,7 @@ R1
 
 S2: 20 senders R2: 20 receivers
 
-![Figure 17](images/Data%20Center%20TCP%20%28DCTCP%29/fig_17.png)
+*[Figure 17 — see PDF]*
 
 **Figure 17:** **Multi-hop topology**
 
@@ -1306,11 +1306,11 @@ solve the incast problem? To answer this question, we repeated
 the above experiment with dynamic buffering enabled. Given the
 poor performance of TCP with 300ms timeout (top curve in Figure 18(a)), we use 10ms timeout here and for the rest of the paper.
 
-![Figure 18](images/Data%20Center%20TCP%20%28DCTCP%29/fig_18.png)
+*[Figure 18 — see PDF]*
 
 **Figure 18: DCTCP performs better than TCP and then con- verges at 35 senders (log scale on Y axis; 90% confidence inter- vals for the means are too small to be visible).**
 
-![Figure 19](images/Data%20Center%20TCP%20%28DCTCP%29/fig_19.png)
+*[Figure 19 — see PDF]*
 
 **Figure 19 shows that DCTCP no longer suffers incast timeouts**even when the number of servers grows to 40. On the other hand,
 TCP continues to suffer from incast timeouts, although the dynamic
@@ -1370,7 +1370,7 @@ Completion time of short transfer (ms)
 gets congested. But what happens when there are multiple simultaneous incasts going on, as occurs in the production clusters? To
 investigate, we use the same setup as before, except all 41 machines
 participate. Each machine requests 25KB of data from the remaining 40 machines (total 1MB). In other words, 40 incast experiments
-happen all at once. The CDF of the response time is shown in ![Figure 20](images/Data%20Center%20TCP%20%28DCTCP%29/fig_20.png)
+happen all at once. The CDF of the response time is shown in *[Figure 20 — see PDF]*
 
 **Figure 20. We see that DCTCP keeps the demand on buffer space low**enough that the dynamic buffering is able to cover all requests for
 memory and DCTCP suffers no timeouts at all. TCP, on the other
@@ -1403,7 +1403,7 @@ requests 20KB chunks of data from the third sender. The sender responds immediat
 as it finishes receiving data. All communication is over long-lived
 connections, so there is no three-way handshake for each request.
 
-![Figure 21](images/Data%20Center%20TCP%20%28DCTCP%29/fig_21.png)
+*[Figure 21 — see PDF]*
 
 **Figure 21 shows the CDF of request completion times for 1000**20KB transfers. DCTCP's completion time (median delay < 1 ms)
 is much lower than TCP (median delay 19ms). No flows suffered
@@ -1485,7 +1485,7 @@ measurements of our cluster show happens 25% of the time ( _§_ 2).
 other workers for updates), so using two independent distributions
 instead of a joint distribution is an approximation.
 
-![Figure 22](images/Data%20Center%20TCP%20%28DCTCP%29/fig_22.png)
+*[Figure 22 — see PDF]*
 
 **Figure 22: Completion time of background traffic.** **Note the log**
 **scale on the Y axis.**
@@ -1541,7 +1541,7 @@ Figure 22 shows the mean and 95th percentile of completion delay for background 
 with either protocol in this experiment. Thus, the _lower latency for_
 _short-messages is due to DCTCP's amelioration of queue buildup._
 
-![Figure 23](images/Data%20Center%20TCP%20%28DCTCP%29/fig_23.png)
+*[Figure 23 — see PDF]*
 
 **Figure 23 shows query completion time statistics. DCTCP performs better than TCP, especially at the tail of the distribution. The**reason is a combination of timeouts and high queueing delay. With
 TCP, 1.15% of the queries suffer from timeout(s). No queries suffer
@@ -1577,7 +1577,7 @@ previously at 10Gbps: after experimentation, we found that setting
 _min_ _ _th_ = 20 _,_ _max_ _ _th_ = 60 and using [7] for the remaining
 parameters gave the best performance.
 
-![Figure 24](images/Data%20Center%20TCP%20%28DCTCP%29/fig_24.png)
+*[Figure 24 — see PDF]*
 
 **Figure 24 shows the 95th percentile of response times for the**short messages (100KB-1MB) and the query traffic (mean and other
 percentiles are qualitatively similar). The results show DCTCP

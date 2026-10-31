@@ -25,7 +25,7 @@ Proceedings of the 2nd Workshop on Networks for AI Computing, 81-88
 
 **DNN Model Architecture (Simplified)**
 
-![](images/Collectives-plain/Collectives-plain.pdf-3-0.png)
+*(see PDF for figure)*
 
 |3|5|2|4|
 |---|---|---|---|
@@ -90,20 +90,20 @@ Proceedings of the 2nd Workshop on Networks for AI Computing, 81-88
 
 ##### Training on one GPU
 
-![](images/Collectives-plain/Collectives-plain.pdf-4-0.png)
+*(see PDF for figure)*
 ##### Data Parallelism
 
-![](images/Collectives-plain/Collectives-plain.pdf-5-0.png)
+*(see PDF for figure)*
 ##### Tensor Parallelism (column)
 
-![](images/Collectives-plain/Collectives-plain.pdf-6-0.png)
+*(see PDF for figure)*
 
-![](images/Collectives-plain/Collectives-plain.pdf-6-1.png)
+*(see PDF for figure)*
 ##### Tensor Parallelism (row)
 
-![](images/Collectives-plain/Collectives-plain.pdf-7-0.png)
+*(see PDF for figure)*
 
-![](images/Collectives-plain/Collectives-plain.pdf-7-1.png)
+*(see PDF for figure)*
 **Sharding**
 
    - **Sharding:** Dividing a tensor into shards
@@ -114,7 +114,7 @@ Proceedings of the 2nd Workshop on Networks for AI Computing, 81-88
 
 Shard(1) Shard(0) Partial(SUM)
 
-![](images/Collectives-plain/Collectives-plain.pdf-8-0.png)
+*(see PDF for figure)*
 
 - **1D TP:** Partition a weight
 matrix along one dimension
@@ -188,13 +188,13 @@ Device 2
 ➢ Converts the output sharding of layer ℓ to the input sharding of layer ℓ+ 1
 ➢ Performed with collective operations.
 
-![](images/Collectives-plain/Collectives-plain.pdf-9-0.png)
+*(see PDF for figure)*
 
-![](images/Collectives-plain/Collectives-plain.pdf-9-3.png)
+*(see PDF for figure)*
 
-![](images/Collectives-plain/Collectives-plain.pdf-9-4.png)
+*(see PDF for figure)*
 
-![](images/Collectives-plain/Collectives-plain.pdf-9-5.png)
+*(see PDF for figure)*
 
 |37|23|44|26|
 |---|---|---|---|
@@ -236,15 +236,15 @@ Device 2
 
 4
 
-![](images/Collectives-plain/Collectives-plain.pdf-9-1.png)
+*(see PDF for figure)*
 
-![](images/Collectives-plain/Collectives-plain.pdf-9-2.png)
+*(see PDF for figure)*
 ##### Pipeline Parallelism
 
 ##### Mixture of Expert
 
-![](images/Collectives-plain/Collectives-plain.pdf-11-0.png)
-![](images/Collectives-plain/Collectives-plain.pdf-12-0.png)
+*(see PDF for figure)*
+*(see PDF for figure)*
 ## Overview of Collectives
 
 - Reduce: Aggregates data across devices to a single device.
@@ -283,7 +283,7 @@ distributed across GPUs, loss values are
 reduced to calculate metrics like
 perplexity
 
-![](images/Collectives-plain/Collectives-plain.pdf-14-0.png)
+*(see PDF for figure)*
 ## All-Reduce
 
 - **What It Does** :
@@ -303,9 +303,9 @@ have the same gradient values for consistent weight updates.
 gradients computed locally are all-reduced across devices to
 synchronize updates.
 
-![](images/Collectives-plain/Collectives-plain.pdf-15-0.png)
+*(see PDF for figure)*
 
-![](images/Collectives-plain/Collectives-plain.pdf-15-1.png)
+*(see PDF for figure)*
 ## Gather
 
 - **What It Does** :
@@ -326,7 +326,7 @@ layer).
 transformers computed on separate GPUs
 into a unified tensor.
 
-![](images/Collectives-plain/Collectives-plain.pdf-16-0.png)
+*(see PDF for figure)*
 ## All-Gather
 
 - **What It Does** :
@@ -348,9 +348,9 @@ transformer across GPUs, activations from
 one GPU must be gathered by all others to
 continue computation.
 
-![](images/Collectives-plain/Collectives-plain.pdf-17-0.png)
+*(see PDF for figure)*
 
-![](images/Collectives-plain/Collectives-plain.pdf-17-1.png)
+*(see PDF for figure)*
 ## Scatter
 
 - **What It Does** :
@@ -371,7 +371,7 @@ preprocessing or training.
 into smaller chunks and scattering
 them to GPUs for parallel processing.
 
-![](images/Collectives-plain/Collectives-plain.pdf-18-0.png)
+*(see PDF for figure)*
 ## Reduce-Scatter
 
 - **What It Does** :
@@ -393,8 +393,8 @@ gradients are reduced and scattered to
 ensure only the necessary updates are
 shared with each GPU.
 
-![](images/Collectives-plain/Collectives-plain.pdf-19-0.png)
-![](images/Collectives-plain/Collectives-plain.pdf-20-0.png)
+*(see PDF for figure)*
+*(see PDF for figure)*
 ## Reduce-Scatter
 
 +
@@ -403,9 +403,9 @@ shared with each GPU.
 
 =
 
-![](images/Collectives-plain/Collectives-plain.pdf-20-1.png)
+*(see PDF for figure)*
 
-![](images/Collectives-plain/Collectives-plain.pdf-20-2.png)
+*(see PDF for figure)*
 ## All-to-All
 
 - **What It Does** :
@@ -427,9 +427,9 @@ devices during tensor-parallel or mixture-of-experts
 specific experts are routed to corresponding GPUs
 using an all-to-all communication step.
 
-![](images/Collectives-plain/Collectives-plain.pdf-21-0.png)
+*(see PDF for figure)*
 
-![](images/Collectives-plain/Collectives-plain.pdf-21-1.png)
+*(see PDF for figure)*
 ## Summary of Collectives
 
 - Recap of collectives:
@@ -443,9 +443,9 @@ using an all-to-all communication step.
 - Contribution to scalability and efficiency in
 LLM training.
 
-![](images/Collectives-plain/Collectives-plain.pdf-22-0.png)
+*(see PDF for figure)*
 
-![](images/Collectives-plain/Collectives-plain.pdf-22-1.png)
+*(see PDF for figure)*
 ###### Introduction to Algorithmic Implementation
 
 - The performance of collective operations depends significantly on the algorithm
@@ -470,7 +470,7 @@ to Paper: https://web.cels.anl.gov/~thakur/papers/ijhpca-coll.pdf).
 
 ### Key Parameters in Collective Operations
 
-![](images/Collectives-plain/Collectives-plain.pdf-24-0.png)
+*(see PDF for figure)*
 
 • Definition: In a complete graph, all nodes are directly connected to each other.
 • Time Complexity:𝑂(𝛼+ 𝛽𝑛), as data can be shared in constant time between
@@ -488,16 +488,16 @@ End
 
 Complete graph
 
-![](images/Collectives-plain/Collectives-plain.pdf-25-0.png)
+*(see PDF for figure)*
 
-![](images/Collectives-plain/Collectives-plain.pdf-25-1.png)
+*(see PDF for figure)*
 
-![](images/Collectives-plain/Collectives-plain.pdf-25-2.png)
+*(see PDF for figure)*
 ## Parameter Server
 
-![](images/Collectives-plain/Collectives-plain.pdf-26-0.png)
+*(see PDF for figure)*
 
-![](images/Collectives-plain/Collectives-plain.pdf-26-1.png)
+*(see PDF for figure)*
 ## Ring Algorithm for All-Reduce
 
 - Description: The ring algorithm reduces data in a
@@ -514,10 +514,10 @@ with its neighbor.
 
 - Message/BW Complexity: 𝑂(𝑝𝑛).
 
-![](images/Collectives-plain/Collectives-plain.pdf-27-0.png)
+*(see PDF for figure)*
 ## Ring Algorithm for All-Reduce
 
-![](images/Collectives-plain/Collectives-plain.pdf-28-0.png)
+*(see PDF for figure)*
 
 ## Ring Algorithm for All-Reduce
 
@@ -525,68 +525,68 @@ Reduce-Scatter
 
 All-gather
 
-![](images/Collectives-plain/Collectives-plain.pdf-29-0.png)
+*(see PDF for figure)*
 
-![](images/Collectives-plain/Collectives-plain.pdf-29-1.png)
+*(see PDF for figure)*
 
-![](images/Collectives-plain/Collectives-plain.pdf-29-2.png)
+*(see PDF for figure)*
 
-![](images/Collectives-plain/Collectives-plain.pdf-29-3.png)
-![](images/Collectives-plain/Collectives-plain.pdf-30-0.png)
+*(see PDF for figure)*
+*(see PDF for figure)*
 
 Sequential and Parallel Algorithms and Data Structures: The Basic Toolbox.
 Peter Sanders, Kurt Mehlhorn, Martin Dietzfelbinger, Roman Dementiev. 2019
 
 Selected Topics in Networking – Chen Avin
 
-![](images/Collectives-plain/Collectives-plain.pdf-31-0.png)
+*(see PDF for figure)*
 
-![](images/Collectives-plain/Collectives-plain.pdf-31-1.png)
+*(see PDF for figure)*
 
 Missing, reduce-scatter!!!
 
 ## Recursive Doubling for All-Gather
 
-![](images/Collectives-plain/Collectives-plain.pdf-32-0.png)
+*(see PDF for figure)*
 
-![](images/Collectives-plain/Collectives-plain.pdf-32-1.png)
+*(see PDF for figure)*
 ## 𝑝 Bruck Algorithm for All-Gather (any )
 
-![](images/Collectives-plain/Collectives-plain.pdf-33-1.png)
+*(see PDF for figure)*
 
-![](images/Collectives-plain/Collectives-plain.pdf-33-0.png)
+*(see PDF for figure)*
 #### Bruck Algorithm for All-2-All (any 𝑝)
 
-![](images/Collectives-plain/Collectives-plain.pdf-34-1.png)
+*(see PDF for figure)*
 
-![](images/Collectives-plain/Collectives-plain.pdf-34-0.png)
+*(see PDF for figure)*
 ##### Recursive halving Algorithm
 
-![](images/Collectives-plain/Collectives-plain.pdf-35-0.png)
+*(see PDF for figure)*
 log 𝑝
 
-![](images/Collectives-plain/Collectives-plain.pdf-36-0.png)
+*(see PDF for figure)*
 
 (log 𝑝)(𝛼+ 𝛽𝑛)
 
-![](images/Collectives-plain/Collectives-plain.pdf-37-0.png)
+*(see PDF for figure)*
 
 ⟹
 
-![](images/Collectives-plain/Collectives-plain.pdf-37-1.png)
+*(see PDF for figure)*
 
-![](images/Collectives-plain/Collectives-plain.pdf-37-2.png)
+*(see PDF for figure)*
 
-![](images/Collectives-plain/Collectives-plain.pdf-37-3.png)
+*(see PDF for figure)*
 
-![](images/Collectives-plain/Collectives-plain.pdf-37-4.png)
-![](images/Collectives-plain/Collectives-plain.pdf-38-0.png)
+*(see PDF for figure)*
+*(see PDF for figure)*
 
-![](images/Collectives-plain/Collectives-plain.pdf-38-1.png)
+*(see PDF for figure)*
 
-![](images/Collectives-plain/Collectives-plain.pdf-38-2.png)
+*(see PDF for figure)*
 
-![](images/Collectives-plain/Collectives-plain.pdf-38-3.png)
+*(see PDF for figure)*
 ##### Discussion
 
 distributed machine learning
@@ -607,4 +607,4 @@ distributed machine learning
 
 - Questions?
 
-![](images/Collectives-plain/Collectives-plain.pdf-39-0.png)
+*(see PDF for figure)*

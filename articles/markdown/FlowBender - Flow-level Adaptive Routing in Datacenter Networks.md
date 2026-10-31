@@ -596,7 +596,7 @@ it pre-negotiates multiple routes for every connection it unnecessarily incurs h
 _4.2.1_ _Methodology_
 
 **Topology** : We use ns-3 [4] simulations to evaluate FlowBender on production-like workloads. We model the network topology and the traffic after typical production deployments. We simulate a fat-tree network [15] analogous to
-that depicted in ![Figure 2](images/FlowBender%20-%20Flow-level%20Adaptive%20Routing%20in%20Datacenter%20Networks/fig_2.png)
+that depicted in *[Figure 2 — see PDF]*
 
 **Figure 2. The network has 128 servers, organized into four pods, each having four Top of the Rack (ToR)**and four aggregation switches, with eight core switches interconnecting the pods (overall oversubscription factor of four
 from servers to core switches). Because 10 Gbps ethernet is
@@ -728,7 +728,7 @@ mean adjusted to produce the desired load. We vary the
 load (reported relative to the bisectional bandwidth), and
 compare the different schemes in terms of the mean and the
 99 _[th]_ _percentile_ latency.
-We show the means in ![Figure 3](images/FlowBender%20-%20Flow-level%20Adaptive%20Routing%20in%20Datacenter%20Networks/fig_3.png)
+We show the means in *[Figure 3 — see PDF]*
 
 **Figure 3 and the 99 _[th]_ percentile latencies in Figure 4, with each being binned across flow sizes:**(a) less than or equal to 10KB, (b) greater than 10KB but
 less than or equal to 128KB, (c) greater than 128KB but
@@ -739,7 +739,7 @@ along the Y-axis. Across all of these loads, we see that all
 the three schemes i.e., DeTail, FlowBender and RPS _sub-_
 _stantially_ outperform ECMP. The high level takeaway from
 
-![Figure 4](images/FlowBender%20-%20Flow-level%20Adaptive%20Routing%20in%20Datacenter%20Networks/fig_4.png)
+*[Figure 4 — see PDF]*
 
 **Figure 4: All-to-All workloads: Tail Latency Norm. to ECMP**
 
@@ -791,7 +791,7 @@ of two in the worst case (fan-in degree of 32), and closely
 matches the performance of other expensive schemes such
 as DeTail and RPS.
 
-![Figure 5](images/FlowBender%20-%20Flow-level%20Adaptive%20Routing%20in%20Datacenter%20Networks/fig_5.png)
+*[Figure 5 — see PDF]*
 
 **Figure 5: Partition Aggregate Workloads: Avg. Job Completion Time**
 
@@ -806,7 +806,7 @@ default setting i.e., _N_ = 1. As expected, as _N_ increases,
 FlowBender's performance suffers as its response slows down
 with higher values of _N_ . Nevertheless, the performance variation to _N_ is _marginal_, and FlowBender exhibits robust performance across a broad range of values.
 
-![Figure 6](images/FlowBender%20-%20Flow-level%20Adaptive%20Routing%20in%20Datacenter%20Networks/fig_6.png)
+*[Figure 6 — see PDF]*
 
 **Figure 6: Sensitivity to N**
 
@@ -855,7 +855,7 @@ for _T_ = 5%. Increasing _T_ beyond 5% slows down FlowBender's response, causing
 Overall, similar to _N_, we see that FlowBender's performance
 is relatively robust across a wide range of _T_ values.
 
-![Figure 7](images/FlowBender%20-%20Flow-level%20Adaptive%20Routing%20in%20Datacenter%20Networks/fig_7.png)
+*[Figure 7 — see PDF]*
 
 **Figure 7: Sensitivity to T**
 
@@ -895,7 +895,7 @@ In Figure 8, we show the _mean_, the 99 _[th]_ percentile, and
 the 99 _._ 9 _[th]_ percentile latencies along the X-axis, and FlowBender's completion time normalized to that of ECMP along
 the Y-axis. We use default parameter settings for FlowBender i.e., _N_ = 1 and _T_ = 5%. FlowBender improves the 99 _[th]_
 
-![Figure 8](images/FlowBender%20-%20Flow-level%20Adaptive%20Routing%20in%20Datacenter%20Networks/fig_8.png)
+*[Figure 8 — see PDF]*
 
 **Figure 8: FlowBender's Latency Reduction at 20, 40, and 60% load (Bisectional)**
 

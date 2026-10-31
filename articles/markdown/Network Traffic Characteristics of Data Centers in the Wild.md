@@ -375,7 +375,7 @@ the data center are the edge tier, which consists of the Top-of-Rack
 switches that connect the servers to the data center's network fabric;
 the aggregation tier, which consists of devices that interconnect the
 
-![Figure 1](images/Network%20Traffic%20Characteristics%20of%20Data%20Centers%20in%20the%20Wild/fig_1.png)
+*[Figure 1 — see PDF]*
 
 **Figure 1:** **Canonical 3-Tier data center topology.**
 
@@ -416,7 +416,7 @@ NCP
 
 AFS
 
-![Figure 2](images/Network%20Traffic%20Characteristics%20of%20Data%20Centers%20in%20the%20Wild/fig_2.png)
+*[Figure 2 — see PDF]*
 
 **Figure 2:** **Classification of network traffic to application using**
 **Bro-Id.** **Each of the sniffers sees a very** **different mix of appli-**
@@ -535,7 +535,7 @@ from the enterprise, namely, PRV21, PRV22, and PRV23, where
 the number of active flows is between 1,000 and 5,000 about 90%
 of the time.
 
-![Figure 3](images/Network%20Traffic%20Characteristics%20of%20Data%20Centers%20in%20the%20Wild/fig_3.png)
+*[Figure 3 — see PDF]*
 
 **Figure 3: CDF of the distribution of the number of flows at the edge switch (a) and the arrival rate for flows (b) in EDU1, EDU2, EDU3, and PRV2.**
 
@@ -563,7 +563,7 @@ to be generally shorter and smaller than the flows in the other data
 centers. We believe this is due to the nature of the predominant
 application that accounts for over 70% of the bytes at the switch.
 
-![Figure 4](images/Network%20Traffic%20Characteristics%20of%20Data%20Centers%20in%20the%20Wild/fig_4.png)
+*[Figure 4 — see PDF]*
 
 **Figure 4: CDF of the distribution of the flow sizes (a) and of flow lengths (b) in PRV2, EDU1, EDU2, and EDU3.**
 
@@ -622,7 +622,7 @@ of continually maintaining them.
 ### 5.2 Packet-Level Communication Character-
 **istics**
 We first examine the temporal characteristics of the packet traces.
-![Figure 6](images/Network%20Traffic%20Characteristics%20of%20Data%20Centers%20in%20the%20Wild/fig_6.png)
+*[Figure 6 — see PDF]*
 
 **Figure 6 shows a time-series of packet arrivals observed at one of**the sniffers in PRV2, and the packet arrivals exhibit an ON/OFF
 pattern at both 15ms and 100ms granularities. We observed similar
@@ -754,7 +754,7 @@ Flow Lengths (in usecs)
 
 Packet Size (in Bytes)
 
-![Figure 5](images/Network%20Traffic%20Characteristics%20of%20Data%20Centers%20in%20the%20Wild/fig_5.png)
+*[Figure 5 — see PDF]*
 
 **Figure 5:** **Distribution of packet size in the various networks.**
 
@@ -852,7 +852,7 @@ Length of ON−Periods (in microseconds)
 
 Length of OFF−Periods(in milliseconds) x 10 [4]
 
-![Figure 7](images/Network%20Traffic%20Characteristics%20of%20Data%20Centers%20in%20the%20Wild/fig_7.png)
+*[Figure 7 — see PDF]*
 
 **Figure 7: CDF of the distribution of the arrival times of packets**
 **at 3 of the switches in PRV2.** **The figure contains best fit curve**
@@ -945,7 +945,7 @@ Edge Link Utilization
 
 Data Centers
 
-![Figure 8](images/Network%20Traffic%20Characteristics%20of%20Data%20Centers%20in%20the%20Wild/fig_8.png)
+*[Figure 8 — see PDF]*
 
 **Figure 8:** **The ratio** **of Extra-Rack** **to Intra-Rack** **traffic in the**
 **data centers.**
@@ -986,7 +986,7 @@ we aim to answer the following questions: (1) Do some links frequently appear as
 a layer change over time? (3) Do hot-spot links experience high
 packet loss?
 
-![Figure 9](images/Network%20Traffic%20Characteristics%20of%20Data%20Centers%20in%20the%20Wild/fig_9.png)
+*[Figure 9 — see PDF]*
 
 **Figure 9:** **CDF of link utilizations (percentage) in each layer.**
 
@@ -1171,7 +1171,7 @@ Size of Agg Discards (in Bits)
 
 Size of Core Discards (in Bits)
 
-![Figure 10](images/Network%20Traffic%20Characteristics%20of%20Data%20Centers%20in%20the%20Wild/fig_10.png)
+*[Figure 10 — see PDF]*
 
 **Figure 10:** **A CDF of the fraction of times that links in the var-**
 **ious layers are hot-spots.**
@@ -1195,7 +1195,7 @@ can be utilized to offload some traffic from the hot-spot links.
 _6.3.2_ _Hot-spots and Discards_
 Finally, we study loss rates across links in the data centers. In
 
-![Figure 11](images/Network%20Traffic%20Characteristics%20of%20Data%20Centers%20in%20the%20Wild/fig_11.png)
+*[Figure 11 — see PDF]*
 
 **Figure 11:** **A CDF of the number of bits lost across the various**
 **layers.**
@@ -1220,7 +1220,7 @@ whether or not link utilizations are stable and predictable.
 
 We examined the link utilization over a one week period and
 found that diurnal patterns exist in all data centers. As an example,
-![Figure 14](images/Network%20Traffic%20Characteristics%20of%20Data%20Centers%20in%20the%20Wild/fig_14.png)
+*[Figure 14 — see PDF]*
 
 **Figure 14 presents the utilization for input and output traffic at a**
 276
@@ -1303,7 +1303,7 @@ Utilization of Agg Links with Discards
 
 Time (in 5 minutes Intervals)
 
-![Figure 13](images/Network%20Traffic%20Characteristics%20of%20Data%20Centers%20in%20the%20Wild/fig_13.png)
+*[Figure 13 — see PDF]*
 
 **Figure 13:** **Time series of the fraction of links that are hot-spots**
 **in the core layer for CLD1, CLD2, and CLD5.**
@@ -1366,7 +1366,7 @@ centers. The variation in link utilization is most significant in the
 core of the data centers and quite moderate in other layers of the
 data centers.
 
-![Figure 12](images/Network%20Traffic%20Characteristics%20of%20Data%20Centers%20in%20the%20Wild/fig_12.png)
+*[Figure 12 — see PDF]*
 
 **Figure 12:** **A CDF of the utilization of links with discards.**
 
@@ -1449,7 +1449,7 @@ Max-Trough for Agg Link
 
 Max-Trough for Core Link
 
-![Figure 15](images/Network%20Traffic%20Characteristics%20of%20Data%20Centers%20in%20the%20Wild/fig_15.png)
+*[Figure 15 — see PDF]*
 
 **Figure 15:** **Difference between the peak and trough utilization.**
 
@@ -1476,7 +1476,7 @@ arbitrary traffic matrices and no oversubscription. The full bisec
 
 Data Center
 
-![Figure 16](images/Network%20Traffic%20Characteristics%20of%20Data%20Centers%20in%20the%20Wild/fig_16.png)
+*[Figure 16 — see PDF]*
 
 **Figure 16:** **The first bar is the ratio** **of aggregate** **server** **traffic**
 **over Bisection BW and the second bar is the ratio of aggregate**

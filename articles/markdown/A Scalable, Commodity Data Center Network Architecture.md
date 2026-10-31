@@ -212,7 +212,7 @@ of hosts and oversubscription using current best practices. We assume a cost of 
 and $700,000 for 128-port 10 GigE switches in the aggregation and
 core layers. We do not consider cabling costs in these calculations.
 
-![Figure 2](images/A%20Scalable%2C%20Commodity%20Data%20Center%20Network%20Architecture/fig_2.png)
+*[Figure 2 — see PDF]*
 
 **Figure 2 plots the cost in millions of US dollars as a function**of the total number of end hosts on the _x_ axis. Each curve represents a target oversubscription ratio. For instance, the switching
 hardware to interconnect 20,000 hosts with full bandwidth among
@@ -221,7 +221,7 @@ to an oversubscription of 3:1 plots the cost to interconnect end
 hosts where the maximum available bandwidth for arbitrary end
 host communication would be limited to approximately 330 Mbps.
 
-![Figure 1](images/A%20Scalable%2C%20Commodity%20Data%20Center%20Network%20Architecture/fig_1.png)
+*[Figure 1 — see PDF]*
 
 **Figure 1:** **Common data center interconnect topology.** **Host to switch links are GigE and links between switches are 10 GigE.**
 
@@ -316,7 +316,7 @@ commodity switches [11].
 65
 
 We adopt a special instance of a Clos topology called a _fat-_
-_tree_ [23] to interconnect commodity Ethernet switches. We organize a _k_ -ary fat-tree as shown in ![Figure 3](images/A%20Scalable%2C%20Commodity%20Data%20Center%20Network%20Architecture/fig_3.png)
+_tree_ [23] to interconnect commodity Ethernet switches. We organize a _k_ -ary fat-tree as shown in *[Figure 3 — see PDF]*
 
 **Figure 3. There are _k_ pods, each**containing two layers of _k/_ 2 switches. Each _k_ -port switch in the
 lower layer is directly connected to _k/_ 2 hosts. Each of the remaining _k/_ 2 ports is connected to _k/_ 2 of the _k_ ports in the aggregation
@@ -500,7 +500,7 @@ positions, making it suitable for storing variable length prefixes,
 such as the ones found in routing tables. On the downside, CAMs
 have rather low storage density, they are very power hungry, and
 
-![Figure 5](images/A%20Scalable%2C%20Commodity%20Data%20Center%20Network%20Architecture/fig_5.png)
+*[Figure 5 — see PDF]*
 
 **Figure 5:** **TCAM two-level routing table implementation.**
 
@@ -792,7 +792,7 @@ kilowatts. Almost equally important is the issue of heat dissipation
 from the switches. Enterprise-grade switches generate considerable
 amounts of heat and thus require dedicated cooling systems.
 
-![Figure 6](images/A%20Scalable%2C%20Commodity%20Data%20Center%20Network%20Architecture/fig_6.png)
+*[Figure 6 — see PDF]*
 
 **Figure 6:** **Comparison of power and heat dissipation.**
 
@@ -818,7 +818,7 @@ roughly 27k hosts. For the hierarchical design, we employ 576
 ProCurve 2900 edge switches and 54 BigIron RX-32 switches (36
 in the aggregation and 18 in the core layer). The fat-tree architecture employs 2,880 Netgear GSM 7252S switches. We are able to
 use the cheaper NetGear switch because we do not require 10 GigE
-uplinks (present in the ProCurve) in the fat-tree interconnect. ![Figure 7](images/A%20Scalable%2C%20Commodity%20Data%20Center%20Network%20Architecture/fig_7.png)
+uplinks (present in the ProCurve) in the fat-tree interconnect. *[Figure 7 — see PDF]*
 
 **Figure 7 shows that while our architecture employs more individual**switches, the power consumption and heat dissipation is superior
 to those incurred by current data center designs, with 56.6% less
@@ -1136,7 +1136,7 @@ We present our approach in the context of a maximum-capacity
 27,648-node cluster leveraging 48-port Ethernet switches as the
 building block of the fat-tree. This design generalizes to clusters
 of different sizes. We begin with the design of individual pods that
-make up the replication unit for the larger cluster, see ![Figure 8](images/A%20Scalable%2C%20Commodity%20Data%20Center%20Network%20Architecture/fig_8.png)
+make up the replication unit for the larger cluster, see *[Figure 8 — see PDF]*
 
 **Figure 8.**Each pod consists of 576 machines and 48 individual 48-port GigE
 switches. For simplicity, we assume each end host takes up one
