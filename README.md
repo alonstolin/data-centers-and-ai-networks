@@ -8,16 +8,15 @@ Course 361.2.2460, Semester A 2026. Covers scalable data center architectures, h
 
 | Unit | Topic | Foundational Literature | Labs & Notes |
 |:---:|---|---|:---:|
-| **1** | Clos Topologies & Fat-Trees | • [Al-Fares Fat-Tree (2008)](articles/README.md#al-fares-et-al-2008)<br>• [VL2 (2009)](articles/README.md#greenberg-et-al-2009)<br>• [Jupiter Rising (2015)](articles/README.md#singh-et-al-2015) | • [HW1: Fat-Tree Topology Generation and Analysis](ex1/README.md)<br>• [Topic 1: AI Factory Networking Overview](articles/notes/topic1-podcast-ai-factory.md) |
-| **2** | Traffic Characteristics in the Wild | • [Kandula et al. (2009)](articles/README.md#kandula-et-al-2009) | — |
-| **3** | Low-Latency Transport & DCTCP | • [DCTCP (2010)](articles/README.md#alizadeh-et-al-2010) | — |
-| **4** | Lossless Ethernet & RDMA Transport | • [DCQCN (2015)](articles/README.md#zhu-et-al-2015)<br>• [TIMELY (2015)](articles/README.md#mittal-et-al-2015) | — |
-| **5** | In-Network Load Balancing | • [FlowBender (2014)](articles/README.md#kabbani-et-al-2014)<br>• [WCMP (2014)](articles/README.md#zhou-et-al-2014)<br>• [CONGA (2014)](articles/README.md#alizadeh-et-al-2014) | — |
-| **6** | AI Training Workloads & Dual-Plane Fabrics | • [Alibaba HPN (2024)](articles/README.md#fu-et-al-2024)<br>• [AI Load Balancing](articles/README.md#load-balancing-for-ai-training-workloads-slide-deck) | — |
-| **7** | Collective Communications (AllReduce/NCCL) | • [Collectives Slide Deck](articles/README.md#collectives-slide-deck) | — |
-| **8** | Distributed LLM Clusters & Scale | • [Megatron-LM (2021)](articles/README.md#narayanan-et-al-2021)<br>• [Meta RoCEv2 (2024)](articles/README.md#choudhury-et-al-2024) | — |
-| **9** | Deadlocks & Buffer Management | • [Deadlocks in DCN (2021)](articles/README.md#gupta-et-al-2021) | — |
-| **10** | Flat & Non-Clos Topologies | • [Random Regular Graphs / RNG (2024)](articles/README.md#zhao-et-al-2024) | — |
+| **1** | Foundations of Data Center vs. Internet Networking | • [Al-Fares Fat-Tree (2008)](articles/README.md#1-a-scalable-commodity-data-center-network-architecture-fat-tree)<br>• [VL2 (2009)](articles/README.md#2-vl2-a-scalable-and-flexible-data-center-network)<br>• [Traffic in the Wild (2010)](articles/README.md#3-network-traffic-characteristics-of-data-centers-in-the-wild) | • [HW1: Fat-Tree Topology Generation and Analysis](ex1/README.md)<br>• [Topic 1: AI Factory Networking Overview](articles/notes/topic1-podcast-ai-factory.md) |
+| **2** | AI Factories: Motivation and Challenges | • [Meta RoCEv2 at Scale (2024)](articles/README.md#4-rdma-over-ethernet-for-distributed-ai-training-at-meta-scale)<br>• [Alibaba HPN (2024)](articles/README.md#5-alibaba-hpn-a-data-center-network-for-llm-training) | — |
+| **3** | Architecture | • [Jupiter Rising (2015)](articles/README.md#6-jupiter-rising-a-decade-of-clos-topologies-and-centralized-control-in-googles-datacenter-network)<br>• [RNG: Flat Datacenter Networks (2024)](articles/README.md#7-rng-flat-datacenter-networks-at-scale) | — |
+| **4** | Routing in Data Centers | • [WCMP (2014)](articles/README.md#8-wcmp-weighted-cost-multipathing-for-improved-fairness-in-data-centers)<br>• [FlowBender (2014)](articles/README.md#9-flowbender-flow-level-adaptive-routing-in-datacenter-networks) | — |
+| **5** | Load Balancing | • [CONGA (2014)](articles/README.md#10-conga-distributed-congestion-aware-load-balancing-for-datacenters)<br>• [Load Balancing for AI Training (2025)](articles/README.md#11-load-balancing-for-ai-training-workloads) | — |
+| **6** | Congestion Control | • [Data Center TCP / DCTCP (2010)](articles/README.md#12-dctcp-data-center-tcp)<br>• [TIMELY (2015)](articles/README.md#13-timely-rtt-based-congestion-control-for-the-datacenter) | — |
+| **7** | Lossless Networks | • [DCQCN: RDMA Congestion Control (2015)](articles/README.md#14-dcqcn-congestion-control-for-large-scale-rdma-deployments)<br>• [Deadlocks in Datacenter Networks (2016)](articles/README.md#15-deadlocks-in-datacenter-networks-why-do-they-form-and-how-to-avoid-them) | — |
+| **8** | Collectives | • [Collective Operations in Distributed ML (Slides)](articles/README.md#16-collective-operations-in-distributed-machine-learning-lecture-slides) | — |
+| **9** | Distributed ML | • [Megatron-LM: GPU Cluster Training (2021)](articles/README.md#17-efficient-large-scale-language-model-training-on-gpu-clusters-using-megatron-lm) | — |
 
 ---
 
@@ -46,7 +45,7 @@ Using AI for ready-made answers creates an illusion of competence that breaks do
 
 Each paper includes:
 - Original PDF
-- Audited Markdown transcription (`articles/markdown/`) with embedded figures
+- Audited Markdown transcription (`articles/markdown/`) with mathematical formulas and references to PDF figures
 - Concise executive summary of the problem, technique, and key takeaway
 
 ---
