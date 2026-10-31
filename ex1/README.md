@@ -3,7 +3,6 @@
 [![Python 3.9+](https://img.shields.io/badge/python-3.9+-3776AB.svg?style=flat-square&logo=python&logoColor=white)](https://www.python.org/)
 [![Tests](https://img.shields.io/badge/pytest-32%20passed-success?style=flat-square&logo=pytest&logoColor=white)](test_fattree.py)
 [![Course](https://img.shields.io/badge/course-361.2.2460-blue?style=flat-square)](../README.md)
-[![Status](https://img.shields.io/badge/status-complete-brightgreen?style=flat-square)](#)
 
 Course 361.2.2460 (Data Center Networks & AI), Semester A 2026.
 
