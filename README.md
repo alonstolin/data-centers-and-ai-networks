@@ -27,7 +27,7 @@ Course 361.2.2460, Semester A 2026. Covers scalable data center architectures, h
 
 | # | Topic | Unit | Folder |
 |:---:|---|:---:|---|
-| **HW1** | **$k$-ary Fat-Tree Generation, Link Failures & Bisection Bandwidth**<br>Constructing Clos topologies, modeling link degradation, and showing that failures reduce path diversity $(1-p)^4$ well before reachability drops. | 1 | [ex1/](../exercises/ex1/README.md) |
+| **HW1** | **$k$-ary Fat-Tree Generation, Link Failures & Bisection Bandwidth**<br>Constructing Clos topologies, modeling link degradation, and showing that failures reduce path diversity $(1-p)^4$ well before reachability drops. | 1 | [ex1/](exercises/ex1/README.md) |
 
 ---
 
