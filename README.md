@@ -39,11 +39,19 @@ Course 361.2.2460, Semester A 2026. Covers scalable data center architectures, h
 
 ---
 
-## Studying with AI: The "Sparring Partner" Method
+## Studying with AI
 
-Using AI for ready-made answers creates an illusion of competence that breaks down during class discussions, technical interviews, and exams. Instead, use AI to challenge your own understanding:
+[AGENTS.md](AGENTS.md) sets up AI coding agents (Claude Code, Codex, Cursor, Copilot, Gemini CLI) as a study partner for this course. You choose how much help you want, and you can switch at any time:
 
-1. **Try first:** Inspect the paper's figures and form your own explanation before opening an AI prompt.
-2. **Ask AI to challenge you (Sparring):** Paste your reading of a figure or mechanism and ask the AI:
-   > *"Here is my interpretation of Figure X: [...]. Do not give me the answer. Point out flaws in my reasoning and ask me 2 tough questions to test whether I truly understand it."*
-3. **Verify against the paper:** AI tools frequently hallucinate units, scales, and details (e.g. confusing KB with MB). **If the AI and the paper disagree, the paper wins.** Catching these discrepancies is where real learning happens.
+| Level | Name | The agent... |
+|:---:|---|---|
+| **1** | Sparring | asks questions and challenges your answers |
+| **2** | Hints | gives one nudge at a time and points to the relevant section of the paper *(default)* |
+| **3** | Tutor | explains fully, with worked examples on similar problems |
+| **4** | Worked answer | gives the full answer, then checks that it made sense |
+
+Say "level 3" (or any level) to switch, or use a shortcut: `quiz me on unit N`, `check my understanding`, `compare X and Y`, `exam prep`, `wrap up`.
+
+**Agents in this repo** read the file automatically. **Web chats** (claude.ai, ChatGPT, Gemini) don't: attach or paste [AGENTS.md](AGENTS.md) at the start of the chat and say which level you want.
+
+**The paper wins.** AI tools get units, scales and details wrong (e.g. KB vs. MB). When the AI and the paper disagree, go with the paper; tracking down why they disagree is a good way to learn the material.
