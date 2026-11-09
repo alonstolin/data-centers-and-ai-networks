@@ -30,7 +30,8 @@
   </div>
 
   <div class="console">
-    <section class="map-pane" aria-label="The fabric">
+    <section class="map-pane" aria-label="The plan">
+      <div class="map-head"><b>The plan</b> <span class="fine">This map is the cluster config that every switch received (Section 5.3.1): each line is a cable that <i>should</i> be there. Open a switch to see what it really hears.</span></div>
       <div class="map-wrap"><svg id="map" viewBox="0 0 960 500" role="img" aria-label="Map of the JR-16 fabric"></svg></div>
       <ul class="legend" id="legend">
         <li><i class="lg lg-unknown"></i>Not diagnosed</li>
@@ -75,12 +76,12 @@
               <ol>
                 <li><b>PHY</b> DOWN: <b>Link down</b></li>
                 <li>PHY up, heard nothing: <b>Peer silent</b></li>
-                <li>Heard a different port than the plan: <b>Miswired</b></li>
+                <li>Heard a different port than the map shows: <b>Miswired</b></li>
                 <li>Right peer, but it does not hear you: <b>One-way</b></li>
                 <li>Right peer both ways, error rate high: <b>High errors</b></li>
                 <li>None of these: <b>OK</b></li>
               </ol>
-              <p class="fine">The plan is the cluster configuration that every switch received (Section 5.3.1). Some faults look different from each end, so check both ends of a suspicious cable.</p>
+              <p class="fine">Some faults look different from each end, so check both ends of a suspicious cable.</p>
             </details>
           </div>
           <h3 class="sub">All ports of this switch</h3>
