@@ -305,8 +305,8 @@ footer { margin-top: 8px; }
 .done-list li.ok .tick { color: var(--ok); font-weight: 700; }
 
 /* fabric map: your switch's front panel and the probe cable */
-#map .zoom { fill: var(--accent-glow); stroke: none; opacity: .55; }
-#map .chassis { fill: var(--panel2); stroke: var(--accent); stroke-width: 1.5; }
+#map .zoom { fill: var(--accent); stroke: none; }
+#map .chassis { fill: var(--panel); stroke: var(--accent); stroke-width: 2; filter: drop-shadow(0 4px 10px var(--shadow)); }
 #map .ch-name { font: 700 11px var(--mono); fill: var(--accent); letter-spacing: .06em; }
 #map .ch-grp { font: 500 9px var(--mono); fill: var(--muted); letter-spacing: .12em; }
 #map .pt { cursor: pointer; }
@@ -329,7 +329,7 @@ footer { margin-top: 8px; }
 #map .pb-plan-ring { stroke: var(--dash); stroke-dasharray: 5 4; }
 #map .pb-ok-ring { stroke: var(--ok); } #map .pb-bad-ring { stroke: var(--bad); }
 #map .pb-x { font: 700 22px var(--sans); fill: var(--bad); } #map .pb-x.warn { fill: #B58CFF; }
-#map .pb-note { font: 11.5px var(--mono); fill: var(--muted); }
+#map .pb-note { font: 600 11px var(--mono); fill: var(--muted); } #map .pb-note.bad { fill: var(--bad); } #map .pb-note.warn { fill: #B58CFF; }
 #labelDock { margin-top: 14px; }
 #labelDock .probe-text { font-size: .9rem; color: var(--ink); background: var(--probe-bg); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; margin: 0 0 10px; }
 #map { min-width: 720px; }

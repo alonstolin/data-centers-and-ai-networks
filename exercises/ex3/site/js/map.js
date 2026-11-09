@@ -22,15 +22,15 @@
   const swOf = t => (t && t !== "-" ? t.split(" ")[0] : null);
 
   function panel(pn, P, o) {
-    const sw = pn.sw, tor = /^T/.test(sw), y0 = 540, py = 584, pw = 36, ph = 40, gap = 4;
+    const sw = pn.sw, tor = /^T/.test(sw), pw = 36, ph = 40, gap = 4;
+    const [nx, ny] = P[sw], y0 = ny + 24, py = y0 + 38;
     const groups = [];
     pn.rows.forEach(r => { const g = r.port.charAt(0).toLowerCase(); let G = groups.filter(x => x.g === g)[0]; if (!G) groups.push(G = { g, rows: [] }); G.rows.push(r); });
     if (tor) groups.push({ g: "s", rows: [], servers: true });
     const title = { d: "DOWN PORTS", u: "UP PORTS", p: tor ? "UP PORTS" : "PORTS", s: "SERVER PORTS" };
-    const gw = 8 * (pw + gap) - gap, ggap = 28, total = groups.length * gw + (groups.length - 1) * ggap, x0 = 480 - total / 2;
+    const gw = 8 * (pw + gap) - gap, ggap = 28, total = groups.length * gw + (groups.length - 1) * ggap, x0 = Math.max(100, Math.min(936 - total, nx - total / 2));
     let h = "", centers = {};
-    const [nx, ny] = P[sw], top = tor ? ny + 114 : ny + 18;
-    h += '<polygon class="zoom" points="' + (nx - 20) + "," + top + " " + (nx + 20) + "," + top + " " + (x0 + total + 14) + "," + y0 + " " + (x0 - 14) + "," + y0 + '"/>';
+    h += '<polygon class="zoom" points="' + (nx - 8) + "," + (y0 - 8) + " " + (nx + 8) + "," + (y0 - 8) + " " + (nx + 14) + "," + y0 + " " + (nx - 14) + "," + y0 + '"/>';
     h += '<rect class="chassis" x="' + (x0 - 14) + '" y="' + y0 + '" width="' + (total + 28) + '" height="92" rx="8"/>';
     h += '<text class="ch-name" text-anchor="end" x="' + (x0 + total + 2) + '" y="' + (y0 + 17) + '">' + esc(sw) + " · your switch</text>";
     groups.forEach((G, gi) => {
@@ -53,14 +53,15 @@
       const sx = centers[r.port], sy = py, plan = swOf(r.expected), heard = swOf(r.discovered);
       const down = r.phy === "DOWN", hi = r.err !== "<1e-12", match = !down && heard && r.discovered === r.expected;
       const rad = t => (/^T/.test(t) ? 31 : 44);
-      const route = t => { const [tx, ty] = P[t], ey = ty + (/^T/.test(t) ? 14 : 18); return "M" + sx + "," + sy + " C" + sx + "," + (y0 - 70) + " " + tx + "," + (ey + 60) + " " + tx + "," + ey; };
+      const route = t => { const [tx, ty] = P[t], dir = ty > sy ? 1 : -1, s0 = dir > 0 ? py + ph : py, ey = ty - dir * (/^T/.test(t) ? 12 : 16); return "M" + sx + "," + s0 + " C" + sx + "," + (s0 + dir * 50) + " " + tx + "," + (ey - dir * 50) + " " + tx + "," + ey; };
       let pr = "";
       if (plan && P[plan] && !match) pr += '<path class="pb-plan" d="' + route(plan) + '"/>';
       if (plan && P[plan]) pr += '<circle class="pb-ring pb-plan-ring" cx="' + P[plan][0] + '" cy="' + P[plan][1] + '" r="' + rad(plan) + '"/>';
+      const note = (t, c) => '<text class="pb-note ' + (c || "") + '" x="' + (x0 - 2) + '" y="' + (y0 + 17) + '">' + esc(r.port + ": " + t) + "</text>";
       if (down) {
-        pr += '<line class="pb-cable pb-cut" x1="' + sx + '" y1="' + sy + '" x2="' + sx + '" y2="' + (y0 - 22) + '"/><text class="pb-x" x="' + sx + '" y="' + (y0 - 28) + '" text-anchor="middle">✕</text><text class="pb-note" x="' + sx + '" y="' + (y0 - 52) + '" text-anchor="middle">no signal (PHY down)</text>';
+        pr += '<line class="pb-cable pb-cut" x1="' + sx + '" y1="' + py + '" x2="' + sx + '" y2="' + (y0 + 24) + '"/>' + note("\u2715 no signal (PHY down)", "bad");
       } else if (!heard || !P[heard]) {
-        pr += '<line class="pb-cable pb-silent" x1="' + sx + '" y1="' + sy + '" x2="' + sx + '" y2="' + (y0 - 40) + '"/><text class="pb-x warn" x="' + sx + '" y="' + (y0 - 46) + '" text-anchor="middle">?</text><text class="pb-note" x="' + sx + '" y="' + (y0 - 70) + '" text-anchor="middle">PHY up, but nothing heard</text>';
+        pr += '<line class="pb-cable pb-silent" x1="' + sx + '" y1="' + py + '" x2="' + sx + '" y2="' + (y0 + 24) + '"/>' + note("? PHY up, but nothing heard", "warn");
       } else {
         const d = route(heard);
         pr += '<path class="pb-cable' + (hi ? " pb-noisy" : "") + (match ? "" : " pb-bad") + '" d="' + d + '"/><circle class="pb-pulse" r="5"><animateMotion dur="2.2s" repeatCount="indefinite" path="' + d + '"/></circle>';
@@ -121,7 +122,7 @@
 
     // ---- your switch, zoomed in below the map, with the probe running into the network ----
     const pn = o.panel;
-    svg.setAttribute("viewBox", pn ? "0 0 960 700" : "0 0 960 500");
+    svg.setAttribute("viewBox", "0 0 960 500");
     if (pn) h += panel(pn, P, o);
     h += '<text class="blk" x="260" y="486" text-anchor="middle">BLOCK A</text><text class="blk" x="700" y="486" text-anchor="middle">BLOCK B</text>' +
          '<text class="tier" x="12" y="56">SPINE</text><text class="tier" x="12" y="204">AGGR.</text><text class="tier" x="12" y="344">ToR</text><text class="tier" x="12" y="408">SERVERS</text>';
