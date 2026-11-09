@@ -313,8 +313,8 @@ footer { margin-top: 8px; }
 #map .pt rect { fill: var(--jack-bg); stroke: var(--jack-line); stroke-width: 1.6; }
 #map .pt:hover rect { stroke: var(--muted); }
 #map .pt:focus-visible rect { stroke: var(--accent); stroke-width: 3; }
-#map .pt .pn { font: 600 10.5px var(--mono); fill: var(--ink); }
-#map .pt .pl { font: 700 13px var(--sans); }
+#map .pt .pn { font: 600 9.5px var(--mono); fill: var(--ink); pointer-events: none; }
+#map .pt .pl { font: 700 12px var(--sans); paint-order: stroke; stroke: var(--panel); stroke-width: 3px; pointer-events: none; }
 #map .pt-seen rect { stroke-dasharray: 3 3; stroke: var(--muted); }
 #map .pt-sel rect { stroke: var(--accent); stroke-width: 3; filter: drop-shadow(0 0 6px var(--accent-glow)); }
 #map .pt-static { cursor: default; opacity: .45; }

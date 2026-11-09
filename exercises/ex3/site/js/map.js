@@ -21,54 +21,40 @@
   const SYM = { OK: "✓", MISWIRED: "≠", ONE_WAY: "→", HIGH_ERRORS: "!", LINK_DOWN: "✕", PEER_SILENT: "?" };
   const swOf = t => (t && t !== "-" ? t.split(" ")[0] : null);
 
+  // Ports are drawn as small tabs on the cable of the link they belong to, right next to your switch.
   function panel(pn, P, o) {
-    const sw = pn.sw, tor = /^T/.test(sw), pw = 36, ph = 40, gap = 4;
-    const [nx, ny] = P[sw], y0 = ny + 24, py = y0 + 38;
-    const groups = [];
-    pn.rows.forEach(r => { const g = r.port.charAt(0).toLowerCase(); let G = groups.filter(x => x.g === g)[0]; if (!G) groups.push(G = { g, rows: [] }); G.rows.push(r); });
-    if (tor) groups.push({ g: "s", rows: [], servers: true });
-    const title = { d: "DOWN PORTS", u: "UP PORTS", p: tor ? "UP PORTS" : "PORTS", s: "SERVER PORTS" };
-    const gw = 8 * (pw + gap) - gap, ggap = 28, total = groups.length * gw + (groups.length - 1) * ggap, x0 = Math.max(100, Math.min(936 - total, nx - total / 2));
-    let h = "", centers = {};
-    h += '<polygon class="zoom" points="' + (nx - 8) + "," + (y0 - 8) + " " + (nx + 8) + "," + (y0 - 8) + " " + (nx + 14) + "," + y0 + " " + (nx - 14) + "," + y0 + '"/>';
-    h += '<rect class="chassis" x="' + (x0 - 14) + '" y="' + y0 + '" width="' + (total + 28) + '" height="92" rx="8"/>';
-    h += '<text class="ch-name" text-anchor="end" x="' + (x0 + total + 2) + '" y="' + (y0 + 17) + '">' + esc(sw) + " · your switch</text>";
-    groups.forEach((G, gi) => {
-      const gx = x0 + gi * (gw + ggap);
-      h += '<text class="ch-grp" x="' + gx + '" y="' + (py - 8) + '">' + title[G.g] + "</text>";
-      for (let i = 0; i < 8; i++) {
-        const x = gx + i * (pw + gap);
-        if (G.servers) { h += '<g class="pt pt-static"><rect x="' + x + '" y="' + py + '" width="' + pw + '" height="' + ph + '" rx="4"/><text x="' + (x + pw / 2) + '" y="' + (py + 25) + '" text-anchor="middle">s' + (i + 1) + "</text></g>"; continue; }
-        const r = G.rows[i]; if (!r) continue;
-        const l = pn.labels[r.port], sel = pn.sel === r.port, seen = pn.probed.has(r.port);
-        centers[r.port] = x + pw / 2;
-        h += '<g class="pt' + (sel ? " pt-sel" : "") + (seen && !l ? " pt-seen" : "") + '" data-port="' + esc(r.port) + '" tabindex="0" role="button" aria-label="Port ' + esc(r.port) + (l ? ", labeled " + LABELS[l] : seen ? ", probed" : ", not probed") + '"><title>' + esc(r.port + (l ? ": " + LABELS[l] : "")) + '</title><rect x="' + x + '" y="' + py + '" width="' + pw + '" height="' + ph + '" rx="4"' + (l ? ' style="stroke:' + PCOL[l] + '"' : "") + "/>" +
-          '<circle cx="' + (x + pw / 2) + '" cy="' + (py + 9) + '" r="3.5" style="fill:' + (l ? PCOL[l] : "var(--idle)") + '"/>' +
-          '<text class="pn" x="' + (x + pw / 2) + '" y="' + (py + 27) + '" text-anchor="middle">' + esc(r.port) + "</text>" +
-          '<text class="pl" x="' + (x + pw / 2) + '" y="' + (py + ph + 14) + '" text-anchor="middle" style="fill:' + (l ? PCOL[l] : "var(--muted)") + '">' + (l ? SYM[l] : seen ? "·" : "") + "</text></g>";
-      }
+    const sw = pn.sw, [nx, ny] = P[sw], seen = {}, spot = {};
+    let h = "";
+    pn.rows.forEach(r => {
+      const peer = swOf(r.expected); if (!peer || !P[peer]) return;
+      const [px, py] = P[peer], dx = px - nx, dy = py - ny, len = Math.hypot(dx, dy), ux = dx / len, uy = dy / len;
+      const k = seen[peer] = (seen[peer] || 0) + 1, vy = (py > ny ? 1 : -1) * (46 + (k - 1) * 22), t = vy / dy;
+      spot[r.port] = { x: nx + dx * t, y: ny + vy, ux, uy, peer };
     });
-    const r = pn.sel && pn.rows.filter(x => x.port === pn.sel)[0];
-    if (r && centers[r.port] != null) {
-      const sx = centers[r.port], sy = py, plan = swOf(r.expected), heard = swOf(r.discovered);
-      const down = r.phy === "DOWN", hi = r.err !== "<1e-12", match = !down && heard && r.discovered === r.expected;
-      const rad = t => (/^T/.test(t) ? 31 : 44);
-      const route = t => { const [tx, ty] = P[t], dir = ty > sy ? 1 : -1, s0 = dir > 0 ? py + ph : py, ey = ty - dir * (/^T/.test(t) ? 12 : 16); return "M" + sx + "," + s0 + " C" + sx + "," + (s0 + dir * 50) + " " + tx + "," + (ey - dir * 50) + " " + tx + "," + ey; };
-      let pr = "";
-      if (plan && P[plan] && !match) pr += '<path class="pb-plan" d="' + route(plan) + '"/>';
-      if (plan && P[plan]) pr += '<circle class="pb-ring pb-plan-ring" cx="' + P[plan][0] + '" cy="' + P[plan][1] + '" r="' + rad(plan) + '"/>';
-      const note = (t, c) => '<text class="pb-note ' + (c || "") + '" x="' + (x0 - 2) + '" y="' + (y0 + 17) + '">' + esc(r.port + ": " + t) + "</text>";
-      if (down) {
-        pr += '<line class="pb-cable pb-cut" x1="' + sx + '" y1="' + py + '" x2="' + sx + '" y2="' + (y0 + 24) + '"/>' + note("\u2715 no signal (PHY down)", "bad");
-      } else if (!heard || !P[heard]) {
-        pr += '<line class="pb-cable pb-silent" x1="' + sx + '" y1="' + py + '" x2="' + sx + '" y2="' + (y0 + 24) + '"/>' + note("? PHY up, but nothing heard", "warn");
+    const r = pn.sel && pn.rows.filter(x => x.port === pn.sel)[0], S = r && spot[r.port];
+    if (r && S) {
+      const plan = swOf(r.expected), heard = swOf(r.discovered), down = r.phy === "DOWN", hi = r.err !== "<1e-12", match = !down && heard && r.discovered === r.expected;
+      const rad = t => (/^T/.test(t) ? 31 : 44), ring = (t, c) => '<circle class="pb-ring ' + c + '" cx="' + P[t][0] + '" cy="' + P[t][1] + '" r="' + rad(t) + '"/>';
+      const line = (t, cls) => '<line class="' + cls + '" x1="' + nx + '" y1="' + ny + '" x2="' + P[t][0] + '" y2="' + P[t][1] + '"/>';
+      h += ring(plan, "pb-plan-ring");
+      if (down) h += line(plan, "pb-cable pb-cut");
+      else if (!heard || !P[heard]) h += line(plan, "pb-cable pb-silent");
+      else if (match) {
+        const d = "M" + S.x + "," + S.y + " L" + P[heard][0] + "," + P[heard][1];
+        h += '<path class="pb-cable' + (hi ? " pb-noisy" : "") + '" d="' + d + '"/><circle class="pb-pulse" r="5"><animateMotion dur="2s" repeatCount="indefinite" path="' + d + '"/></circle>' + ring(heard, "pb-ok-ring");
       } else {
-        const d = route(heard);
-        pr += '<path class="pb-cable' + (hi ? " pb-noisy" : "") + (match ? "" : " pb-bad") + '" d="' + d + '"/><circle class="pb-pulse" r="5"><animateMotion dur="2.2s" repeatCount="indefinite" path="' + d + '"/></circle>';
-        pr += '<circle class="pb-ring ' + (match ? "pb-ok-ring" : "pb-bad-ring") + '" cx="' + P[heard][0] + '" cy="' + P[heard][1] + '" r="' + rad(heard) + '"/>';
+        const hx = P[heard][0], hy = P[heard][1], d = "M" + S.x + "," + S.y + " Q" + ((S.x + hx) / 2 + (hy > ny ? 40 : -40)) + "," + ((S.y + hy) / 2) + " " + hx + "," + hy;
+        h += line(plan, "pb-plan") + '<path class="pb-cable pb-bad" d="' + d + '"/><circle class="pb-pulse" r="5"><animateMotion dur="2s" repeatCount="indefinite" path="' + d + '"/></circle>' + ring(heard, "pb-bad-ring");
       }
-      h += pr;
     }
+    pn.rows.forEach(rw => {
+      const S2 = spot[rw.port]; if (!S2) return;
+      const l = pn.labels[rw.port], sel = pn.sel === rw.port, sn = pn.probed.has(rw.port);
+      h += '<g class="pt' + (sel ? " pt-sel" : "") + (sn && !l ? " pt-seen" : "") + '" data-port="' + esc(rw.port) + '" tabindex="0" role="button" aria-label="Port ' + esc(rw.port) + (l ? ", labeled " + LABELS[l] : sn ? ", probed" : ", not probed") + '"><title>' + esc("Port " + rw.port + " (click to probe)" + (l ? ": " + LABELS[l] : "")) + '</title>' +
+        '<rect x="' + (S2.x - 13) + '" y="' + (S2.y - 9) + '" width="26" height="18" rx="4"' + (l ? ' style="stroke:' + PCOL[l] + ";fill:color-mix(in srgb," + PCOL[l] + ' 22%,var(--panel))"' : "") + "/>" +
+        '<text class="pn" x="' + S2.x + '" y="' + (S2.y + 3.6) + '" text-anchor="middle">' + esc(rw.port) + "</text>" +
+        (l ? '<text class="pl" x="' + (S2.x + 15) + '" y="' + (S2.y - 6) + '" style="fill:' + PCOL[l] + '">' + SYM[l] + "</text>" : "") + "</g>";
+    });
     return h;
   }
 
@@ -117,7 +103,7 @@
       }
       h += '<g class="' + cls.join(" ") + '"><rect x="' + (x - w / 2) + '" y="' + (y - hh / 2) + '" width="' + w + '" height="' + hh + '" rx="5"/>' +
         '<text x="' + x + '" y="' + (y + 4.5) + '" text-anchor="middle">' + s + "</text>" +
-        (o.me === s ? '<text class="you" x="' + x + '" y="' + (y + (tor ? 132 : 34)) + '" text-anchor="middle">\u25B2 YOU</text>' : "") + "</g>";
+        (o.me === s ? (tor ? '<text class="you" x="' + x + '" y="' + (y + 132) + '" text-anchor="middle">\u25B2 YOU</text>' : '<text class="you" x="' + (x + w / 2 + 8) + '" y="' + (y + 4) + '">\u25C0 YOU</text>') : "") + "</g>";
     });
 
     // ---- your switch, zoomed in below the map, with the probe running into the network ----
