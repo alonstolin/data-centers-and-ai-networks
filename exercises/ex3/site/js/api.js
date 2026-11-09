@@ -7,11 +7,10 @@
     if (!configured) throw new Error("The site is not connected to its database yet (see js/config.js).");
     const res = await fetch(C.SUPABASE_URL.replace(/\/$/, "") + "/rest/v1/rpc/" + fn, {
       method: "POST",
-      headers: {
+      headers: Object.assign({
         "apikey": C.SUPABASE_ANON_KEY,
-        "Authorization": "Bearer " + C.SUPABASE_ANON_KEY,
         "Content-Type": "application/json"
-      },
+      }, C.SUPABASE_ANON_KEY.startsWith("eyJ") ? { "Authorization": "Bearer " + C.SUPABASE_ANON_KEY } : {}),
       body: JSON.stringify(args || {})
     });
     const text = await res.text();
