@@ -320,12 +320,12 @@ footer { margin-top: 8px; }
 #map .pt-static { cursor: default; opacity: .45; }
 #map .pt-static text { font: 500 10px var(--mono); fill: var(--muted); }
 #map .pb-plan { fill: none; stroke: var(--dash); stroke-width: 2; stroke-dasharray: 6 5; }
-#map .pb-cable { fill: none; stroke: var(--ok); stroke-width: 3.4; stroke-linecap: round; filter: drop-shadow(0 0 4px var(--ok-dim)); }
+#map .pb-cable { fill: none; stroke: var(--ok); stroke-width: 3; stroke-linecap: round; }
 #map .pb-cable.pb-bad { stroke: var(--bad); }
 #map .pb-cable.pb-noisy { stroke-dasharray: 3 3; stroke: var(--warn); }
 #map .pb-cable.pb-cut, #map .pb-cable.pb-silent { stroke: #9AA7B2; stroke-dasharray: 4 4; filter: none; }
 #map .pb-pulse { fill: var(--pulse); filter: drop-shadow(0 0 5px var(--accent)); }
-#map .pb-ring { fill: none; stroke-width: 2.4; }
+#map .pb-ring { fill: none; stroke-width: 2; }
 #map .pb-plan-ring { stroke: var(--dash); stroke-dasharray: 5 4; }
 #map .pb-ok-ring { stroke: var(--ok); } #map .pb-bad-ring { stroke: var(--bad); }
 #map .pb-x { font: 700 22px var(--sans); fill: var(--bad); } #map .pb-x.warn { fill: #B58CFF; }
@@ -333,3 +333,4 @@ footer { margin-top: 8px; }
 #labelDock { margin-top: 14px; }
 #labelDock .probe-text { font-size: .9rem; color: var(--ink); background: var(--probe-bg); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; margin: 0 0 10px; }
 #map { min-width: 720px; }
+#map .pt:focus { outline: none; }

@@ -34,18 +34,17 @@
     const r = pn.sel && pn.rows.filter(x => x.port === pn.sel)[0], S = r && spot[r.port];
     if (r && S) {
       const plan = swOf(r.expected), heard = swOf(r.discovered), down = r.phy === "DOWN", hi = r.err !== "<1e-12", match = !down && heard && r.discovered === r.expected;
-      const rad = t => (/^T/.test(t) ? 31 : 44), ring = (t, c) => '<circle class="pb-ring ' + c + '" cx="' + P[t][0] + '" cy="' + P[t][1] + '" r="' + rad(t) + '"/>';
-      const line = (t, cls) => '<line class="' + cls + '" x1="' + nx + '" y1="' + ny + '" x2="' + P[t][0] + '" y2="' + P[t][1] + '"/>';
+      const isT = t => /^T/.test(t);
+      const ring = (t, c) => { const w = isT(t) ? 54 : 74, hh = isT(t) ? 24 : 32; return '<rect class="pb-ring ' + c + '" x="' + (P[t][0] - w / 2 - 5) + '" y="' + (P[t][1] - hh / 2 - 5) + '" width="' + (w + 10) + '" height="' + (hh + 10) + '" rx="9"/>'; };
+      // same geometry as the map's own link lines: upper node bottom edge to lower node top edge
+      const seg = t => { const up = P[t][1] < ny ? t : sw, lo = up === t ? sw : t, a = P[up], b = P[lo]; const pts = [a[0], a[1] + 16, b[0], b[1] - (isT(lo) ? 12 : 16)]; return up === sw ? pts : [pts[2], pts[3], pts[0], pts[1]]; };
+      const ln = (t, cls) => { const q = seg(t); return '<line class="' + cls + '" x1="' + q[0] + '" y1="' + q[1] + '" x2="' + q[2] + '" y2="' + q[3] + '"/>'; };
+      const pulse = t => { const q = seg(t); return '<circle class="pb-pulse" r="4.5"><animateMotion dur="2s" repeatCount="indefinite" path="M' + q[0] + "," + q[1] + " L" + q[2] + "," + q[3] + '"/></circle>'; };
       h += ring(plan, "pb-plan-ring");
-      if (down) h += line(plan, "pb-cable pb-cut");
-      else if (!heard || !P[heard]) h += line(plan, "pb-cable pb-silent");
-      else if (match) {
-        const d = "M" + S.x + "," + S.y + " L" + P[heard][0] + "," + P[heard][1];
-        h += '<path class="pb-cable' + (hi ? " pb-noisy" : "") + '" d="' + d + '"/><circle class="pb-pulse" r="5"><animateMotion dur="2s" repeatCount="indefinite" path="' + d + '"/></circle>' + ring(heard, "pb-ok-ring");
-      } else {
-        const hx = P[heard][0], hy = P[heard][1], d = "M" + S.x + "," + S.y + " Q" + ((S.x + hx) / 2 + (hy > ny ? 40 : -40)) + "," + ((S.y + hy) / 2) + " " + hx + "," + hy;
-        h += line(plan, "pb-plan") + '<path class="pb-cable pb-bad" d="' + d + '"/><circle class="pb-pulse" r="5"><animateMotion dur="2s" repeatCount="indefinite" path="' + d + '"/></circle>' + ring(heard, "pb-bad-ring");
-      }
+      if (down) h += ln(plan, "pb-cable pb-cut");
+      else if (!heard || !P[heard]) h += ln(plan, "pb-cable pb-silent");
+      else if (match) h += ln(heard, "pb-cable" + (hi ? " pb-noisy" : "")) + pulse(heard) + ring(heard, "pb-ok-ring");
+      else h += ln(plan, "pb-plan") + ln(heard, "pb-cable pb-bad") + pulse(heard) + ring(heard, "pb-bad-ring");
     }
     pn.rows.forEach(rw => {
       const S2 = spot[rw.port]; if (!S2) return;
