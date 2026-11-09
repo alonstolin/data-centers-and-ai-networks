@@ -100,9 +100,9 @@
         for (let i = 0; i < 4; i++) h += '<rect class="rk-srv" x="' + (x - 18) + '" y="' + (y + 35 + i * 19) + '" width="36" height="13" rx="2"/><circle class="rk-led" cx="' + (x + 12) + '" cy="' + (y + 41.5 + i * 19) + '" r="1.8"/><line class="rk-slot" x1="' + (x - 13) + '" y1="' + (y + 41.5 + i * 19) + '" x2="' + (x + 3) + '" y2="' + (y + 41.5 + i * 19) + '"/>';
         h += "</g>";
       }
-      h += '<g class="' + cls.join(" ") + '"><rect x="' + (x - w / 2) + '" y="' + (y - hh / 2) + '" width="' + w + '" height="' + hh + '" rx="5"/>' +
+      h += '<g class="' + cls.join(" ") + '" data-sw="' + s + '"><rect x="' + (x - w / 2) + '" y="' + (y - hh / 2) + '" width="' + w + '" height="' + hh + '" rx="5"/>' +
         '<text x="' + x + '" y="' + (y + 4.5) + '" text-anchor="middle">' + s + "</text>" +
-        (o.me === s ? (tor ? '<text class="you" x="' + x + '" y="' + (y + 132) + '" text-anchor="middle">\u25B2 YOU</text>' : '<text class="you" x="' + (x + w / 2 + 8) + '" y="' + (y + 4) + '">\u25C0 YOU</text>') : "") + "</g>";
+        (o.me === s ? (tor ? '<text class="you" x="' + x + '" y="' + (y + 132) + '" text-anchor="middle">\u25B2 OPEN</text>' : '<text class="you" x="' + (x + w / 2 + 8) + '" y="' + (y + 4) + '">\u25C0 OPEN</text>') : "") + "</g>";
     });
 
     // ---- your switch, zoomed in below the map, with the probe running into the network ----

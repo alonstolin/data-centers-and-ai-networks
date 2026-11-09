@@ -15,10 +15,9 @@
   <div class="topbar-in">
     <span class="brand"><i class="led"></i>JR-16 <small>fabric bring-up</small></span>
     <div class="status-strip" id="strip">
-      <div><span class="k">Faults confirmed</span><span class="v" id="sFaults">&ndash;</span></div>
-      <div title="One switch is silent, so at most 15 can report."><span class="k">Switches reported</span><span class="v" id="sReported">&ndash;</span></div>
-      <div id="sProgBox" hidden title="Report sent and both questions answered"><span class="k">Your progress</span><span class="v" id="sProg">&ndash;</span></div>
-      <div class="fabric" title="Turns green when all 5 faults are confirmed"><span class="k">Fabric</span><span class="v" id="sFabric">&ndash;</span></div>
+      <div><span class="k">Faults found</span><span class="v" id="sFaults">0 / 5</span></div>
+      <div><span class="k">Ports diagnosed</span><span class="v" id="sDiag">0 / 62</span></div>
+      <div class="fabric" title="Turns green when all 5 faults are found"><span class="k">Fabric</span><span class="v" id="sFabric">DOWN</span></div>
     </div>
     <button class="theme-btn" id="themeBtn" type="button">&#9790; Dark</button>
   </div>
@@ -29,27 +28,16 @@
     <h1>Miswire Hunt</h1>
     <details class="about" id="about" open>
       <summary>About this exercise</summary>
-      <p class="lede">A small data-center network of 16 switches has <b>five hidden faults</b>. You get <b>one switch</b> and can only see its own ports, so you need your classmates&rsquo; reports to find them. If there are more students than switches, some of you share a switch.</p>
+      <p class="lede">A small data-center network of 16 switches has <b>five hidden faults</b>. You can see the whole network. Open each switch, probe its ports and say what is wrong with them. Your progress is saved in this browser.</p>
       <ol class="steps">
-        <li><b>Join</b> with your email. The same email always gets the same switch.</li>
-        <li><b>Probe and diagnose</b> every port of your switch: does what it heard match the plan?</li>
-        <li><b>Send your report.</b> It shows up on the shared map.</li>
-        <li><b>Answer</b> two short root-cause questions. You are done after this step.</li>
+        <li><b>Open a switch</b> by clicking it on the map.</li>
+        <li><b>Probe and diagnose</b> its ports: does what the switch heard match the plan?</li>
+        <li>When both ends of a broken cable are diagnosed correctly, the cable turns <b>red</b>: you found a fault.</li>
+        <li>Find all five, then <b>answer</b> two short root-cause questions. You are done after this step.</li>
       </ol>
-      <p class="fine">Optional: flag cables you think are broken, and place the parts of Firepath on the SDN planes. The map fills in as classmates report during the week, so check back later.</p>
+      <p class="fine">Optional: Part 2, where you place the parts of Firepath on the SDN planes.</p>
     </details>
   </header>
-
-  <section class="card" id="joinCard">
-    <h2>Get your switch</h2>
-    <form id="joinForm" class="join">
-      <label for="email">Email</label>
-      <input id="email" type="email" required autocomplete="email" placeholder="you@example.com">
-      <button class="btn primary" type="submit">Take my switch</button>
-    </form>
-    <p class="fine">We only store a scrambled version of your email, so the same email gets the same switch next time. No password.</p>
-    <p class="err" id="joinErr" hidden></p>
-  </section>
 
   <details class="why" id="paperBox">
     <summary>The paper behind this: Neighbor Discovery (Section 5.2.1)</summary>
@@ -62,47 +50,34 @@
     </blockquote>
   </details>
 
-  <section class="card" id="consoleCard" hidden>
-    <div class="console-head">
-      <div>
-        <p class="eyebrow">Your switch</p>
-        <h2 class="sw-name" id="swName">&ndash;</h2>
-        <p class="fine" id="swRole"></p>
-      </div>
-      <button class="btn ghost" id="switchUser" type="button">Not you? Use another email</button>
-    </div>
-    <div id="darkPanel" class="dark" hidden>
-      <p class="mono">&gt; ssh admin@T7.cpn<br>&gt; connection timed out<br>&gt; ping T7.cpn: 100% packet loss</p>
-      <p>Your switch does not answer, so you have no port table. Use the shared map to work out what happened to <b>T7</b>, then answer the two questions below.</p>
-    </div>
-  </section>
-
   <section class="card" id="mapCard">
     <div class="console-head">
-      <div><h2>Shared fabric map</h2>
-        <div class="how" id="mapHow" hidden>
-          <p><b>The goal:</b> together, the class finds the 5 broken cables. <b>Your job:</b> check each port of your switch and say what is wrong with it, or that it is OK. A broken cable is confirmed when the switches at both of its ends have diagnosed their ports correctly.</p>
+      <div><h2>The fabric</h2>
+        <div class="how">
+          <p><b>The goal:</b> find the 5 broken cables. A cable counts as found when the switches at both of its ends have been diagnosed correctly.</p>
           <ol>
-            <li><b>Click a port tab</b> on your switch (the little tabs on its cables).</li>
-            <li>Compare the <b>plan</b> (dashed outline) with what the switch <b>heard</b> (solid line). The table under the map shows the details.</li>
-            <li>Give the port a <b>diagnosis</b> (one of six). When every port has one, press <b>Send report</b>.</li>
+            <li><b>Click a switch</b> on the map. Its ports appear as little tabs on its cables.</li>
+            <li><b>Click a port tab.</b> Compare the <b>plan</b> (dashed outline) with what the switch <b>heard</b> (solid line). The table under the map shows the details.</li>
+            <li>Give the port a <b>diagnosis</b> (one of six).</li>
           </ol>
         </div>
-        <p class="fine" id="mapIntro">Everyone&rsquo;s reports show up here every few seconds. <b>Click a cable</b> to see what each end said. You can flag up to 5 cables you think are broken.</p>
-        <p class="notice" id="mapJoin">Join above to get your switch. The map stays grey until people send reports.</p></div>
-      <button class="btn ghost" id="refresh" type="button">Refresh</button>
+      </div>
     </div>
-    <p class="fine swipe">Swipe the map sideways to see Block B &rarr;</p>
-    <div class="map-wrap"><svg id="map" viewBox="0 0 960 500" role="img" aria-label="Shared map of the JR-16 fabric"></svg></div>
+    <div class="map-wrap"><svg id="map" viewBox="0 0 960 500" role="img" aria-label="Map of the JR-16 fabric"></svg></div>
     <ul class="legend">
-      <li><i class="lg lg-unknown"></i>No report yet</li>
-      <li><i class="lg lg-half"></i>One end says OK</li>
-      <li><i class="lg lg-verified"></i>Both ends say OK</li>
+      <li><i class="lg lg-unknown"></i>Not diagnosed yet</li>
+      <li><i class="lg lg-verified"></i>Both ends diagnosed OK</li>
       <li><i class="lg lg-suspect"></i>One end reports a problem</li>
-      <li><i class="lg lg-confirmed"></i>Confirmed fault</li>
+      <li><i class="lg lg-confirmed"></i>Fault found</li>
     </ul>
+    <p class="notice" id="selHint">Click any switch on the map to open its ports.</p>
+    <div id="darkPanel" class="dark" hidden>
+      <p class="mono">&gt; ssh admin@T7.cpn<br>&gt; connection timed out<br>&gt; ping T7.cpn: 100% packet loss</p>
+      <p>This switch does not answer, so it has no port table. Look at what its neighbours report, and work out what happened to <b>T7</b>.</p>
+    </div>
     <div id="labelDock" hidden>
-      <div class="probe-text" id="probeText">Click a port tab on your switch to probe it.</div>
+      <h3 class="dock-title" id="dockTitle"></h3>
+      <div class="probe-text" id="probeText">Click a port tab on the open switch to probe it.</div>
       <div class="cheat" aria-label="How to pick a diagnosis">
         <h3>Which diagnosis? Check in this order</h3>
         <ol>
@@ -118,7 +93,7 @@
       <div class="tray-head"><b>Diagnoses</b> <span class="fine" id="trayHint"></span></div>
       <div class="tray" id="tray"></div>
       <div class="row">
-        <button class="btn primary" id="sendReport" type="button">Send report</button>
+        <button class="btn" id="checkBtn" type="button">Check my diagnoses</button>
         <span class="fine" id="reportMsg"></span>
       </div>
       <details class="guide">
@@ -137,17 +112,12 @@
           </table>
           </details>
     </div>
-    <div class="linkcard" id="linkCard" hidden></div>
     <div id="faultList" class="faults"></div>
-    <details class="feed-box"><summary>Live feed</summary>
-      <ul class="feed" id="feed"><li class="fine">Waiting for the first report…</li></ul>
-    </details>
-    <p class="err" id="mapErr" hidden></p>
   </section>
 
   <section class="card" id="rcCard" hidden>
     <h2>Root cause</h2>
-    <p class="fine" id="rcLock">Send your report first, then come back. You will need the shared map.</p>
+    <p class="fine" id="rcLock">Find at least one fault first, then come back.</p>
     <form id="rcForm" hidden>
       <fieldset>
         <legend>1. On AG3 and AG4, every port that connects to <b>T7</b> has a working link but hears nothing. What most likely happened?</legend>
@@ -170,12 +140,12 @@
   <section class="card" id="doneCard" hidden>
     <h2>Your progress</h2>
     <ul class="done-list" id="doneList"></ul>
-    <p class="fine">You are done when both required items are ticked. Optional items are for extra practice.</p>
+    <p class="fine">You are done when all 5 faults are found and both questions are answered correctly. Part 2 is optional.</p>
   </section>
 
   <section class="card" id="planeCard" hidden>
     <h2>Where does the control live?</h2>
-    <p class="fine" id="planeLock">Unlocks after you send your report. It does not depend on your classmates.</p>
+    <p class="fine" id="planeLock">Unlocks when you find your first fault.</p>
     <div id="planeBody" hidden>
       <p>Software-defined networking (SDN) moves forwarding decisions out of the individual switches and into software that sees the whole network. It uses three terms, the <b>planes</b>:</p>
       <ul class="pl-def">
@@ -195,8 +165,7 @@
   <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
   <footer class="fine">Based on A. Singh et al., &ldquo;Jupiter Rising: A Decade of Clos Topologies and Centralized Control in Google's Datacenter Network&rdquo;, SIGCOMM &rsquo;15, Section 5.2.1 (p. 192) and Section 5.3. The JR-16 fabric and its faults are made up for this exercise.</footer>
 </main>
-<script src="js/config.js"></script>
-<script src="js/api.js"></script>
+<script src="js/puzzle.js"></script>
 <script src="js/topology.js"></script>
 <script src="js/map.js"></script>
 <script src="js/planes.js"></script>
