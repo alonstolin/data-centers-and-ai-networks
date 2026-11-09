@@ -34,8 +34,17 @@
       <li><b>Answer.</b> <span>Two short questions at the end.</span></li>
     </ol>
     <details class="why" open>
+      <summary>Read this first: the paper, in about half a page</summary>
+      <blockquote class="paper">
+        <p>&ldquo;Building a fabric with thousands of cables invariably leads to multiple cabling errors. Moreover, correctly cabled links may be re-connected incorrectly after maintenance such as linecard replacement. Allowing traffic to use a miscabled link can lead to forwarding loops. Links that fail unidirectionally or develop high packet error rates should also be avoided and scheduled for replacement. To address these issues, we developed Neighbor Discovery (ND), an online liveness and peer correctness checking protocol.</p>
+        <p>Neighbor Discovery (ND) uses the configured view of cluster topology together with a switch&rsquo;s local ID to determine the expected peer IDs of its local ports. It regularly exchanges its local port ID, expected peer port ID, discovered peer port ID, and link error signal. Doing so allows ND on both ends of a link to verify correct cabling.</p>
+        <p>The Interface Manager (IFM) module on each switch&rsquo;s embedded stack continuously monitors the ND state of each port, declaring a port up to the routing process only if it is both PHY UP and ND UP.&rdquo;</p>
+        <footer>A. Singh et al., &ldquo;Jupiter Rising: A Decade of Clos Topologies and Centralized Control in Google&rsquo;s Datacenter Network&rdquo;, SIGCOMM &rsquo;15, <b>Section 5.2.1</b> (&ldquo;Neighbor Discovery to Verify Connectivity&rdquo;), p. 192.</footer>
+      </blockquote>
+    </details>
+    <details class="why">
       <summary>Why this matters in Jupiter</summary>
-      <p>With thousands of cables, some will always be plugged in wrong. Google's answer was <b>Neighbor Discovery (ND)</b>. Every switch gets the same plan, so it knows which port should be at the far end of each cable. ND checks who is really there and tells the peer what it found. A port is only used for traffic when it is both <b>PHY up</b> and <b>ND up</b>. <span class="ref">(Section 5.2.1)</span></p>
+      <p>With thousands of cables, some will always be plugged in wrong. Google's answer was <b>Neighbor Discovery (ND)</b>. Every switch gets the same plan, so it knows which port should be at the far end of each cable. ND checks who is really there and tells the peer what it found. A port is only used for traffic when it is both <b>PHY up</b> and <b>ND up</b>. <span class="ref">(Section 5.2.1, p. 192)</span></p>
       <p>A problem is <b>confirmed</b> when switches on both sides of it have labeled their ports correctly. When all five are confirmed, the fabric comes up.</p>
     </details>
   </header>
@@ -156,7 +165,7 @@
   </section>
 
   <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
-  <footer class="fine">Based on A. Singh et al., &ldquo;Jupiter Rising: A Decade of Clos Topologies and Centralized Control in Google's Datacenter Network&rdquo;, SIGCOMM 2015, Sections 5.2.1 and 5.3. The JR-16 fabric and its faults are made up for this exercise.</footer>
+  <footer class="fine">Based on A. Singh et al., &ldquo;Jupiter Rising: A Decade of Clos Topologies and Centralized Control in Google's Datacenter Network&rdquo;, SIGCOMM &rsquo;15, Section 5.2.1 (p. 192) and Section 5.3. The JR-16 fabric and its faults are made up for this exercise.</footer>
 </main>
 <script src="js/config.js"></script>
 <script src="js/api.js"></script>

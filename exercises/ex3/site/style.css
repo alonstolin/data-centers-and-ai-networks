@@ -277,3 +277,6 @@ footer { margin-top: 8px; }
 .jack.static { cursor: default; opacity: 0.55; pointer-events: none; }
 .jack.static .pn { color: var(--muted); }
 .jack.static .led { background: var(--ok); opacity: 0.6; }
+.paper { margin: 10px 0 0; padding: 4px 0 4px 16px; border-left: 3px solid var(--accent); max-width: 66ch; }
+.paper p { margin: 0 0 10px; color: var(--ink); }
+.paper footer { font-size: 0.85rem; color: var(--muted); }
