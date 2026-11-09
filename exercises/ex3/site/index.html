@@ -10,158 +10,217 @@
 <link rel="stylesheet" href="style.css">
 <script src="js/theme.js"></script>
 </head>
-<body>
+<body class="console-page">
 <div class="topbar">
   <div class="topbar-in">
-    <span class="brand"><i class="led"></i>JR-16 <small>fabric bring-up</small></span>
-    <div class="status-strip" id="strip">
-      <div><span class="k">Faults confirmed</span><span class="v" id="sFaults">&ndash;</span></div>
-      <div><span class="k">Switches reported</span><span class="v" id="sReported">&ndash;</span></div>
-      <div class="fabric"><span class="k">Fabric</span><span class="v" id="sFabric">&ndash;</span></div>
-    </div>
+    <span class="brand"><i class="led"></i>Miswire Hunt <small>JR-16 fabric bring-up</small></span>
+    <a class="pagelink" href="homework.html">Homework</a>
+    <nav class="missions" id="missions" aria-label="Mission steps">
+      <button type="button" class="ms" data-step="0"><span class="ms-n">1</span><span class="ms-t">Collect</span><span class="ms-v" id="m0v">0 / 16</span></button>
+      <button type="button" class="ms" data-step="1"><span class="ms-n">2</span><span class="ms-t">Inspect</span><span class="ms-v" id="m1v">0 / 62</span></button>
+      <button type="button" class="ms" data-step="2"><span class="ms-n">3</span><span class="ms-t">Drain</span><span class="ms-v" id="m2v">0 links</span></button>
+      <button type="button" class="ms" data-step="3"><span class="ms-n">4</span><span class="ms-t">Explain</span><span class="ms-v" id="m3v">0 / 2</span></button>
+      <button type="button" class="ms" data-step="4"><span class="ms-n">5</span><span class="ms-t">Submit</span><span class="ms-v" id="m4v">not yet</span></button>
+    </nav>
     <button class="theme-btn" id="themeBtn" type="button">&#9790; Dark</button>
   </div>
 </div>
-<main>
-  <header class="hero">
-    <p class="eyebrow">Data Centers &amp; AI Networks &middot; Unit 3 &middot; Jupiter Rising</p>
-    <h1>Miswire<br>Hunt</h1>
-    <p class="lede">Sixteen switches. Five hidden cabling problems. Nobody can route until they are found. <b>Each of you is one switch</b> and sees only your own ports, so the only way to bring the fabric up is to compare notes.</p>
-    <ol class="steps">
-      <li><b>Join</b><span>Enter your email, get a switch.</span></li>
-      <li><b>Label</b><span>Check every port against the plan.</span></li>
-      <li><b>Report</b><span>Your labels light up the shared map.</span></li>
-      <li><b>Explain</b><span>Two root-cause questions.</span></li>
-    </ol>
-    <details class="why" open>
-      <summary>Why this matters in Jupiter</summary>
-      <p>&ldquo;Building a fabric with thousands of cables invariably leads to multiple cabling errors.&rdquo; Google's answer was <b>Neighbor Discovery (ND)</b>. Every switch is loaded with the same <b>cluster config</b>, so it knows which peer port should sit at the far end of each cable. ND checks what is really there and exchanges what it found with the peer. A port is declared up to the routing process only if it is both <b>PHY up</b> and <b>ND up</b>. <span class="ref">(Section 5.2.1)</span></p>
-      <p>A problem counts as <b>confirmed</b> once switches on two different sides of it have labeled their ports correctly. When all five are confirmed, the fabric comes up.</p>
-    </details>
-  </header>
 
-  <section class="card" id="joinCard">
-    <h2>Get your switch</h2>
-    <form id="joinForm" class="join">
-      <label for="email">Email</label>
-      <input id="email" type="email" required autocomplete="email" placeholder="you@example.com">
-      <button class="btn primary" type="submit">Take my switch</button>
-    </form>
-    <p class="fine">We store only a one-way hash of your email, so the same email always gets the same switch. No password, no grade.</p>
-    <p class="err" id="joinErr" hidden></p>
-  </section>
+<main class="console-main">
+  <div class="brief" id="brief">
+    <p><b>Five hidden faults</b> are somewhere in this 16-switch fabric. Work through the five steps above. There is no feedback while you play: your work is saved in this browser, you send it at step 5, and we go through the answers in class. <button type="button" class="linkbtn" id="paperBtn">What to read in the paper</button></p>
+  </div>
 
-  <section class="card" id="consoleCard" hidden>
-    <div class="console-head">
-      <div>
-        <p class="eyebrow">Your switch</p>
-        <h2 class="sw-name" id="swName">&ndash;</h2>
-        <p class="fine" id="swRole"></p>
-      </div>
-      <button class="btn ghost" id="switchUser" type="button">Not you? Use another email</button>
-    </div>
+  <div class="console">
+    <section class="map-pane" aria-label="The plan">
+      <div class="map-head"><b>The plan</b> <span class="fine">This map is the cluster config that every switch received (Section 5.3.1): each line is a cable that <i>should</i> be there. Open a switch to see what it really hears.</span></div>
+      <div class="map-wrap"><svg id="map" viewBox="0 0 960 500" role="img" aria-label="Map of the JR-16 fabric"></svg></div>
+      <ul class="legend" id="legend">
+        <li><i class="lg lg-unknown"></i>Not diagnosed</li>
+        <li><i class="lg lg-half"></i>One end OK</li>
+        <li><i class="lg lg-verified"></i>Both ends OK</li>
+        <li><i class="lg lg-suspect"></i>You found a problem</li>
+        <li><i class="lg lg-drained"></i>Drained</li>
+      </ul>
+    </section>
 
-    <div id="darkPanel" class="dark" hidden>
-      <p class="mono">&gt; ssh admin@T7.cpn<br>&gt; connection timed out<br>&gt; ping T7.cpn: 100% packet loss</p>
-      <p>Your switch does not answer on the control plane network, so you have no port table. Your job: use the shared map to work out what happened to <b>T7</b>, and answer the two questions below.</p>
-    </div>
-
-    <div id="tablePanel">
-      <p class="how"><b>1.</b> Click a port to probe it. <b>2.</b> Compare what the <b>plan</b> says should be at the other end with what <b>ND</b> (Neighbor Discovery) actually heard. <b>3.</b> Put the matching label on the port. Label all of your ports, then press Send report. The map's highlighted line is the cable of the port you are probing.</p>
-      <div class="cheat" aria-label="How to read a port">
-        <h3>How to pick a label</h3>
-        <ul>
-          <li><i style="--tc:var(--ok)"></i><b>OK</b> heard peer = plan, <code>peer hears you: yes</code>, errors below 1e-12</li>
-          <li><i style="--tc:var(--bad)"></i><b>Miswired</b> heard peer is a different port than the plan</li>
-          <li><i style="--tc:#FF8C42"></i><b>One-way</b> you hear the peer but <code>peer hears you: no</code></li>
-          <li><i style="--tc:var(--warn)"></i><b>High errors</b> plan and peer match, but the error rate is high</li>
-          <li><i style="--tc:#9AA7B2"></i><b>Link down</b> <code>PHY</code> is DOWN: there is no working cable</li>
-          <li><i style="--tc:#B58CFF"></i><b>Peer silent</b> PHY is up but you hear nothing from the peer (discovered <code>-</code>)</li>
-        </ul>
-        <p class="fine"><code>PHY</code> is the physical link. <code>ND</code> is the neighbor check each switch runs on every port. A port is only usable when it is PHY up and ND up. Some problems cannot be seen from one switch alone, so check the shared map too.</p>
-      </div>
-      <div class="faceplate" id="face" role="group" aria-label="Front panel of your switch"></div>
-      <div class="probe-card">
-        <svg id="probe" viewBox="0 0 520 200" role="img" aria-label="Probe of the selected port"></svg>
-        <p class="probe-text" id="probeText">Select a port above to probe it.</p>
-      </div>
-      <div class="tray-head"><b>Labels</b> <span class="fine" id="trayHint"></span></div>
-      <div class="tray" id="tray"></div>
-      <details class="guide">
-        <summary>What do the fields mean? (and the raw table)</summary>
-        <dl>
-          <dt>Expected peer</dt><dd>Who the cluster config says is at the other end.</dd>
-          <dt>Discovered peer</dt><dd>Who ND actually hears on this port. <code>-</code> means nothing is heard.</dd>
-          <dt>Peer hears you</dt><dd>ND messages also carry the sender's own discovered peer, so you learn whether the peer hears you. <code>unknown</code> when you hear nothing from it.</dd>
-          <dt>PHY</dt><dd>Physical link status: is there a working cable at all?</dd>
-          <dt>Error rate</dt><dd>ND's link error signal.</dd>
-        </dl>
-        <div class="tbl-wrap">
-          <table class="ports">
-            <thead><tr><th>Port</th><th>Expected peer</th><th>Discovered peer</th><th>Peer hears you</th><th>PHY</th><th>Error rate</th><th>Your label</th></tr></thead>
-            <tbody id="portRows"></tbody>
-          </table>
+    <aside class="inspector" id="inspector" aria-live="polite">
+      <!-- step 0: collect -->
+      <div class="step" id="step0" hidden>
+        <p class="step-k">Step 1 · Collect</p>
+        <h2>You are the Firepath master</h2>
+        <p>The master does not see cables. It learns the state of every link from the switches themselves: each switch reports over the control network (<b>CPN</b>) which of its ports are up (Section 5.2.2). A port is up only when it is both PHY UP and ND UP (Section 5.2.1).</p>
+        <p><button type="button" class="linkbtn" data-clip="clip-522">&#128196; Read it in the paper (Section 5.2.2)</button></p>
+        <div class="row"><button class="btn primary" id="collectBtn" type="button">Collect link state from all switches</button></div>
+        <div id="lsd" hidden>
+          <p class="fine" id="lsdSum"></p>
+          <h3 class="sub">Link-state database: links that are down</h3>
+          <ul class="flagged" id="lsdDown"></ul>
+          <p class="fine">The master only knows <i>up</i> or <i>down</i>, not why. Inspect the switches to find out what is wrong. Not every problem takes a link down.</p>
         </div>
-      </details>
-      <div class="row">
-        <button class="btn primary" id="sendReport" type="button">Send report</button>
-        <span class="fine" id="reportMsg"></span>
+      </div>
+
+      <!-- step 1: inspect -->
+      <div class="step" id="step1">
+        <div class="empty" id="s1empty">
+          <p class="step-k">Step 2 · Inspect</p>
+          <h2>Pick a switch on the map</h2>
+          <p>Each switch checks its cables with <b>Neighbor Discovery</b>: it knows from the plan who should be at the other end, and it listens for who really is.</p>
+          <p class="fine">Start anywhere. Spines are on top, ToR switches at the bottom.</p>
+          <p><button type="button" class="linkbtn" data-clip="clip-521">&#128196; Read it in the paper (Section 5.2.1)</button></p>
+        </div>
+        <div id="s1dark" hidden>
+          <p class="step-k">Step 2 · Inspect</p>
+          <h2>T7 <span class="role">ToR switch</span></h2>
+          <p class="mono term">&gt; ssh admin@T7.cpn<br>&gt; connection timed out<br>&gt; ping T7.cpn: 100% packet loss</p>
+          <p>This switch does not answer, so it has no port table. Open its neighbours (AG3, AG4) and look at the ports that face T7.</p>
+        </div>
+        <div id="s1sw" hidden>
+          <p class="step-k">Step 2 · Inspect</p>
+          <h2 id="swTitle"></h2>
+          <div class="probe" id="probe" hidden>
+            <div class="wire" id="wire"></div>
+            <dl class="pv-facts">
+              <div><dt>PHY</dt><dd id="pvPhy"></dd></div>
+              <div><dt>Peer hears you</dt><dd id="pvHears"></dd></div>
+              <div><dt>Error rate</dt><dd id="pvErr"></dd></div>
+            </dl>
+            <div class="dbox" id="dbox">
+              <p class="dq"><span class="dq-n">&#9654;</span> Pick a diagnosis for <b id="dqPort"></b> <span class="fine">(or press 1-6)</span></p>
+              <div class="dgrid" id="dgrid"></div>
+            </div>
+            <details class="cheat">
+              <summary>How to choose</summary>
+              <ol>
+                <li><b>PHY</b> DOWN: <b>Link down</b></li>
+                <li>PHY up, heard nothing: <b>Peer silent</b></li>
+                <li>Heard a different port than the map shows: <b>Miswired</b></li>
+                <li>Right peer, but it does not hear you: <b>One-way</b></li>
+                <li>Right peer both ways, error rate high: <b>High errors</b></li>
+                <li>None of these: <b>OK</b></li>
+              </ol>
+              <p class="fine">Some faults look different from each end, so check both ends of a suspicious cable.</p>
+            </details>
+          </div>
+          <h3 class="sub">All ports of this switch</h3>
+          <ol class="portlist" id="portList"></ol>
+          <p class="fine" id="probeHint">Click a port in the list, or its tab on the map.</p>
+        </div>
+      </div>
+
+      <!-- step 2: drain -->
+      <div class="step" id="step2" hidden>
+        <p class="step-k">Step 3 · Drain</p>
+        <h2>You are the Firepath master</h2>
+        <p>The master gathers link state from every switch over the control network and the switches compute their routes from it (Section 5.2.2). <b>Click a cable on the map</b> to take it out of routing. Click again to put it back.</p>
+        <h3 class="sub">Links where you found a problem</h3>
+        <ul class="flagged" id="flagged"></ul>
+        <h3 class="sub">Drained <span class="fine" id="drainCount"></span></h3>
+        <ul class="flagged" id="drainList"></ul>
+        <div class="row"><button class="btn" id="recomputeBtn" type="button">Recompute routes</button></div>
+        <div class="mres" id="masterRes" hidden></div>
+        <p class="fine">Draining a working link costs capacity. A broken link left in costs reliability, and a miswired one can cause forwarding loops (Section 5.2.1).</p>
+      </div>
+
+      <!-- step 3: explain -->
+      <div class="step" id="step3" hidden>
+        <p class="step-k">Step 4 · Explain</p>
+        <h2>Two root-cause questions</h2>
+        <form id="rcForm">
+          <fieldset>
+            <legend>On AG3 and AG4, every port that faces <b>T7</b> has PHY up but hears nothing. What most likely happened?</legend>
+            <label><input type="radio" name="q1" value="cables"> Two separate cable faults</label>
+            <label><input type="radio" name="q1" value="power"> T7 lost power</label>
+            <label><input type="radio" name="q1" value="crash"> T7's software crashed</label>
+            <label><input type="radio" name="q1" value="miswire"> T7's cables are in the wrong ports</label>
+          </fieldset>
+          <fieldset>
+            <legend><b>SP3 p3</b> has PHY up but hears nothing from AG3 u3. What is the most likely cause?</legend>
+            <label><input type="radio" name="q2" value="crash"> AG3's software crashed</label>
+            <label><input type="radio" name="q2" value="oneway"> The link works in one direction only</label>
+            <label><input type="radio" name="q2" value="miswire"> The cable goes to a different switch</label>
+            <label><input type="radio" name="q2" value="down"> The cable is unplugged</label>
+          </fieldset>
+        </form>
+        <p class="fine">Answers are saved as you click.</p>
+      </div>
+
+      <!-- step 4: submit -->
+      <div class="step" id="step4" hidden>
+        <p class="step-k">Step 5 · Submit</p>
+        <h2>Send your work</h2>
+        <ul class="done-list" id="doneList"></ul>
+        <label class="nick" for="nick">Your email</label>
+        <input id="nick" type="email" maxlength="254" autocomplete="email" placeholder="name@example.com" required>
+        <div class="row"><button class="btn primary" id="submitBtn" type="button">Submit my work</button></div>
+        <p class="fine" id="submitMsg"></p>
+        <p class="fine">Nothing is graded. You can change things and submit again.</p>
+      </div>
+
+      <div class="step-nav">
+        <button type="button" class="btn ghost" id="prevBtn">&larr; Back</button>
+        <button type="button" class="btn primary" id="nextBtn">Next step &rarr;</button>
+      </div>
+    </aside>
+  </div>
+
+  <details class="why reading" id="paperBox">
+    <summary>What to read in the paper (about 500 words)</summary>
+    <p>A. Singh et al., &ldquo;Jupiter Rising: A Decade of Clos Topologies and Centralized Control in Google&rsquo;s Datacenter Network&rdquo;, SIGCOMM &rsquo;15. You need three short passages:</p>
+    <ul class="readlist">
+      <li><b>Section 5.2.1</b> (Neighbor Discovery): the whole section, one block of text.</li>
+      <li><b>Section 5.2.2</b> (Firepath): the paragraph that starts &ldquo;At startup&rdquo;.</li>
+      <li><b>Section 5.3.1</b> (Configuration): the last paragraph.</li>
+    </ul>
+    <p>Here they are, cut straight from the paper:</p>
+    <div class="clips">
+      <figure class="clip" id="clip-531">
+        <span class="tape"></span>
+        <img src="img/paper-5-3-1.png" alt="Section 5.3.1: We distribute a single monolithic cluster configuration to all switches (chassis and ToRs) in the cluster. Each switch simply extracts its relevant portion." loading="lazy">
+        <figcaption><b>Section 5.3.1</b> · The plan: the map you see</figcaption>
+      </figure>
+      <figure class="clip" id="clip-522">
+        <span class="tape"></span>
+        <img src="img/paper-5-2-2.png" alt="Section 5.2.2: each client collects the state of its local interfaces and transmits this state to the master. The master constructs a Link State Database (LSD) and distributes it to all clients over the CPN. Each client computes shortest path forwarding with ECMP." loading="lazy">
+        <figcaption><b>Section 5.2.2</b> · Firepath: steps 1 Collect and 3 Drain</figcaption>
+      </figure>
+      <figure class="clip tall" id="clip-521">
+        <span class="tape"></span>
+        <img src="img/paper-5-2-1.png" alt="Section 5.2.1 Neighbor Discovery to Verify Connectivity (full text): ND compares expected and discovered peer IDs, a port is up only if PHY UP and ND UP, and ND also serves as a keepalive protocol." loading="lazy">
+        <figcaption><b>Section 5.2.1</b> · Neighbor Discovery: step 2 Inspect</figcaption>
+      </figure>
+    </div>
+    <p class="fine">Clippings from A. Singh et al., SIGCOMM &rsquo;15 (pages 192-194). Highlights are ours.</p>
+  </details>
+
+  <section class="card" id="planeCard">
+    <h2>Bonus: where does the control live?</h2>
+    <p class="fine" id="planeLock">Optional practice.</p>
+    <div id="planeBody" hidden>
+      <p>Software-defined networking (SDN) moves forwarding decisions out of the individual switches and into software that sees the whole network. It uses three terms, the <b>planes</b>:</p>
+      <ul class="pl-def">
+        <li><b>Data plane.</b> Forwards each packet by looking it up in a table in the switch hardware.</li>
+        <li><b>Control plane.</b> Decides what goes into those tables, for example by computing shortest paths.</li>
+        <li><b>Management plane.</b> Configures, monitors and upgrades the devices.</li>
+      </ul>
+      <p>Google built its own control plane, <b>Firepath</b>, long before &ldquo;SDN&rdquo; was a common term. Place each of its parts on a plane. You get an answer right away, and there is nothing to submit.</p>
+      <p class="fine" id="planeCount">0 of 7 placed</p>
+      <ol class="pl-list" id="planeList"></ol>
+      <div class="pl-done" id="planeDone" hidden>
+        <b>Look at the split.</b> The master holds the topology for the whole fabric, but each client computes its own forwarding table. In a textbook OpenFlow design the controller would do both and install ready-made entries. So Firepath is centralized in what it <i>knows</i> and distributed in what it <i>computes</i>. <span class="ref">(Section 5.2.2)</span>
       </div>
     </div>
-  </section>
-
-  <section class="card" id="mapCard">
-    <div class="console-head">
-      <div><h2>Shared fabric map</h2><p class="fine">Built from everyone's reports. <b>Click a link</b> to see what each end said and to put one of your 5 flags on it. Refreshes every few seconds.</p>
-        <p class="notice" id="mapJoin">Join above first. You get your own switch, your port table and 5 flags. Until then the map is read-only and grey, because nobody has reported yet.</p>
-        <p class="fine">The <b>Fabric</b> box at the top turns green when all 5 hidden faults are confirmed.</p></div>
-      <button class="btn ghost" id="refresh" type="button">Refresh</button>
-    </div>
-    <p class="fine swipe">Swipe the map sideways to see Block B &rarr;</p>
-    <div class="map-wrap"><svg id="map" viewBox="0 0 960 400" role="img" aria-label="Shared map of the JR-16 fabric"></svg></div>
-    <ul class="legend">
-      <li><i class="lg lg-unknown"></i>No report yet</li>
-      <li><i class="lg lg-half"></i>One end says OK</li>
-      <li><i class="lg lg-verified"></i>Both ends say OK</li>
-      <li><i class="lg lg-suspect"></i>Someone flagged a problem</li>
-      <li><i class="lg lg-confirmed"></i>Confirmed fault</li>
-    </ul>
-    <div class="linkcard" id="linkCard" hidden></div>
-    <div class="feed-head"><b>Live feed</b></div>
-    <ul class="feed" id="feed"><li class="fine">Waiting for the first report…</li></ul>
-    <div id="faultList" class="faults"></div>
-    <p class="err" id="mapErr" hidden></p>
-  </section>
-
-  <section class="card" id="rcCard" hidden>
-    <h2>Root cause</h2>
-    <p class="fine" id="rcLock">Send your report first, then come back here. You will need the shared map.</p>
-    <form id="rcForm" hidden>
-      <fieldset>
-        <legend>1. On AG3 and AG4, every port that faces <b>T7</b> shows PHY up but hears no ND. What happened?</legend>
-        <label><input type="radio" name="q1" value="cables"> Four separate cable faults</label>
-        <label><input type="radio" name="q1" value="power"> T7 lost power</label>
-        <label><input type="radio" name="q1" value="crash"> T7's switch software crashed</label>
-        <label><input type="radio" name="q1" value="miswire"> T7's cables were plugged into the wrong ports</label>
-      </fieldset>
-      <fieldset>
-        <legend>2. <b>SP3 p6</b> shows PHY up but hears no ND from AG3 u6. What is the most likely cause?</legend>
-        <label><input type="radio" name="q2" value="crash"> AG3's software crashed</label>
-        <label><input type="radio" name="q2" value="oneway"> The link works in one direction only</label>
-        <label><input type="radio" name="q2" value="miswire"> The cable goes to a different switch</label>
-        <label><input type="radio" name="q2" value="down"> The cable is unplugged</label>
-      </fieldset>
-      <div class="row"><button class="btn primary" type="submit">Save my answers</button><span class="fine" id="rcMsg"></span></div>
-    </form>
   </section>
 
   <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
-  <footer class="fine">Based on A. Singh et al., &ldquo;Jupiter Rising: A Decade of Clos Topologies and Centralized Control in Google's Datacenter Network&rdquo;, SIGCOMM 2015, Sections 5.2.1 and 5.3. The JR-16 fabric and its faults are made up for this exercise.</footer>
+  <footer class="fine">Based on A. Singh et al., &ldquo;Jupiter Rising&rdquo;, SIGCOMM &rsquo;15, Sections 5.2.1, 5.2.2 and 5.3.1. The JR-16 fabric and its faults are made up for this exercise.</footer>
 </main>
 <script src="js/config.js"></script>
 <script src="js/api.js"></script>
+<script src="js/puzzle.js"></script>
 <script src="js/topology.js"></script>
 <script src="js/map.js"></script>
+<script src="js/planes.js"></script>
 <script src="js/student.js"></script>
 </body>
 </html>
