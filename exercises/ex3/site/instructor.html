@@ -20,6 +20,12 @@
     <p class="err" id="err" hidden></p>
     <p class="fine" id="sum"></p>
   </section>
+  <section class="card" id="answerCard" hidden>
+    <h2>The answer map</h2>
+    <p class="fine">Red cables are the 8 links with a fault (the ones to drain). The number on each cable is the fault in the list below. Each port end shows the right diagnosis. The dashed red line is the cable that really exists between T4 and AG4.</p>
+    <div class="map-wrap"><svg id="map" viewBox="0 0 960 500" role="img" aria-label="Fabric map with the correct answers"></svg></div>
+    <ol class="ans-list" id="ansList"></ol>
+  </section>
   <section class="card" id="faultsCard" hidden><h2>Faults: who found them</h2><p class="fine">A fault counts as found for a student when at least two different switches at its ends were diagnosed correctly.</p><div id="faults"></div></section>
   <section class="card" id="portsCard" hidden><h2>Diagnoses on the fault ports</h2><div class="tbl-wrap"><table class="ports" id="portTbl"></table></div></section>
   <section class="card" id="wrongCard" hidden><h2>Ports students got wrong most often</h2><div class="tbl-wrap"><table class="ports" id="wrongTbl"></table></div></section>

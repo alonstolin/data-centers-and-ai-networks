@@ -500,3 +500,14 @@ body.submitted .led { background: var(--ok); box-shadow: 0 0 9px var(--ok); }
 .map-head { padding: 2px 4px 8px; font-size: 0.92rem; }
 .map-head b { font: 600 0.78rem var(--mono); text-transform: uppercase; letter-spacing: .08em; color: var(--accent); margin-right: 6px; }
 .portlist { display: grid; grid-template-columns: repeat(2, 1fr); }
+
+/* instructor answer map */
+#map .ans-real { stroke: var(--bad); stroke-width: 3; stroke-dasharray: 8 5; }
+#map .ans-end rect { fill: var(--panel); stroke-width: 1.5; }
+#map .ans-end text { font: 600 9.5px var(--mono); fill: var(--ink); }
+#map .ans-badge text { font: 700 12px var(--sans); fill: #fff; }
+#map .ans-dead line { stroke: var(--bad); stroke-width: 3; stroke-linecap: round; }
+.ans-list { list-style: none; padding: 0; margin: 12px 0 0; display: flex; flex-direction: column; gap: 10px; }
+.ans-list li { display: flex; gap: 10px; align-items: flex-start; }
+.ans-n { flex: none; width: 24px; height: 24px; border-radius: 50%; color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 0.85rem; }
+.ans-n.q { background: var(--muted); }

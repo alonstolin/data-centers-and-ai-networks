@@ -11,7 +11,42 @@
   const pct = (n, d) => (d ? Math.round(100 * n / d) : 0) + "%";
   const tbl = (head, rows) => "<thead><tr>" + head.map(h => "<th>" + h + "</th>").join("") + "</tr></thead><tbody>" + rows.map(r => "<tr>" + r.map(c => "<td>" + c + "</td>").join("") + "</tr>").join("") + "</tbody>";
 
+  // ---------- the answer map ----------
+  const FCOL = { 1: "#D0343A", 2: "#B5179E", 3: "#FF8C42", 4: "#A86A00", 5: "#7B5CD6" };
+  const SHORT = { OK: "OK", MISWIRED: "Miswired", ONE_WAY: "One-way", HIGH_ERRORS: "High err", LINK_DOWN: "Link down", PEER_SILENT: "Silent" };
+  function answerMap() {
+    const latest = {}, confirmed = new Set();
+    Object.keys(P.truth).forEach(k => { latest[k] = P.truth[k].a[0]; confirmed.add(k); });
+    const svg = $("map");
+    window.MH_MAP.render(svg, { latest, reported: new Set(), confirmed, flags: {}, myflags: [], me: null, flash: new Set(), master: true, drained: new Set() });
+    const Pp = T.pos, isT = s => /^T/.test(s);
+    const ends = l => { const a = Pp[l.a.s], b = Pp[l.b.s]; return [a[0], a[1] + 16, b[0], b[1] - (isT(l.b.s) ? 12 : 16)]; };
+    let h = "";
+    // the cable that really exists: T4 p2 lands on AG4 d4
+    const ag4 = Pp.AG4, t4 = Pp.T4;
+    h += '<line class="ans-real" x1="' + ag4[0] + '" y1="' + (ag4[1] + 16) + '" x2="' + t4[0] + '" y2="' + (t4[1] - 12) + '"><title>The real cable: T4 p2 to AG4 d4</title></line>';
+    const upN = {};
+    T.links.forEach(l => {
+      const fa = endF(l.a), fb = endF(l.b), f = fa || fb; if (!f) return;
+      const ui = upN[l.a.s] = (upN[l.a.s] || 0) + 1, tu = l.tier === "tor" ? 0.08 + 0.17 * (ui - 1) : 0.2;
+      const [x1, y1, x2, y2] = ends(l), tm = l.tier === "tor" ? 0.62 : 0.5, mx = x1 + (x2 - x1) * tm, my = y1 + (y2 - y1) * tm;
+      [[l.a, tu], [l.b, 0.82]].forEach(([e, t]) => {
+        const tr = P.truth[e.s + ":" + e.p]; if (!tr) return;
+        const x = x1 + (x2 - x1) * t, y = y1 + (y2 - y1) * t, txt = e.p + " " + tr.a.map(a => SHORT[a]).join("/");
+        h += '<g class="ans-end"><rect x="' + (x - txt.length * 3.1 - 4) + '" y="' + (y - 8) + '" width="' + (txt.length * 6.2 + 8) + '" height="16" rx="4" style="stroke:' + FCOL[f] + '"/><text x="' + x + '" y="' + (y + 4) + '" text-anchor="middle">' + esc(txt) + "</text></g>";
+      });
+      h += '<g class="ans-badge"><circle cx="' + mx + '" cy="' + my + '" r="10" style="fill:' + FCOL[f] + '"/><text x="' + mx + '" y="' + (my + 4) + '" text-anchor="middle">' + f + "</text></g>";
+    });
+    const t7 = Pp.T7;
+    h += '<g class="ans-dead"><line x1="' + (t7[0] - 30) + '" y1="' + (t7[1] - 15) + '" x2="' + (t7[0] + 30) + '" y2="' + (t7[1] + 15) + '"/><line x1="' + (t7[0] + 30) + '" y1="' + (t7[1] - 15) + '" x2="' + (t7[0] - 30) + '" y2="' + (t7[1] + 15) + '"/></g>';
+    svg.insertAdjacentHTML("beforeend", h);
+    $("ansList").innerHTML = P.faults.map(f => '<li><span class="ans-n" style="background:' + FCOL[f.id] + '">' + f.id + "</span><div><b>" + esc(f.title) + "</b> " + esc(f.text) + ' <span class="ref">(' + esc(f.ref) + ")</span></div></li>").join("") +
+      '<li><span class="ans-n q">?</span><div><b>Root cause answers:</b> Q1 T7&rsquo;s software crashed. Q2 the link works in one direction only.</div></li>';
+    $("answerCard").hidden = false;
+  }
+
   function show(subs) {
+    answerMap();
     const n = subs.length;
     $("sum").textContent = n + " submission" + (n === 1 ? "" : "s") + ".";
     ["faultsCard", "portsCard", "wrongCard", "rcCard2", "masterCard", "studentsCard"].forEach(id => { $(id).hidden = false; });
