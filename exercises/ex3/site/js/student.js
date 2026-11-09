@@ -58,7 +58,7 @@
   function jack(r) {
     const l = me.labels[r.port], st = l ? LABELS[l] : (probed.has(r.port) ? "probed" : "not probed");
     return '<button type="button" class="jack' + (selPort === r.port ? " sel" : "") + (probed.has(r.port) && !l ? " seen" : "") + '" data-port="' + esc(r.port) + '" aria-label="Port ' + esc(r.port) + ", " + (l ? "labeled " + LABELS[l] : (probed.has(r.port) ? "probed, not labeled" : "not probed")) + '">' +
-      '<span class="led" style="background:' + (l ? LCOL[l] : "var(--idle)") + ";box-shadow:0 0 8px " + (l ? LCOL[l] : "transparent") + '"></span>' +
+      '<span class="led" style="background:' + (l ? LCOL[l] : "var(--idle)") + '"></span>' +
       '<span class="sock"></span><span class="pn">' + esc(r.port) + '</span><span class="pl">' + st + "</span></button>";
   }
   function renderPanel() {
@@ -66,7 +66,7 @@
     me.rows.forEach(r => { const g = r.port.charAt(0).toLowerCase(); let G = groups.filter(x => x.g === g)[0]; if (!G) groups.push(G = { g, rows: [] }); G.rows.push(r); });
     $("face").innerHTML = groups.map(G => '<div class="fp-group"><div class="fp-title">' + (GROUP[G.g] || "Ports") + '</div><div class="fp-row">' + G.rows.map(jack).join("") + "</div></div>").join("");
     $("tray").innerHTML = Object.keys(LABELS).map(k => '<span role="button" tabindex="0" class="tag' + (selLabel === k ? " sel" : "") + '" draggable="true" data-label="' + k + '" aria-pressed="' + (selLabel === k) + '" title="' + HINT[k] + '" style="--tc:' + LCOL[k] + '"><i></i>' + LABELS[k] + "</span>").join("");
-    $("trayHint").innerHTML = selLabel ? "Label <b>" + LABELS[selLabel] + "</b> is selected. Now click a port to put it there." : "Drag a label onto a port, or click a label first and then a port.";
+    $("trayHint").innerHTML = selLabel ? "<b>" + LABELS[selLabel] + "</b> is selected. Now click a port to put it there." : "Drag a label onto a port, or click a label first and then a port.";
     const n = me.rows.length, done = Object.keys(me.labels).length;
     $("sendReport").disabled = !n;
     $("reportMsg").textContent = done === n ? (me.sent ? "Report on file. You can change labels and send again." : "All ports labeled. Send your report.") : done + " of " + n + " ports labeled. Label every port, then send.";
@@ -215,10 +215,8 @@
     $("sReported").textContent = sw.size + " / 16";
     $("sFabric").textContent = allUp ? "UP" : "DOWN";
     $("strip").classList.toggle("up", allUp);
-    $("faultList").innerHTML = (allUp ? '<div class="up-banner">FABRIC UP. All five problems are confirmed. Firepath may route. What each problem was gets revealed in class.</div>' : "") +
-      (st.faults || []).map(f => f.confirmed
-        ? '<article class="fault ok"><h3>Problem ' + f.id + ": confirmed</h3><p>Ports: " + esc((f.ports || []).map(p => p.s + " " + p.p).join(", ")) + "</p></article>"
-        : '<article class="fault"><h3>Problem ' + f.id + ": not confirmed yet</h3></article>").join("");
+    $("faultList").innerHTML = (allUp ? '<div class="up-banner">FABRIC UP. All five problems are confirmed. Firepath may route. What each problem was gets revealed in class.</div>' : '<p class="faults-sum">' + done.length + " of " + st.faults_total + " problems confirmed</p>") +
+      done.map(f => '<article class="fault ok"><h3>Problem ' + f.id + "</h3><p>Ports: " + esc((f.ports || []).map(p => p.s + " " + p.p).join(", ")) + "</p></article>").join("");
     drawMap();
   }
 
