@@ -67,13 +67,25 @@
     </div>
 
     <div id="tablePanel">
-      <p class="how"><b>1.</b> Click a port to probe it. <b>2.</b> Compare the plan with what ND heard. <b>3.</b> Drop a label on the port.</p>
+      <p class="how"><b>1.</b> Click a port to probe it. <b>2.</b> Compare what the <b>plan</b> says should be at the other end with what <b>ND</b> (Neighbor Discovery) actually heard. <b>3.</b> Put the matching label on the port. Label all of your ports, then press Send report. The map's highlighted line is the cable of the port you are probing.</p>
+      <div class="cheat" aria-label="How to read a port">
+        <h3>How to pick a label</h3>
+        <ul>
+          <li><i style="--tc:var(--ok)"></i><b>OK</b> heard peer = plan, <code>peer hears you: yes</code>, errors below 1e-12</li>
+          <li><i style="--tc:var(--bad)"></i><b>Miswired</b> heard peer is a different port than the plan</li>
+          <li><i style="--tc:#FF8C42"></i><b>One-way</b> you hear the peer but <code>peer hears you: no</code></li>
+          <li><i style="--tc:var(--warn)"></i><b>High errors</b> plan and peer match, but the error rate is high</li>
+          <li><i style="--tc:#9AA7B2"></i><b>Link down</b> <code>PHY</code> is DOWN: there is no working cable</li>
+          <li><i style="--tc:#B58CFF"></i><b>Peer silent</b> PHY is up but you hear nothing from the peer (discovered <code>-</code>)</li>
+        </ul>
+        <p class="fine"><code>PHY</code> is the physical link. <code>ND</code> is the neighbor check each switch runs on every port. A port is only usable when it is PHY up and ND up. Some problems cannot be seen from one switch alone, so check the shared map too.</p>
+      </div>
       <div class="faceplate" id="face" role="group" aria-label="Front panel of your switch"></div>
       <div class="probe-card">
         <svg id="probe" viewBox="0 0 520 200" role="img" aria-label="Probe of the selected port"></svg>
         <p class="probe-text" id="probeText">Select a port above to probe it.</p>
       </div>
-      <div class="tray-head"><b>Labels</b> <span class="fine">drag a label onto a port, or select a label and click a port</span></div>
+      <div class="tray-head"><b>Labels</b> <span class="fine" id="trayHint"></span></div>
       <div class="tray" id="tray"></div>
       <details class="guide">
         <summary>What do the fields mean? (and the raw table)</summary>
