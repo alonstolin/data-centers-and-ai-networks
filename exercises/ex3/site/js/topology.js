@@ -1,6 +1,6 @@
 // JR-16: the cluster config (intended topology). This is public: every switch gets it.
 // 4 spine switches (SP), 4 aggregation switches (AG) in two blocks, 8 ToRs.
-// Dual links everywhere, as in Jupiter (Section 3.5).
+// Dual links between every connected pair. The paper only says this for ToR-to-MB links in Jupiter (Section 3.3, "dual redundant 10G links"); extending it to the spine tier is our simplification.
 (function () {
   const SP = ["SP1", "SP2", "SP3", "SP4"], AG = ["AG1", "AG2", "AG3", "AG4"];
   const TOR = ["T1", "T2", "T3", "T4", "T5", "T6", "T7", "T8"];
