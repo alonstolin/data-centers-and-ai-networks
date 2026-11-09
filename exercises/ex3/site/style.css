@@ -627,3 +627,24 @@ tr[data-part].lit { background: var(--glow); }
 .hw-opt { display: flex; gap: 8px; align-items: center; padding: 6px 8px; border-radius: 6px; cursor: pointer; }
 .hw-opt:hover { background: var(--panel2); }
 @media (max-width: 760px) { .hw-grid, .hw-pair { grid-template-columns: 1fr; } }
+.hw-grid { display: block; }
+.hwp-head, .hwp-row { display: grid; grid-template-columns: minmax(200px, 1.4fr) repeat(4, 1fr); gap: 6px; align-items: center; }
+.hwp-head { font: 600 0.74rem var(--mono); text-transform: uppercase; letter-spacing: .04em; color: var(--muted); padding: 0 0 6px; text-align: center; }
+.hwp-row { padding: 5px 0; border-top: 1px solid var(--line); }
+.hwp-name { display: flex; align-items: center; gap: 4px; font-weight: 500; }
+.hwp-cell { display: flex; justify-content: center; align-items: center; gap: 6px; padding: 7px 4px; border: 1.5px solid var(--line); border-radius: 8px; cursor: pointer; font-size: 0.84rem; background: var(--panel); transition: all .15s; }
+.hwp-cell:hover { border-color: var(--accent); }
+.hwp-cell input { position: absolute; opacity: 0; pointer-events: none; }
+.hwp-cell .hwp-dot { width: 12px; height: 12px; border-radius: 50%; border: 2px solid var(--muted); flex: none; }
+.hwp-cell:has(input:checked) { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); font-weight: 600; }
+.hwp-cell:has(input:checked) .hwp-dot { border-color: var(--accent-ink); background: var(--accent-ink); }
+.hwp-cell:has(input:focus-visible) { outline: 3px solid var(--accent); outline-offset: 2px; }
+.hwp-head span { display: block; }
+.hwp-head { display: grid; }
+.hwp-head > span:first-child { display: block; }
+.hw-hard { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.hw-hcard { border: 1px solid var(--line); border-radius: 10px; padding: 12px; background: var(--panel2); display: flex; flex-direction: column; gap: 8px; }
+.hw-hhead { display: flex; flex-direction: column; gap: 6px; }
+@media (max-width: 860px) { .hw-hard { grid-template-columns: 1fr; } .hwp-head { display: none; } .hwp-row { grid-template-columns: 1fr 1fr; } .hwp-name { grid-column: 1 / -1; } }
+.hwp-cell { padding: 12px 4px; } .hwp-cell .hwp-dot { width: 16px; height: 16px; }
+.hwp-row:hover { background: var(--panel2); }
