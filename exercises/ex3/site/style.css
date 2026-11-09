@@ -297,3 +297,9 @@ footer { margin-top: 8px; }
 .pl-fb.ok { border-left-color: var(--warn); }
 .pl-fb.no { border-left-color: var(--bad); }
 .pl-done { margin-top: 16px; padding: 12px 14px; border-left: 4px solid var(--accent); background: var(--panel2); border-radius: 4px; }
+
+.done-list { list-style: none; margin: 8px 0 12px; padding: 0; display: grid; gap: 6px; }
+.done-list li { display: flex; gap: 10px; align-items: baseline; color: var(--muted); }
+.done-list li.ok { color: var(--ink); }
+.done-list .tick { width: 1.2em; text-align: center; color: var(--muted); }
+.done-list li.ok .tick { color: var(--ok); font-weight: 700; }

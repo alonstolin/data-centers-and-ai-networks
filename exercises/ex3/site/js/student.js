@@ -24,7 +24,7 @@
 
   $("switchUser").addEventListener("click", () => {
     store.del(KEY); me = null;
-    $("consoleCard").hidden = true; $("rcCard").hidden = true; window.MH_PLANES.update(false, false); $("joinCard").hidden = false; $("mapJoin").hidden = false;
+    $("consoleCard").hidden = true; $("rcCard").hidden = true; window.MH_PLANES.update(false, false); $("doneCard").hidden = true; $("joinCard").hidden = false; $("mapJoin").hidden = false;
     $("email").value = ""; $("email").focus();
     drawMap();
   });
@@ -147,11 +147,25 @@
     $("sendReport").disabled = false;
   });
 
+  // ---------- progress ----------
+  function renderDone() {
+    const el = $("doneCard"); if (!el) return;
+    el.hidden = !me;
+    if (!me) return;
+    const sent = me.rows.length === 0 || Object.keys(me.mine || {}).length > 0, ans = !!me.answers;
+    const pc = window.MH_PLANES ? window.MH_PLANES.count() : 0, pt = window.MH_PLANES ? window.MH_PLANES.total : 7;
+    const item = (ok, text, opt) => '<li class="' + (ok ? "ok" : "") + '"><span class="tick" aria-hidden="true">' + (ok ? "\u2713" : "\u25CB") + "</span> " + text + (opt ? ' <span class="fine">(optional)</span>' : "") + "</li>";
+    $("doneList").innerHTML = item(sent, me.rows.length ? "Report sent" : "Nothing to report from this switch", false) + item(ans, "Both root-cause questions saved", false) +
+      item(me.flags.length > 0, "Flags placed on the map: " + me.flags.length + " of 5", true) + item(pc === pt, "Firepath parts placed: " + pc + " of " + pt, true);
+  }
+  document.addEventListener("planes-change", () => { if (me) renderDone(); });
+
   // ---------- root cause ----------
   function renderRc() {
     const unlocked = me && (me.rows.length === 0 || Object.keys(me.mine).length > 0);
     $("rcLock").hidden = !!unlocked;
     window.MH_PLANES.update(!!me, !!unlocked);
+    renderDone();
     $("rcForm").hidden = !unlocked;
     if (me && me.answers) {
       ["q1", "q2"].forEach(q => { const el = document.querySelector('input[name="' + q + '"][value="' + me.answers[q] + '"]'); if (el) el.checked = true; });
@@ -164,7 +178,7 @@
     if (!q1 || !q2) { $("rcMsg").textContent = "Answer both questions."; return; }
     try {
       await rpc("submit_answers", { p_hash: me.hash, p_q1: q1, p_q2: q2 });
-      me.answers = { q1, q2 };
+      me.answers = { q1, q2 }; renderDone();
       $("rcMsg").textContent = "Answers saved. The class result is revealed in class.";
     } catch (err) { $("rcMsg").textContent = err.message; }
   });
@@ -246,7 +260,7 @@
   $("linkCard").addEventListener("click", async e => {
     if (!e.target.closest("#flagBtn") || !me || !selPair) return;
     const b = e.target.closest("#flagBtn"); b.disabled = true;
-    try { me.flags = await rpc("toggle_suspect", { p_hash: me.hash, p_pair: selPair }); await refresh(); }
+    try { me.flags = await rpc("toggle_suspect", { p_hash: me.hash, p_pair: selPair }); renderDone(); await refresh(); }
     catch (err) { toast(err.message); }
     renderLink();
   });

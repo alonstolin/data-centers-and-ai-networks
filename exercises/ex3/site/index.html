@@ -29,10 +29,12 @@
     <p class="lede">This is a 16-switch fabric (the whole network of switches and cables that connects the servers) with five hidden faults. Each of you is one switch and can only see your own ports, so you have to compare notes to find them. Until all five are found, the fabric stays down.</p>
     <ol class="steps">
       <li><b>Join.</b> <span>Enter your email. You get one switch.</span></li>
-      <li><b>Check.</b> <span>Look at each of your ports. Does what the switch heard match the plan?</span></li>
-      <li><b>Label.</b> <span>Mark every port with the label that fits, then send your report.</span></li>
-      <li><b>Answer.</b> <span>Two short questions at the end.</span></li>
+      <li><b>Check and label.</b> <span>Look at each of your ports. Does what the switch heard match the plan? Mark each port with the label that fits.</span></li>
+      <li><b>Report.</b> <span>Send your labels. They show up on the shared map.</span></li>
+      <li><b>Answer.</b> <span>Two short questions about the root cause.</span></li>
+      <li><b>Optional.</b> <span>Flag cables you think are broken, and place the parts of Firepath on the SDN planes (Part 2).</span></li>
     </ol>
+    <p class="fine">You are done after steps 1 to 4. The shared map fills in as classmates report during the week, so check back later. The fabric coming up is a result for the class, not something you have to wait for.</p>
     <details class="why" open>
       <summary>Read this first: the paper, in about half a page</summary>
       <blockquote class="paper">
@@ -167,7 +169,7 @@
 
   <section class="card" id="planeCard" hidden>
     <h2>Where does the control live?</h2>
-    <p class="fine" id="planeLock">Send your report first. This part does not depend on anyone else.</p>
+    <p class="fine" id="planeLock">Unlocks after you send your report. It does not depend on your classmates.</p>
     <div id="planeBody" hidden>
       <p>Software-defined networking (SDN) moves forwarding decisions out of the individual switches and into software that sees the whole network. It uses three terms, the <b>planes</b>:</p>
       <ul class="pl-def">
@@ -182,6 +184,12 @@
         <b>Look at the split.</b> The master holds the topology for the whole fabric, but each client computes its own forwarding table. In a textbook OpenFlow design the controller would do both and install ready-made entries. So Firepath is centralized in what it <i>knows</i> and distributed in what it <i>computes</i>. <span class="ref">(Section 5.2.2)</span>
       </div>
     </div>
+  </section>
+
+  <section class="card" id="doneCard" hidden>
+    <h2>Your progress</h2>
+    <ul class="done-list" id="doneList"></ul>
+    <p class="fine">You are done when both required items are ticked. Optional items are for extra practice.</p>
   </section>
 
   <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>

@@ -38,6 +38,7 @@
     const n = Object.keys(choice).length;
     $("planeCount").textContent = n + " of " + PARTS.length + " placed";
     $("planeDone").hidden = n < PARTS.length;
+    document.dispatchEvent(new CustomEvent("planes-change"));
   }
 
   document.addEventListener("DOMContentLoaded", function () {
@@ -50,6 +51,7 @@
   });
 
   window.MH_PLANES = {
+    count() { return Object.keys(choice).length; }, total: PARTS.length,
     update(joined, unlocked) {
       if (!$("planeCard")) return;
       $("planeCard").hidden = !joined;
