@@ -387,7 +387,7 @@ footer { margin-top: 8px; }
 .mres .good { color: var(--ok); font-weight: 600; }
 
 /* ---------- console layout (map + inspector + mission bar) ---------- */
-.console-page .topbar-in { max-width: 1280px; flex-wrap: nowrap; }
+.console-page .topbar-in { max-width: 1280px; flex-wrap: nowrap; gap: 8px; }
 .console-page main { max-width: 1280px; padding-top: 14px; gap: 14px; }
 .missions { display: flex; gap: 4px; background: var(--panel2); border: 1px solid var(--line); border-radius: 10px; padding: 4px; }
 .ms { display: flex; align-items: center; gap: 8px; border: 0; background: transparent; color: var(--muted); font: 500 0.92rem var(--sans); padding: 6px 14px; border-radius: 7px; cursor: pointer; transition: background .15s, color .15s; }
@@ -534,3 +534,28 @@ body.submitted .led { background: var(--ok); box-shadow: 0 0 9px var(--ok); }
 :root[data-theme="dark"] .clip { filter: brightness(.92); }
 .readlist { margin: 4px 0 10px; padding-left: 1.3em; }
 .readlist li { margin: 3px 0; }
+
+/* homework page and cross links */
+.pages { display: flex; gap: 4px; }
+.pages a, .pagelink { font: 600 0.88rem var(--sans); color: var(--muted); text-decoration: none; padding: 6px 12px; border-radius: 7px; white-space: nowrap; }
+.pages a:hover, .pagelink:hover { background: var(--tag-hover); color: var(--ink); }
+.pages a.on { background: var(--panel); color: var(--ink); box-shadow: inset 0 -2px 0 var(--accent); }
+.hw { max-width: 860px !important; }
+.hw p { max-width: 70ch; }
+.hwt td, .hwt th { vertical-align: top; text-align: left; }
+.hwt td:first-child { white-space: nowrap; }
+.callout { background: var(--glow); border-left: 4px solid var(--accent); padding: 8px 12px; border-radius: 4px; }
+.todo { background: #FFF1B8; color: #5B4300; padding: 1px 6px; border-radius: 4px; font-family: var(--mono); }
+.hw h2 .fine { font-weight: 400; margin-left: 6px; }
+.hwt { width: 100%; table-layout: auto; font: 0.94rem var(--sans); }
+.hwt th { font: 600 0.74rem var(--mono); text-transform: uppercase; letter-spacing: .05em; }
+.hwt td { font: 0.94rem/1.45 var(--sans); white-space: normal !important; overflow-wrap: anywhere; padding: 8px 10px; }
+.hwt td:first-child { white-space: nowrap !important; }
+.hw .tbl-wrap { overflow-x: visible; }
+.ms { white-space: nowrap; }
+.ms-v { white-space: nowrap; }
+.console-page .missions { flex-shrink: 0; }
+.console-page .topbar-in { flex-wrap: wrap; }
+.console-page .topbar-in { flex-wrap: nowrap; }
+.console-page .brand small { display: none; }
+.console-page .ms { padding: 6px 10px; gap: 6px; }

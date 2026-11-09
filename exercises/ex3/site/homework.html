@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Unit 3 Homework: Jupiter and SDN</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="style.css">
+<script src="js/theme.js"></script>
+</head>
+<body class="hw-page">
+<div class="topbar"><div class="topbar-in">
+  <span class="brand"><i class="led"></i>Unit 3 <small>homework</small></span>
+  <nav class="pages" aria-label="Pages"><a href="homework.html" class="on">Homework: Jupiter and SDN</a><a href="index.html">Miswire Hunt (game)</a></nav>
+  <button class="theme-btn" id="themeBtn" type="button">&#9790; Dark</button>
+</div></div>
+<main class="hw">
+  <header class="hero">
+    <p class="eyebrow">Data Centers &amp; AI Networks, Unit 3</p>
+    <h1>Jupiter and SDN</h1>
+    <p class="lede"><b>Due Sunday, Nov 15, at 13:00</b>, one hour before class. About one hour of work: 30 minutes of reading, then two short parts submitted through a Google Form.</p>
+    <p>Google&rsquo;s Jupiter paper describes ten years of datacenter networks built on three ideas: Clos topologies, merchant silicon and centralized control. This homework focuses on the third. Google built its own control plane, Firepath, years before &ldquo;SDN&rdquo; was a common term. You will place Firepath&rsquo;s parts on the standard SDN picture, then take a position on how centralized a datacenter&rsquo;s control should be.</p>
+    <p>There are no right answers in Part 2, but every claim needs a section number. In class, some of you will be asked to read your answer aloud and defend it, so write something you can stand behind. Using AI is fine; arriving unable to explain your own answer is not.</p>
+  </header>
+
+  <section class="card">
+    <h2>Reading <span class="fine">(about 30 minutes)</span></h2>
+    <p>Read these sections of <i>Jupiter Rising: A Decade of Clos Topologies and Centralized Control in Google&rsquo;s Datacenter Network</i> (Singh et al., Communications of the ACM, Sept. 2016), then the SDN primer below.</p>
+    <div class="tbl-wrap"><table class="ports hwt">
+      <thead><tr><th>Section</th><th>Title</th><th>Read it for</th></tr></thead>
+      <tbody>
+        <tr><td>&sect;1</td><td>Introduction</td><td>The three principles, especially &ldquo;Centralized control protocols&rdquo;</td></tr>
+        <tr><td>&sect;3.1</td><td>Firehose</td><td>Google&rsquo;s first fabric, why 1.0 failed and what 1.1 changed</td></tr>
+        <tr><td>&sect;5.1</td><td>Discussion</td><td>Why Google rejected standard routing protocols such as OSPF and BGP</td></tr>
+        <tr><td>&sect;5.2</td><td>Routing</td><td>How Firepath works: master, clients, LSD, CPN, Neighbor Discovery</td></tr>
+        <tr><td>&sect;6.1</td><td>Fabric congestion</td><td>Why drops happened at 25% average utilization</td></tr>
+        <tr><td>&sect;6.2</td><td>Outages</td><td>What went wrong in production, including the control software</td></tr>
+      </tbody>
+    </table></div>
+    <p class="fine">Skip the hardware detail in &sect;3.2&ndash;&sect;3.3 and the external connectivity in &sect;4. We cover what you need from them in class.</p>
+  </section>
+
+  <section class="card">
+    <h2>SDN primer <span class="fine">(5 minutes)</span></h2>
+    <p>Software-defined networking (SDN) moves the decisions about forwarding out of individual switches and into software with a view of the whole network. You need three terms, the SDN planes:</p>
+    <div class="tbl-wrap"><table class="ports hwt">
+      <thead><tr><th>Plane</th><th>What it does</th><th>Example</th></tr></thead>
+      <tbody>
+        <tr><td><b>Data plane</b></td><td>Forwards each packet by looking it up in a table in the switch hardware</td><td>A switch matching a destination and sending the packet out port 3</td></tr>
+        <tr><td><b>Control plane</b></td><td>Decides what goes into those tables</td><td>A routing protocol computing shortest paths</td></tr>
+        <tr><td><b>Management plane</b></td><td>Configures, monitors and upgrades the devices</td><td>An operator pushing a config file, an alerting system</td></tr>
+      </tbody>
+    </table></div>
+    <p>Traditional networks run the control plane on every switch. Each switch discovers its neighbors, exchanges routing messages with them (OSPF, IS-IS, BGP), builds its own picture of the network and computes its own tables. No device has the whole picture.</p>
+    <p>SDN, as OpenFlow defined it, splits the control plane off the switches. A logically centralized controller (it may be several replicated machines acting as one) holds the global view, computes the forwarding entries and installs them in each switch&rsquo;s flow table over a dedicated channel, using the OpenFlow protocol. The switch keeps the data plane and becomes simple: match a packet against its flow table, apply the action, and ask the controller when nothing matches.</p>
+    <div class="tbl-wrap"><table class="ports hwt">
+      <thead><tr><th></th><th>Traditional</th><th>SDN (OpenFlow)</th></tr></thead>
+      <tbody>
+        <tr><td>Who knows the whole topology?</td><td>Every switch, each building its own copy</td><td>The controller</td></tr>
+        <tr><td>Who computes the forwarding tables?</td><td>Every switch, for itself</td><td>The controller, for all switches</td></tr>
+        <tr><td>What travels from the control logic to a switch?</td><td>Routing messages between neighbors</td><td>Ready-made flow table entries</td></tr>
+      </tbody>
+    </table></div>
+    <p class="fine">Source: N. McKeown et al., &ldquo;OpenFlow: Enabling Innovation in Campus Networks,&rdquo; ACM SIGCOMM Computer Communication Review, 38(2), April 2008. The Jupiter paper cites it as reference 18.</p>
+    <p class="callout">Keep the second table in mind: Firepath does not fit neatly in either column.</p>
+  </section>
+
+  <section class="card">
+    <h2>Part 1: Mapping <span class="fine">(about 15 minutes)</span></h2>
+    <p><b>1a.</b> Place each Firepath part on one SDN plane: data, control, management, or outside the SDN picture. All seven are described in &sect;5.1&ndash;&sect;5.2 (cluster config also in &sect;5.3).</p>
+    <div class="tbl-wrap"><table class="ports hwt">
+      <thead><tr><th>#</th><th>Part</th><th>What the paper calls it</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>Firepath master</td><td>The elected node that collects link state and redistributes it</td></tr>
+        <tr><td>2</td><td>Firepath client</td><td>The process running on every fabric switch</td></tr>
+        <tr><td>3</td><td>Link State Database (LSD)</td><td>The versioned topology state the master sends to clients</td></tr>
+        <tr><td>4</td><td>Control Plane Network (CPN)</td><td>The out-of-band network the master and clients talk over</td></tr>
+        <tr><td>5</td><td>Neighbor Discovery (ND)</td><td>The liveness and peer-correctness check on each link</td></tr>
+        <tr><td>6</td><td>BGP at the cluster border routers (CBRs)</td><td>Route exchange at the edge of the fabric</td></tr>
+        <tr><td>7</td><td>Cluster config</td><td>The static topology of the whole fabric, loaded at startup</td></tr>
+      </tbody>
+    </table></div>
+    <p><b>1b.</b> Pick the two placements you found hardest and explain each in one or two sentences.</p>
+    <p><b>1c.</b> Name one thing Firepath does that a textbook OpenFlow controller would not, and give the section number.</p>
+  </section>
+
+  <section class="card">
+    <h2>Part 2: Position <span class="fine">(about 15 minutes)</span></h2>
+    <p>Firepath centralizes the topology state but lets each switch compute its own forwarding table (&sect;5.2). Suppose you are designing the control plane for a datacenter fabric of thousands of switches, like the ones in the paper.</p>
+    <p><b>2a.</b> Which would you build? Choose one.</p>
+    <div class="tbl-wrap"><table class="ports hwt">
+      <thead><tr><th>Option</th><th>Who holds the topology</th><th>Who computes the forwarding tables</th></tr></thead>
+      <tbody>
+        <tr><td><b>A.</b> Fully distributed (OSPF, IS-IS or BGP)</td><td>Every switch builds its own view from its neighbors</td><td>Every switch</td></tr>
+        <tr><td><b>B.</b> Google&rsquo;s split (Firepath)</td><td>A central master, which sends it to every switch</td><td>Every switch</td></tr>
+        <tr><td><b>C.</b> Fully centralized (OpenFlow-style)</td><td>A central controller</td><td>The controller, which installs entries in every switch</td></tr>
+      </tbody>
+    </table></div>
+    <p><b>2b.</b> Why? In two or three sentences, argue for your choice and against at least one of the others. Cite at least two section numbers from &sect;5 or &sect;6.2.</p>
+    <p><b>2c.</b> What would change your mind? Name one fact, measurement or failure that would make you switch to another option.</p>
+  </section>
+
+  <section class="card">
+    <h2>How to submit</h2>
+    <p>Submit through the Google Form: <span class="todo">[Form link to be added]</span>. It closes <b>Sunday, Nov 15, at 13:00</b>, and late answers aren&rsquo;t counted in the class tally.</p>
+    <p>The Form asks for your name, your seven placements (1a), your two explanations (1b), your Firepath vs. OpenFlow difference (1c), your choice of A, B or C (2a), your argument (2b) and what would change your mind (2c). You can draft your answers elsewhere and paste them into the Form.</p>
+    <p>At the start of the Firepath discussion we show how many chose A, B and C, without names. Then we ask a few of you to read your answer.</p>
+  </section>
+  <footer class="fine"><a href="index.html">Go to the Miswire Hunt game</a></footer>
+</main>
+</body>
+</html>
