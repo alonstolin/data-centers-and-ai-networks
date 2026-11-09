@@ -4,7 +4,7 @@ A shared, browser-based game about **Neighbor Discovery and centralized configur
 *Jupiter Rising* (SIGCOMM 2015, Sections 5.2.1 and 5.3). About 15 minutes per student, no grade.
 
 The class is the control plane of **JR-16**, a 16-switch Clos fabric (4 spine, 4 aggregation in
-two blocks, 8 ToR, dual links everywhere). Each student enters an email and gets one switch. They see
+two blocks, 8 ToR, one link per connected pair). Each student enters an email and gets one switch. They see
 only that switch's ND port table: expected peer (cluster config), discovered peer, whether the peer
 hears them, PHY state and error rate. They label every port, and the labels paint a shared map that
 everyone sees. Five problems are hidden in the fabric. A problem is *confirmed* when switches on two
