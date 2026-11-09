@@ -48,3 +48,7 @@ under `/preview/` for review before merging.
 - Run `supabase/submissions.sql` once in the Supabase SQL Editor. It creates `submissions`, `submit_work` and `all_submissions`.
 - `site/instructor.html` shows class results. It asks for the instructor key stored in `settings` (`k = 'instructor_key'`).
 - Part 2 (planes) still gives instant feedback.
+
+## Layout
+
+The page is a console: the map on the left, an inspector on the right, and four mission steps in the top bar (Inspect, Drain, Explain, Submit). In Inspect, picking a diagnosis moves on to the next port of the open switch; keys 1-6 pick a diagnosis.

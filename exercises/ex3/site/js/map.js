@@ -64,7 +64,7 @@
     T.links.forEach(l => {
       const k = l.a.s + "|" + l.b.s, st = (o.drained && o.drained.has(k)) ? "drained" : linkState(l, o);
       const la = o.latest[l.a.s + ":" + l.a.p], lb = o.latest[l.b.s + ":" + l.b.p];
-      const line = l.a.s + " " + l.a.p + " \u2194 " + l.b.s + " " + l.b.p + " | " + l.a.s + ": " + (la ? LABELS[la] : "no report") + ", " + l.b.s + ": " + (lb ? LABELS[lb] : "no report");
+      const line = l.a.s + " " + l.a.p + " \u2194 " + l.b.s + " " + l.b.p + " | " + l.a.s + ": " + (la ? LABELS[la] : "not diagnosed") + ", " + l.b.s + ": " + (lb ? LABELS[lb] : "not diagnosed");
       const p = pairs[k] || (pairs[k] = { a: l.a.s, b: l.b.s, st: "unknown", tips: [], tier: l.tier });
       if (ORDER[st] > ORDER[p.st]) p.st = st;
       p.tips.push(line);
@@ -81,7 +81,7 @@
     // wide invisible hit areas (thin lines are hard to click) and flag markers
     Object.values(pairs).forEach(p => {
       const [x1, y1] = P[p.a], [x2, y2] = P[p.b], yb = y2 - (p.b.startsWith("T") ? 12 : 16);
-      h += '<line class="hit" data-pair="' + p.key + '" x1="' + x1 + '" y1="' + (y1 + 16) + '" x2="' + x2 + '" y2="' + yb + '"><title>' + esc(p.a + " \u2194 " + p.b + " (click to inspect and flag)") + "</title></line>";
+      h += '<line class="hit" data-pair="' + p.key + '" x1="' + x1 + '" y1="' + (y1 + 16) + '" x2="' + x2 + '" y2="' + yb + '"><title>' + esc(p.a + " \u2194 " + p.b + (o.masterSel ? " (click to drain or restore)" : "")) + "</title></line>";
     });
     Object.values(pairs).forEach(p => {
       const c = flags[p.key]; if (!c) return;

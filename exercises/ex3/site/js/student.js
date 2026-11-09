@@ -1,4 +1,5 @@
-// Miswire Hunt, single-player version with delayed feedback.
+// Miswire Hunt, single-player console with delayed feedback.
+// Layout: the map on the left, an inspector on the right, four mission steps in the top bar.
 // The student's work is kept in localStorage and sent to Supabase only when they press Submit.
 // Nothing here tells the student whether an answer is right: the results are discussed in class.
 (function () {
@@ -17,86 +18,87 @@
   const drained = new Set(saved.drained || []);  // "upper|lower" link keys taken out of routing
   const answers = saved.answers || {};           // { q1, q2 }
   let nick = saved.nick || "", submittedAt = saved.submittedAt || null;
+  let step = saved.step || 1;
   const uid = saved.uid || (window.crypto && crypto.randomUUID ? crypto.randomUUID() : "u" + Date.now() + Math.random().toString(36).slice(2));
-  const persist = () => store.set(KEY, JSON.stringify({ uid, diag, drained: Array.from(drained), answers, nick, submittedAt }));
+  const persist = () => store.set(KEY, JSON.stringify({ uid, diag, drained: Array.from(drained), answers, nick, submittedAt, step }));
 
   const TOTAL_PORTS = Object.values(P.views).reduce((n, v) => n + v.length, 0);
-  let sel = null, selPort = null, selLabel = null;
+  let sel = null, selPort = null;
   const probed = new Set();                      // "SW:port"
 
   const rowsOf = sw => (P.views[sw] || []).map(a => ({ port: a[0], expected: a[1], discovered: a[2], peer_hears: a[3], phy: a[4], err: a[5] }));
   const linkKey = l => l.a.s + "|" + l.b.s;
+  const ORDER_KEYS = ["OK", "MISWIRED", "ONE_WAY", "HIGH_ERRORS", "LINK_DOWN", "PEER_SILENT"];
+  const LCOL = { OK: "var(--ok)", MISWIRED: "var(--bad)", ONE_WAY: "#FF8C42", HIGH_ERRORS: "var(--warn)", LINK_DOWN: "#9AA7B2", PEER_SILENT: "#B58CFF" };
+  const HINT = { OK: "Plan and reality agree, both directions", MISWIRED: "A different peer than the plan", ONE_WAY: "Only one direction works", HIGH_ERRORS: "Up and correct, but error rate is high", LINK_DOWN: "PHY down: no working cable", PEER_SILENT: "PHY up but nothing heard from the peer" };
 
   // ---------- map ----------
   function drawMap() {
     const reported = new Set();
     Object.keys(diag).forEach(k => reported.add(k.split(":")[0]));
-    const rows = sel && sel !== "MASTER" ? rowsOf(sel) : [];
+    const showSw = step === 1 && sel;
+    const rows = showSw ? rowsOf(sel) : [];
     const labels = {};
     rows.forEach(r => { const l = diag[sel + ":" + r.port]; if (l) labels[r.port] = l; });
     const panel = rows.length ? { sw: sel, rows, labels, sel: selPort, probed: new Set(rows.filter(r => probed.has(sel + ":" + r.port)).map(r => r.port)) } : null;
-    const ap = document.activeElement && document.activeElement.getAttribute && document.activeElement.getAttribute("data-port");
-    render($("map"), { latest: diag, reported, confirmed: new Set(), flags: {}, myflags: [], me: sel === "MASTER" ? null : sel, flash: new Set(), selPair: null, probePair: null, panel, master: true, masterSel: sel === "MASTER", drained });
-    if (ap) { const f = $("map").querySelector('[data-port="' + ap + '"]'); if (f) f.focus(); }
+    render($("map"), { latest: diag, reported, confirmed: new Set(), flags: {}, myflags: [], me: showSw ? sel : null, flash: new Set(), selPair: null, probePair: null, panel, master: true, masterSel: step === 2, drained });
+    $("map").classList.toggle("drainmode", step === 2);
   }
 
-  // ---------- status and progress ----------
-  function renderStatus() {
-    $("sDiag").textContent = Object.keys(diag).length + " / " + TOTAL_PORTS;
-    $("sDrain").textContent = String(drained.size);
-    $("sSub").textContent = submittedAt ? "YES" : "NO";
-    $("strip").classList.toggle("up", !!submittedAt);
-    window.MH_PLANES.update(true, true);
-    renderDone();
+  // ---------- mission bar ----------
+  function renderMissions() {
+    const nd = Object.keys(diag).length, na = (answers.q1 ? 1 : 0) + (answers.q2 ? 1 : 0);
+    $("m1v").textContent = nd + " / " + TOTAL_PORTS;
+    $("m2v").textContent = drained.size + (drained.size === 1 ? " link" : " links");
+    $("m3v").textContent = na + " / 2";
+    $("m4v").textContent = submittedAt ? "sent" : "not yet";
+    const done = { 1: nd > 0, 2: drained.size > 0, 3: na === 2, 4: !!submittedAt };
+    document.querySelectorAll(".ms").forEach(b => {
+      const n = +b.dataset.step;
+      b.classList.toggle("on", n === step);
+      b.classList.toggle("done", done[n]);
+      b.setAttribute("aria-current", n === step ? "step" : "false");
+    });
+    document.body.classList.toggle("submitted", !!submittedAt);
+    $("prevBtn").hidden = step === 1;
+    $("nextBtn").hidden = step === 4;
+    $("nextBtn").textContent = ["", "Next: drain links →", "Next: explain →", "Next: submit →"][step] || "";
   }
-  function renderDone() {
-    const pc = window.MH_PLANES.count(), pt = window.MH_PLANES.total, nd = Object.keys(diag).length, answered = !!(answers.q1 && answers.q2);
-    const item = (ok, text, opt) => '<li class="' + (ok ? "ok" : "") + '"><span class="tick" aria-hidden="true">' + (ok ? "✓" : "○") + "</span> " + text + (opt ? ' <span class="fine">(optional)</span>' : "") + "</li>";
-    $("doneList").innerHTML = item(nd > 0, "Ports diagnosed: " + nd + " of " + TOTAL_PORTS) + item(answered, "Both root-cause questions answered") + item(!!submittedAt, "Work submitted") +
-      item(drained.size > 0, "Firepath master: links drained: " + drained.size, true) + item(pc === pt, "Firepath parts placed: " + pc + " of " + pt, true);
-  }
-  document.addEventListener("planes-change", renderDone);
 
-  // ---------- the open switch ----------
-  const LCOL = { OK: "var(--ok)", MISWIRED: "var(--bad)", ONE_WAY: "#FF8C42", HIGH_ERRORS: "var(--warn)", LINK_DOWN: "#9AA7B2", PEER_SILENT: "#B58CFF" };
-  const HINT = { OK: "Plan and reality agree, both directions", MISWIRED: "A different peer than the plan", ONE_WAY: "Only one direction works", HIGH_ERRORS: "Up and correct, but error rate is high", LINK_DOWN: "PHY down: no working cable", PEER_SILENT: "PHY up but no ND from the peer" };
-
-  function renderDock() {
-    const isM = sel === "MASTER", rows = sel && !isM ? rowsOf(sel) : [], dark = sel && !isM && !rows.length;
-    $("selHint").hidden = !!sel;
-    $("masterDock").hidden = !isM;
-    document.querySelectorAll(".mleg").forEach(e => { e.hidden = !drained.size; });
-    $("darkPanel").hidden = !dark;
-    $("labelDock").hidden = !(sel && rows.length);
-    if (isM) renderMaster();
+  // ---------- step 1: inspect ----------
+  function renderInspect() {
+    const rows = sel ? rowsOf(sel) : [], dark = sel === "T7";
+    $("s1empty").hidden = !!sel;
+    $("s1dark").hidden = !dark;
+    $("s1sw").hidden = !(sel && rows.length);
     if (!sel || !rows.length) return;
-    const done = rows.filter(r => diag[sel + ":" + r.port]).length;
-    $("dockTitle").textContent = sel + " · " + T.role(sel) + " · " + rows.length + " ports";
-    $("tray").innerHTML = Object.keys(LABELS).map(k => '<span role="button" tabindex="0" class="tag' + (selLabel === k ? " sel" : "") + '" draggable="true" data-label="' + k + '" aria-pressed="' + (selLabel === k) + '" title="' + HINT[k] + '" style="--tc:' + LCOL[k] + '"><i></i>' + LABELS[k] + "</span>").join("");
-    $("trayHint").innerHTML = selLabel ? "<b>" + LABELS[selLabel] + "</b> is selected. Now click a port tab to put it there." : "Drag a diagnosis onto a port tab, or click one first and then a port tab.";
-    $("reportMsg").textContent = done + " of " + rows.length + " ports of " + sel + " diagnosed.";
-    $("portRows").innerHTML = rows.map(r => "<tr><th scope=\"row\">" + esc(r.port) + "</th><td>" + esc(r.expected) + "</td><td>" + esc(r.discovered) + "</td><td>" + esc(r.peer_hears) +
-      '</td><td class="' + (r.phy === "DOWN" ? "bad" : "") + '">' + esc(r.phy) + "</td><td>" + esc(r.err) + "</td><td>" + (diag[sel + ":" + r.port] ? LABELS[diag[sel + ":" + r.port]] : "—") + "</td></tr>").join("");
+    const nd = rows.filter(r => diag[sel + ":" + r.port]).length;
+    $("swTitle").innerHTML = esc(sel) + ' <span class="role">' + esc(T.role(sel)) + "</span>" + '<span class="swprog">' + nd + " / " + rows.length + " diagnosed</span>";
+    $("portList").innerHTML = rows.map(r => {
+      const d = diag[sel + ":" + r.port], on = r.port === selPort;
+      return '<li><button type="button" class="pl' + (on ? " on" : "") + '" data-port="' + esc(r.port) + '"><span class="pl-p">' + esc(r.port) + '</span><span class="pl-to">→ ' + esc(r.expected) + "</span>" +
+        (d ? '<span class="chip" style="--tc:' + LCOL[d] + '">' + LABELS[d] + "</span>" : '<span class="chip none">?</span>') + "</button></li>";
+    }).join("");
+    const r = rows.filter(x => x.port === selPort)[0];
+    $("probe").hidden = !r;
+    $("probeHint").hidden = !!r;
+    if (!r) return;
+    const silent = r.discovered === "-", mism = !silent && r.discovered !== r.expected;
+    $("pvPlan").textContent = r.expected;
+    $("pvHeard").textContent = silent ? "nothing" : r.discovered;
+    $("pvHeard").className = "pv-v" + (silent || mism ? " bad" : "");
+    $("pvArrow").textContent = silent ? "?" : mism ? "≠" : "=";
+    $("pvArrow").className = "pv-arrow" + (silent || mism ? " bad" : "");
+    const fact = (id, v, bad) => { $(id).textContent = v; $(id).className = bad ? "bad" : ""; };
+    fact("pvPhy", r.phy, r.phy === "DOWN");
+    fact("pvHears", r.peer_hears, r.peer_hears === "no");
+    fact("pvErr", r.err, r.err !== "<1e-12");
+    $("dqPort").textContent = sel + " " + r.port;
+    const cur = diag[sel + ":" + r.port];
+    $("dgrid").innerHTML = ORDER_KEYS.map(k => '<button type="button" class="dg' + (cur === k ? " on" : "") + '" data-label="' + k + '" title="' + HINT[k] + '" style="--tc:' + LCOL[k] + '"><i></i>' + LABELS[k] + "</button>").join("");
   }
 
-  function renderProbe() {
-    const r = selPort && sel && sel !== "MASTER" && rowsOf(sel).filter(x => x.port === selPort)[0];
-    if (!r) { $("probeText").textContent = "Click a port tab on the open switch to probe it."; return; }
-    const silent = r.discovered === "-", bad = () => ' class="bad"';
-    $("probeText").innerHTML = "<b>Port " + esc(sel + " " + r.port) + "</b>" +
-      '<table class="probe-tbl"><thead><tr><th>Plan says</th><th>Heard</th><th>PHY</th><th>Peer hears you</th><th>Error rate</th></tr></thead><tbody><tr>' +
-      "<td>" + esc(r.expected) + "</td><td" + (!silent && r.discovered !== r.expected ? bad() : "") + ">" + (silent ? "nothing" : esc(r.discovered)) + "</td><td" + (r.phy === "DOWN" ? bad() : "") + ">" + esc(r.phy) + "</td><td" + (r.peer_hears === "no" ? bad() : "") + ">" + esc(r.peer_hears) + "</td><td" + (r.err !== "<1e-12" ? bad() : "") + ">" + esc(r.err) + "</td></tr></tbody></table>" +
-      '<p class="fine">"Plan says" comes from the cluster configuration that every switch received (Section 5.3.1).</p>';
-  }
-
-  function refresh() { renderDock(); renderProbe(); renderStatus(); drawMap(); }
-  function touch() { submittedAt = submittedAt && null; $("submitMsg").textContent = ""; persist(); }
-
-  function openSwitch(sw) { sel = sw; selPort = null; refresh(); }
-  function selectPort(port) { selPort = port; probed.add(sel + ":" + port); refresh(); }
-  function setDiag(port, label) { diag[sel + ":" + port] = label; selPort = port; probed.add(sel + ":" + port); touch(); refresh(); }
-
-  // ---------- the Firepath master ----------
+  // ---------- step 2: the Firepath master ----------
   // ECMP: number of shortest paths between two ToRs over the links that are not drained (T7 is crashed: not a node)
   function paths(src, dst, out) {
     const adj = {};
@@ -115,79 +117,105 @@
     return cnt[dst] || 0;
   }
   const PAIRS = [["T1", "T8"], ["T4", "T5"], ["T5", "T6"]];
+  const linkText = l => l.a.s + " " + l.a.p + " ↔ " + l.b.s + " " + l.b.p;
 
-  function renderMaster() {
-    $("mlinkRows").innerHTML = T.links.map(l => {
-      const k = linkKey(l), la = diag[l.a.s + ":" + l.a.p], lb = diag[l.b.s + ":" + l.b.p];
-      return '<tr class="' + (drained.has(k) ? "drain" : "") + '"><td><label><input type="checkbox" data-drain="' + k + '"' + (drained.has(k) ? " checked" : "") + '> drain</label></td><td>' + esc(l.a.s + " " + l.a.p + " ↔ " + l.b.s + " " + l.b.p) + "</td><td>" + (la ? LABELS[la] : "—") + " / " + (lb ? LABELS[lb] : "—") + "</td></tr>";
-    }).join("");
-    $("drainCount").textContent = drained.size + " link" + (drained.size === 1 ? "" : "s") + " drained.";
+  function renderDrain() {
+    const bad = T.links.filter(l => { const a = diag[l.a.s + ":" + l.a.p], b = diag[l.b.s + ":" + l.b.p]; return (a && a !== "OK") || (b && b !== "OK"); });
+    const item = l => {
+      const k = linkKey(l), a = diag[l.a.s + ":" + l.a.p], b = diag[l.b.s + ":" + l.b.p];
+      return '<li><button type="button" class="dl' + (drained.has(k) ? " on" : "") + '" data-drain="' + k + '"><span class="dl-x">' + (drained.has(k) ? "✕" : "") + '</span><span class="dl-t">' + esc(linkText(l)) + '</span><span class="fine">' + (a ? LABELS[a] : "—") + " / " + (b ? LABELS[b] : "—") + "</span></button></li>";
+    };
+    $("flagged").innerHTML = bad.length ? bad.map(item).join("") : '<li class="fine">None yet. Diagnose ports in step 1 first.</li>';
+    const dl = T.links.filter(l => drained.has(linkKey(l)));
+    $("drainList").innerHTML = dl.length ? dl.map(item).join("") : '<li class="fine">Nothing drained.</li>';
+    $("drainCount").textContent = "(" + drained.size + ")";
   }
   function recompute() {
-    const rows = PAIRS.map(p => { const n = paths(p[0], p[1], drained); return "<tr><td>" + p[0] + " → " + p[1] + "</td><td>" + n + " path" + (n === 1 ? "" : "s") + "</td></tr>"; }).join("");
+    const rows = PAIRS.map(p => { const n = paths(p[0], p[1], drained), full = paths(p[0], p[1], new Set()); return "<tr><td>" + p[0] + " → " + p[1] + '</td><td class="num">' + n + " of " + full + " paths</td></tr>"; }).join("");
     $("masterRes").hidden = false;
-    $("masterRes").innerHTML = "<table><tbody>" + rows + '</tbody></table><p class="fine">Fewer paths means less capacity. Taking out a working link costs capacity. Leaving a broken link in costs reliability, and a miswired one can cause loops (Section 5.2.1).</p>';
+    $("masterRes").innerHTML = "<table><tbody>" + rows + "</tbody></table>";
   }
   function toggleDrain(k) { if (drained.has(k)) drained.delete(k); else drained.add(k); $("masterRes").hidden = true; touch(); refresh(); }
-  $("mlinkRows").addEventListener("change", e => { const c = e.target.closest("[data-drain]"); if (c) toggleDrain(c.getAttribute("data-drain")); });
-  $("recomputeBtn").addEventListener("click", recompute);
 
-  // ---------- map and tray events ----------
+  // ---------- step 4: submit ----------
+  function renderSubmit() {
+    const nd = Object.keys(diag).length, answered = !!(answers.q1 && answers.q2);
+    const item = (ok, text) => '<li class="' + (ok ? "ok" : "") + '"><span class="tick" aria-hidden="true">' + (ok ? "✓" : "○") + "</span> " + text + "</li>";
+    $("doneList").innerHTML = item(nd > 0, nd + " of " + TOTAL_PORTS + " ports diagnosed") + item(drained.size > 0, drained.size + " link" + (drained.size === 1 ? "" : "s") + " drained") + item(answered, answered ? "Both questions answered" : "Questions not answered yet");
+    if (submittedAt) $("submitMsg").textContent = "Sent at " + new Date(submittedAt).toTimeString().slice(0, 5) + ". Thanks! You can change things and send again.";
+  }
+
+  // ---------- refresh ----------
+  function refresh() {
+    [1, 2, 3, 4].forEach(n => { $("step" + n).hidden = n !== step; });
+    if (step === 1) renderInspect();
+    if (step === 2) renderDrain();
+    if (step === 4) renderSubmit();
+    renderMissions(); drawMap();
+    window.MH_PLANES.update(true, true);
+  }
+  function touch() { if (submittedAt) { submittedAt = null; $("submitMsg").textContent = ""; } persist(); }
+  function goStep(n) { step = Math.max(1, Math.min(4, n)); persist(); refresh(); }
+
+  function openSwitch(sw) {
+    if (sw === "MASTER") { goStep(2); return; }
+    sel = sw; step = 1;
+    const rows = rowsOf(sw), first = rows.filter(r => !diag[sw + ":" + r.port])[0] || rows[0];
+    selPort = first ? first.port : null;
+    if (selPort) probed.add(sw + ":" + selPort);
+    persist(); refresh();
+  }
+  function selectPort(port) { selPort = port; probed.add(sel + ":" + port); refresh(); }
+  function setDiag(label) {
+    if (!sel || !selPort) return;
+    diag[sel + ":" + selPort] = label; touch();
+    // move on to the next port of this switch that has no diagnosis yet
+    const rows = rowsOf(sel), i = rows.findIndex(r => r.port === selPort);
+    const next = rows.slice(i + 1).concat(rows.slice(0, i)).filter(r => !diag[sel + ":" + r.port])[0];
+    if (next) { selPort = next.port; probed.add(sel + ":" + next.port); }
+    refresh();
+  }
+
+  // ---------- events ----------
   $("map").addEventListener("click", e => {
     const p = e.target.closest("[data-port]");
-    if (p && sel) {
-      const port = p.getAttribute("data-port");
-      if (selLabel && selPort === port) { setDiag(port, selLabel); return; }
-      selectPort(port);
-      if (selLabel) setDiag(port, selLabel);
-      return;
-    }
-    const pr = e.target.closest("[data-pair]");
-    if (pr && sel === "MASTER") { toggleDrain(pr.getAttribute("data-pair")); return; }
+    if (p && sel && step === 1) { selectPort(p.getAttribute("data-port")); return; }
     const n = e.target.closest("[data-sw]");
-    if (n) openSwitch(n.getAttribute("data-sw"));
+    if (n) { openSwitch(n.getAttribute("data-sw")); return; }
+    const pr = e.target.closest("[data-pair]");
+    if (pr && step === 2) toggleDrain(pr.getAttribute("data-pair"));
   });
   $("map").addEventListener("keydown", e => {
-    if ((e.key === "Enter" || e.key === " ") && e.target.closest && e.target.closest("[data-port]")) { e.preventDefault(); e.target.closest("[data-port]").dispatchEvent(new MouseEvent("click", { bubbles: true })); }
+    if ((e.key === "Enter" || e.key === " ") && e.target.closest && e.target.closest("[data-port],[data-sw]")) { e.preventDefault(); e.target.closest("[data-port],[data-sw]").dispatchEvent(new MouseEvent("click", { bubbles: true })); }
   });
-  $("map").addEventListener("dragover", e => { if (e.target.closest("[data-port]")) e.preventDefault(); });
-  $("map").addEventListener("drop", e => {
-    const j = e.target.closest("[data-port]"); if (!j || !sel) return; e.preventDefault();
-    const l = e.dataTransfer.getData("text/plain"); if (!LABELS[l]) return;
-    setDiag(j.getAttribute("data-port"), l);
+  $("portList").addEventListener("click", e => { const b = e.target.closest("[data-port]"); if (b) selectPort(b.getAttribute("data-port")); });
+  $("dgrid").addEventListener("click", e => { const b = e.target.closest("[data-label]"); if (b) setDiag(b.dataset.label); });
+  document.addEventListener("keydown", e => {
+    // number keys 1-6 pick a diagnosis while a port is open
+    if (step !== 1 || !selPort || /INPUT|TEXTAREA/.test((e.target.tagName || ""))) return;
+    const i = "123456".indexOf(e.key); if (i >= 0) setDiag(ORDER_KEYS[i]);
   });
-  $("tray").addEventListener("click", e => { const t = e.target.closest("[data-label]"); if (!t) return; selLabel = selLabel === t.dataset.label ? null : t.dataset.label; renderDock(); });
-  $("tray").addEventListener("keydown", e => { if ((e.key === "Enter" || e.key === " ") && e.target.closest("[data-label]")) { e.preventDefault(); e.target.closest("[data-label]").click(); } });
-  $("tray").addEventListener("dragstart", e => { const t = e.target.closest("[data-label]"); if (t) e.dataTransfer.setData("text/plain", t.dataset.label); });
+  $("inspector").addEventListener("click", e => { const b = e.target.closest("[data-drain]"); if (b) toggleDrain(b.getAttribute("data-drain")); });
+  $("recomputeBtn").addEventListener("click", recompute);
+  $("missions").addEventListener("click", e => { const b = e.target.closest("[data-step]"); if (b) goStep(+b.dataset.step); });
+  $("prevBtn").addEventListener("click", () => goStep(step - 1));
+  $("nextBtn").addEventListener("click", () => goStep(step + 1));
+  $("paperBtn").addEventListener("click", () => { $("paperBox").open = true; $("paperBox").scrollIntoView({ behavior: "smooth" }); });
 
-  // ---------- root cause (saved, no verdict) ----------
   ["q1", "q2"].forEach(q => { const el = document.querySelector('input[name="' + q + '"][value="' + answers[q] + '"]'); if (el) el.checked = true; });
-  $("rcForm").addEventListener("submit", e => {
-    e.preventDefault();
-    const q1 = (document.querySelector('input[name="q1"]:checked') || {}).value, q2 = (document.querySelector('input[name="q2"]:checked') || {}).value;
-    if (!q1 || !q2) { $("rcMsg").textContent = "Answer both questions."; return; }
-    answers.q1 = q1; answers.q2 = q2; touch(); renderDone();
-    $("rcMsg").textContent = "Saved. We go through the answers in class.";
-  });
+  $("rcForm").addEventListener("change", e => { if (e.target.name) { answers[e.target.name] = e.target.value; touch(); renderMissions(); } });
 
-  // ---------- submit ----------
   $("nick").value = nick;
   $("nick").addEventListener("input", () => { nick = $("nick").value; persist(); });
-  function submitMsg() {
-    if (submittedAt) $("submitMsg").textContent = "Submitted at " + new Date(submittedAt).toTimeString().slice(0, 5) + ". You can change things and submit again.";
-  }
   $("submitBtn").addEventListener("click", async () => {
-    if (!Object.keys(diag).length) { $("submitMsg").textContent = "Diagnose a few ports first."; return; }
+    if (!Object.keys(diag).length) { $("submitMsg").textContent = "Diagnose a few ports first (step 1)."; return; }
     $("submitBtn").disabled = true; $("submitMsg").textContent = "Sending...";
     try {
       await window.MH.rpc("submit_work", { p_id: uid, p_nick: nick, p_diag: diag, p_drained: Array.from(drained), p_answers: answers });
-      submittedAt = Date.now(); persist(); submitMsg(); renderStatus();
+      submittedAt = Date.now(); persist(); refresh();
     } catch (err) { $("submitMsg").textContent = "Could not send: " + err.message + " Your work is still saved in this browser. Try again."; }
     $("submitBtn").disabled = false;
   });
 
-  // ---------- boot ----------
-  ["rcCard", "doneCard", "planeCard"].forEach(id => { $(id).hidden = false; });
   refresh();
-  submitMsg();
 })();
