@@ -4,7 +4,7 @@
   const { render, fromStatus, LABELS, esc } = window.MH_MAP;
   const KEY = "mh-hash";
   let me = null;        // { hash, switch, rows, mine, answers }
-  let lastPairs = {}, selPair = null, lastStatus = null, prevFlags = null, prevPorts = null, prevConfirmed = null, flash = new Set(), feed = [];
+  let lastPairs = {}, selPair = null, probePair = null, lastStatus = null, prevFlags = null, prevPorts = null, prevConfirmed = null, flash = new Set(), feed = [];
 
   function showErr(el, msg) { el.textContent = msg; el.hidden = !msg; }
 
@@ -24,17 +24,17 @@
 
   $("switchUser").addEventListener("click", () => {
     store.del(KEY); me = null;
-    $("consoleCard").hidden = true; $("rcCard").hidden = true; $("joinCard").hidden = false;
+    $("consoleCard").hidden = true; $("rcCard").hidden = true; $("joinCard").hidden = false; $("mapJoin").hidden = false;
     $("email").value = ""; $("email").focus();
     drawMap();
   });
 
   async function loadMe(hash) {
     const v = await rpc("get_my_view", { p_hash: hash });
-    if (!v) { store.del(KEY); $("joinCard").hidden = false; return; }
+    if (!v) { store.del(KEY); $("joinCard").hidden = false; $("mapJoin").hidden = false; return; }
     me = { hash, flags: v.flags || [], switch: v.switch, rows: v.rows || [], mine: v.mine || {}, labels: Object.assign({}, v.mine || {}), sent: Object.keys(v.mine || {}).length > 0, answers: v.answers };
     selPort = null; selLabel = null;
-    $("joinCard").hidden = true;
+    $("joinCard").hidden = true; $("mapJoin").hidden = true;
     $("consoleCard").hidden = false;
     $("rcCard").hidden = false;
     $("swName").textContent = me.switch;
@@ -51,20 +51,25 @@
   // ---------- front panel ----------
   const LCOL = { OK: "var(--ok)", MISWIRED: "var(--bad)", ONE_WAY: "#FF8C42", HIGH_ERRORS: "var(--warn)", LINK_DOWN: "#9AA7B2", PEER_SILENT: "#B58CFF" };
   const HINT = { OK: "Plan and reality agree, both directions", MISWIRED: "A different peer than the plan", ONE_WAY: "Only one direction works", HIGH_ERRORS: "Up and correct, but error rate is high", LINK_DOWN: "PHY down: no working cable", PEER_SILENT: "PHY up but no ND from the peer" };
-  let selLabel = null, selPort = null;
+  let selLabel = null, selPort = null; const probed = new Set();
   const rowOf = p => me.rows.filter(r => r.port === p)[0];
 
+  const GROUP = { d: "Down ports (toward the tier below)", u: "Up ports (toward the tier above)", p: "Ports" };
+  function jack(r) {
+    const l = me.labels[r.port], st = l ? LABELS[l] : (probed.has(r.port) ? "probed" : "not probed");
+    return '<button type="button" class="jack' + (selPort === r.port ? " sel" : "") + (probed.has(r.port) && !l ? " seen" : "") + '" data-port="' + esc(r.port) + '" aria-label="Port ' + esc(r.port) + ", " + (l ? "labeled " + LABELS[l] : (probed.has(r.port) ? "probed, not labeled" : "not probed")) + '">' +
+      '<span class="led" style="background:' + (l ? LCOL[l] : "var(--idle)") + ";box-shadow:0 0 8px " + (l ? LCOL[l] : "transparent") + '"></span>' +
+      '<span class="sock"></span><span class="pn">' + esc(r.port) + '</span><span class="pl">' + st + "</span></button>";
+  }
   function renderPanel() {
-    $("face").innerHTML = me.rows.map(r => {
-      const l = me.labels[r.port];
-      return '<button type="button" class="jack' + (selPort === r.port ? " sel" : "") + '" data-port="' + esc(r.port) + '" aria-label="Port ' + esc(r.port) + (l ? ", labeled " + LABELS[l] : ", not labeled") + '">' +
-        '<span class="led" style="background:' + (l ? LCOL[l] : "var(--idle)") + ";box-shadow:0 0 8px " + (l ? LCOL[l] : "transparent") + '"></span>' +
-        '<span class="sock"></span><span class="pn">' + esc(r.port) + '</span><span class="pl">' + (l ? LABELS[l] : "\u2014") + "</span></button>";
-    }).join("");
+    const groups = [];
+    me.rows.forEach(r => { const g = r.port.charAt(0).toLowerCase(); let G = groups.filter(x => x.g === g)[0]; if (!G) groups.push(G = { g, rows: [] }); G.rows.push(r); });
+    $("face").innerHTML = groups.map(G => '<div class="fp-group"><div class="fp-title">' + (GROUP[G.g] || "Ports") + '</div><div class="fp-row">' + G.rows.map(jack).join("") + "</div></div>").join("");
     $("tray").innerHTML = Object.keys(LABELS).map(k => '<span role="button" tabindex="0" class="tag' + (selLabel === k ? " sel" : "") + '" draggable="true" data-label="' + k + '" aria-pressed="' + (selLabel === k) + '" title="' + HINT[k] + '" style="--tc:' + LCOL[k] + '"><i></i>' + LABELS[k] + "</span>").join("");
+    $("trayHint").innerHTML = selLabel ? "Label <b>" + LABELS[selLabel] + "</b> is selected. Now click a port to put it there." : "Drag a label onto a port, or click a label first and then a port.";
     const n = me.rows.length, done = Object.keys(me.labels).length;
     $("sendReport").disabled = !n;
-    $("reportMsg").textContent = done === n ? (me.sent ? "Report on file. You can change labels and send again." : "All ports labeled. Send your report.") : done + " of " + n + " ports labeled.";
+    $("reportMsg").textContent = done === n ? (me.sent ? "Report on file. You can change labels and send again." : "All ports labeled. Send your report.") : done + " of " + n + " ports labeled. Label every port, then send.";
     renderTable();
   }
 
@@ -95,6 +100,10 @@
   // The probe: plan on the right in dashes, reality in solid, an ND pulse running along the cable.
   function renderProbe(port) {
     const r = rowOf(port), svg = $("probe"); if (!r) return;
+    if (!probed.has(port)) { probed.add(port); renderPanel(); }
+    const peerSw = r.expected && r.expected !== "-" ? r.expected.split(" ")[0] : null;
+    probePair = null; if (peerSw) { [me.switch + "|" + peerSw, peerSw + "|" + me.switch].forEach(k => { if (lastPairs[k]) probePair = k; }); }
+    drawMap();
     const down = r.phy === "DOWN", silent = r.discovered === "-", match = !silent && r.discovered === r.expected, hi = r.err !== "<1e-12";
     const node = (x, y, w, t1, t2, cls) => '<g class="pn-box ' + cls + '"><rect x="' + x + '" y="' + y + '" width="' + w + '" height="44" rx="6"/><text x="' + (x + w / 2) + '" y="' + (y + 19) + '" text-anchor="middle" class="t1">' + t1 + '</text><text x="' + (x + w / 2) + '" y="' + (y + 35) + '" text-anchor="middle" class="t2">' + t2 + "</text></g>";
     let h = "", cableEnd = 330;
@@ -156,7 +165,7 @@
   // ---------- shared map ----------
   function drawMap() {
     const base = lastStatus ? fromStatus(lastStatus) : { latest: {}, reported: new Set(), confirmed: new Set() };
-    lastPairs = render($("map"), Object.assign(base, { me: me && me.switch, flash, selPair, myflags: me ? me.flags : [] }));
+    lastPairs = render($("map"), Object.assign(base, { probePair, me: me && me.switch, flash, selPair, myflags: me ? me.flags : [] }));
     renderLink();
   }
 
@@ -203,7 +212,7 @@
     diffEvents(st);
     $("sFaults").textContent = done.length + " / " + st.faults_total;
     const sw = new Set((st.ports || []).map(p => p.s));
-    $("sReported").textContent = sw.size + " / 15";
+    $("sReported").textContent = sw.size + " / 16";
     $("sFabric").textContent = allUp ? "UP" : "DOWN";
     $("strip").classList.toggle("up", allUp);
     $("faultList").innerHTML = (allUp ? '<div class="up-banner">FABRIC UP. All five problems are confirmed. Firepath may route. What each problem was gets revealed in class.</div>' : "") +

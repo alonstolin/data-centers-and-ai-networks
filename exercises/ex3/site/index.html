@@ -6,7 +6,9 @@
 <title>Miswire Hunt</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%230A7F77%22/%3E%3Cpath d=%22M6 22V10l5 8 5-8v12M20 10h6M23 10v12%22 stroke=%22white%22 stroke-width=%223%22 fill=%22none%22/%3E%3C/svg%3E">
 <link rel="stylesheet" href="style.css">
+<script src="js/theme.js"></script>
 </head>
 <body>
 <div class="topbar">
@@ -17,6 +19,7 @@
       <div><span class="k">Switches reported</span><span class="v" id="sReported">&ndash;</span></div>
       <div class="fabric"><span class="k">Fabric</span><span class="v" id="sFabric">&ndash;</span></div>
     </div>
+    <button class="theme-btn" id="themeBtn" type="button">&#9790; Dark</button>
   </div>
 </div>
 <main>
@@ -30,7 +33,7 @@
       <li><b>Report</b><span>Your labels light up the shared map.</span></li>
       <li><b>Explain</b><span>Two root-cause questions.</span></li>
     </ol>
-    <details class="why">
+    <details class="why" open>
       <summary>Why this matters in Jupiter</summary>
       <p>&ldquo;Building a fabric with thousands of cables invariably leads to multiple cabling errors.&rdquo; Google's answer was <b>Neighbor Discovery (ND)</b>. Every switch is loaded with the same <b>cluster config</b>, so it knows which peer port should sit at the far end of each cable. ND checks what is really there and exchanges what it found with the peer. A port is declared up to the routing process only if it is both <b>PHY up</b> and <b>ND up</b>. <span class="ref">(Section 5.2.1)</span></p>
       <p>A problem counts as <b>confirmed</b> once switches on two different sides of it have labeled their ports correctly. When all five are confirmed, the fabric comes up.</p>
@@ -64,13 +67,25 @@
     </div>
 
     <div id="tablePanel">
-      <p class="how"><b>1.</b> Click a port to probe it. <b>2.</b> Compare the plan with what ND heard. <b>3.</b> Drop a label on the port.</p>
+      <p class="how"><b>1.</b> Click a port to probe it. <b>2.</b> Compare what the <b>plan</b> says should be at the other end with what <b>ND</b> (Neighbor Discovery) actually heard. <b>3.</b> Put the matching label on the port. Label all of your ports, then press Send report. The map's highlighted line is the cable of the port you are probing.</p>
+      <div class="cheat" aria-label="How to read a port">
+        <h3>How to pick a label</h3>
+        <ul>
+          <li><i style="--tc:var(--ok)"></i><b>OK</b> heard peer = plan, <code>peer hears you: yes</code>, errors below 1e-12</li>
+          <li><i style="--tc:var(--bad)"></i><b>Miswired</b> heard peer is a different port than the plan</li>
+          <li><i style="--tc:#FF8C42"></i><b>One-way</b> you hear the peer but <code>peer hears you: no</code></li>
+          <li><i style="--tc:var(--warn)"></i><b>High errors</b> plan and peer match, but the error rate is high</li>
+          <li><i style="--tc:#9AA7B2"></i><b>Link down</b> <code>PHY</code> is DOWN: there is no working cable</li>
+          <li><i style="--tc:#B58CFF"></i><b>Peer silent</b> PHY is up but you hear nothing from the peer (discovered <code>-</code>)</li>
+        </ul>
+        <p class="fine"><code>PHY</code> is the physical link. <code>ND</code> is the neighbor check each switch runs on every port. A port is only usable when it is PHY up and ND up. Some problems cannot be seen from one switch alone, so check the shared map too.</p>
+      </div>
       <div class="faceplate" id="face" role="group" aria-label="Front panel of your switch"></div>
       <div class="probe-card">
         <svg id="probe" viewBox="0 0 520 200" role="img" aria-label="Probe of the selected port"></svg>
         <p class="probe-text" id="probeText">Select a port above to probe it.</p>
       </div>
-      <div class="tray-head"><b>Labels</b> <span class="fine">drag a label onto a port, or select a label and click a port</span></div>
+      <div class="tray-head"><b>Labels</b> <span class="fine" id="trayHint"></span></div>
       <div class="tray" id="tray"></div>
       <details class="guide">
         <summary>What do the fields mean? (and the raw table)</summary>
@@ -97,9 +112,12 @@
 
   <section class="card" id="mapCard">
     <div class="console-head">
-      <div><h2>Shared fabric map</h2><p class="fine">Built from everyone's reports. <b>Click a link</b> to see what each end said and to put one of your 5 flags on it. Refreshes every few seconds.</p></div>
+      <div><h2>Shared fabric map</h2><p class="fine">Built from everyone's reports. <b>Click a link</b> to see what each end said and to put one of your 5 flags on it. Refreshes every few seconds.</p>
+        <p class="notice" id="mapJoin">Join above first. You get your own switch, your port table and 5 flags. Until then the map is read-only and grey, because nobody has reported yet.</p>
+        <p class="fine">The <b>Fabric</b> box at the top turns green when all 5 hidden faults are confirmed.</p></div>
       <button class="btn ghost" id="refresh" type="button">Refresh</button>
     </div>
+    <p class="fine swipe">Swipe the map sideways to see Block B &rarr;</p>
     <div class="map-wrap"><svg id="map" viewBox="0 0 960 400" role="img" aria-label="Shared map of the JR-16 fabric"></svg></div>
     <ul class="legend">
       <li><i class="lg lg-unknown"></i>No report yet</li>
