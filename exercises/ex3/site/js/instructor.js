@@ -69,10 +69,10 @@
     $("rcBars").innerHTML = rc("q1", P.rc.q1, { cables: "Two separate cable faults", power: "T7 lost power", crash: "T7's software crashed", miswire: "T7's cables were plugged into the wrong ports" }) +
       rc("q2", P.rc.q2, { crash: "AG3's software crashed", oneway: "The link works in one direction only", miswire: "The cable goes to a different switch", down: "The cable is unplugged" });
     $("drainTbl").innerHTML = tbl(["Link", "Broken?", "Drained by"], T.links.map(l => { const k = linkKey(l), c = subs.filter(s => (s.drained || []).indexOf(k) >= 0).length; return [esc(l.a.s + " " + l.a.p + " ↔ " + l.b.s + " " + l.b.p), faulty.has(k) ? "<b>broken</b>" : "", c + " of " + n]; }));
-    $("stuTbl").innerHTML = tbl(["Name", "Diagnosed", "Wrong", "Faults found", "Q1", "Q2", "Master clean"], subs.map(s => {
+    $("stuTbl").innerHTML = tbl(["Email", "Diagnosed", "Wrong", "Faults found", "Q1", "Q2", "Master clean"], subs.map(s => {
       const d = s.diag || {}, ks = Object.keys(d), w = ks.filter(k => !isOk(d, k)).length, fd = P.faults.filter(f => found(d, f.id)).length, dr = new Set(s.drained || []), a = s.answers || {};
       const clean = dr.size === faulty.size && Array.from(faulty).every(k => dr.has(k));
-      return [esc(s.nick || "(anonymous)"), ks.length, w, fd + " / " + P.faults.length, a.q1 ? (a.q1 === P.rc.q1 ? "✓" : "✗") : "—", a.q2 ? (a.q2 === P.rc.q2 ? "✓" : "✗") : "—", dr.size ? (clean ? "✓" : "✗ (" + dr.size + ")") : "—"];
+      return [esc(s.nick || "(no email)"), ks.length, w, fd + " / " + P.faults.length, a.q1 ? (a.q1 === P.rc.q1 ? "✓" : "✗") : "—", a.q2 ? (a.q2 === P.rc.q2 ? "✓" : "✗") : "—", dr.size ? (clean ? "✓" : "✗ (" + dr.size + ")") : "—"];
     }));
   }
 

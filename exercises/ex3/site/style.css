@@ -532,3 +532,5 @@ body.submitted .led { background: var(--ok); box-shadow: 0 0 9px var(--ok); }
 .clip.flash { animation: clipflash 1.4s ease-out; }
 @keyframes clipflash { 0%, 40% { box-shadow: 0 0 0 6px var(--accent-glow), 0 10px 24px rgba(20,35,45,.14); } }
 :root[data-theme="dark"] .clip { filter: brightness(.92); }
+.readlist { margin: 4px 0 10px; padding-left: 1.3em; }
+.readlist li { margin: 3px 0; }

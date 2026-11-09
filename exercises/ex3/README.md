@@ -44,7 +44,7 @@ under `/preview/` for review before merging.
 
 ## Saving and class results
 
-- The page gives no feedback while students play. Work is kept in the browser (`localStorage`) and sent to Supabase when the student presses **Submit** (optional nickname, anonymous id).
+- The page gives no feedback while students play. Work is kept in the browser (`localStorage`) and sent to Supabase when the student presses **Submit** (the student enters their email; it is stored in the `nick` column).
 - Run `supabase/submissions.sql` once in the Supabase SQL Editor. It creates `submissions`, `submit_work` and `all_submissions`.
 - `site/instructor.html` shows class results. It asks for the instructor key stored in `settings` (`k = 'instructor_key'`).
 - Part 2 (planes) still gives instant feedback.

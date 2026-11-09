@@ -263,6 +263,8 @@
   $("nick").value = nick;
   $("nick").addEventListener("input", () => { nick = $("nick").value; persist(); });
   $("submitBtn").addEventListener("click", async () => {
+    nick = $("nick").value.trim(); persist();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(nick)) { $("submitMsg").textContent = "Enter your email address first."; $("nick").focus(); return; }
     if (!Object.keys(diag).length) { $("submitMsg").textContent = "Diagnose a few ports first (step 2)."; return; }
     $("submitBtn").disabled = true; $("submitMsg").textContent = "Sending...";
     try {

@@ -149,8 +149,8 @@
         <p class="step-k">Step 5 · Submit</p>
         <h2>Send your work</h2>
         <ul class="done-list" id="doneList"></ul>
-        <label class="nick" for="nick">Name or nickname <span class="fine">(optional)</span></label>
-        <input id="nick" type="text" maxlength="60" autocomplete="off">
+        <label class="nick" for="nick">Your email</label>
+        <input id="nick" type="email" maxlength="254" autocomplete="email" placeholder="name@example.com" required>
         <div class="row"><button class="btn primary" id="submitBtn" type="button">Submit my work</button></div>
         <p class="fine" id="submitMsg"></p>
         <p class="fine">Nothing is graded. You can change things and submit again.</p>
@@ -165,7 +165,13 @@
 
   <details class="why reading" id="paperBox">
     <summary>What to read in the paper (about 500 words)</summary>
-    <p>A. Singh et al., &ldquo;Jupiter Rising: A Decade of Clos Topologies and Centralized Control in Google&rsquo;s Datacenter Network&rdquo;, SIGCOMM &rsquo;15. You need three short passages: <b>Section 5.2.1</b> (Neighbor Discovery, one paragraph-block), the paragraph of <b>Section 5.2.2</b> that starts &ldquo;At startup&rdquo; (Firepath), and the last paragraph of <b>Section 5.3.1</b>. Here they are, cut straight from the paper:</p>
+    <p>A. Singh et al., &ldquo;Jupiter Rising: A Decade of Clos Topologies and Centralized Control in Google&rsquo;s Datacenter Network&rdquo;, SIGCOMM &rsquo;15. You need three short passages:</p>
+    <ul class="readlist">
+      <li><b>Section 5.2.1</b> (Neighbor Discovery): the whole section, one block of text.</li>
+      <li><b>Section 5.2.2</b> (Firepath): the paragraph that starts &ldquo;At startup&rdquo;.</li>
+      <li><b>Section 5.3.1</b> (Configuration): the last paragraph.</li>
+    </ul>
+    <p>Here they are, cut straight from the paper:</p>
     <div class="clips">
       <figure class="clip" id="clip-531">
         <span class="tape"></span>

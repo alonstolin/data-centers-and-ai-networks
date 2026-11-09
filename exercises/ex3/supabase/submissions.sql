@@ -1,4 +1,4 @@
--- Miswire Hunt (single-player): store what each student submitted.
+-- Miswire Hunt (single-player): store what each student submitted. The nick column holds the student's email.
 -- Run once in the Supabase SQL Editor. Students can only call submit_work();
 -- reading everything needs the instructor key (the 'instructor_key' row in the settings table).
 create table if not exists submissions (
@@ -20,7 +20,7 @@ begin
     raise exception 'too large';
   end if;
   insert into submissions(id, nick, diag, drained, answers, updated_at)
-  values (p_id, left(coalesce(p_nick, ''), 60), coalesce(p_diag, '{}'), coalesce(p_drained, '[]'), coalesce(p_answers, '{}'), now())
+  values (p_id, left(coalesce(p_nick, ''), 254), coalesce(p_diag, '{}'), coalesce(p_drained, '[]'), coalesce(p_answers, '{}'), now())
   on conflict (id) do update set nick = excluded.nick, diag = excluded.diag, drained = excluded.drained,
     answers = excluded.answers, updated_at = now();
 end $$;
