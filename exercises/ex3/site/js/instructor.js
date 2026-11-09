@@ -76,9 +76,36 @@
     }));
   }
 
+  // ---------- homework ----------
+  const DEADLINE = Date.parse("2026-11-15T13:00:00+02:00");
+  const PARTS = ["Firepath master", "Firepath client", "Link State Database (LSD)", "Control Plane Network (CPN)", "Neighbor Discovery (ND)", "BGP at the CBRs", "Cluster config"];
+  const PLANE = { data: "Data", control: "Control", management: "Management", outside: "Outside SDN" };
+  const CHOICE = { A: "A. Fully distributed", B: "B. Google's split (Firepath)", C: "C. Fully centralized" };
+  function showHomework(rows) {
+    $("hwCard").hidden = false;
+    const late = r => Date.parse(r.at) > DEADLINE, on = rows.filter(r => !late(r));
+    $("hwSum").textContent = rows.length + " submission" + (rows.length === 1 ? "" : "s") + ", " + on.length + " on time, " + (rows.length - on.length) + " late.";
+    const c = { A: 0, B: 0, C: 0 }; on.forEach(r => { const k = (r.answers || {}).choice; if (c[k] !== undefined) c[k]++; });
+    const tot = c.A + c.B + c.C;
+    $("hwTally").innerHTML = '<div class="bars">' + Object.keys(CHOICE).map(k => "<div><span>" + CHOICE[k] + '</span><span class="t"><span class="right" style="width:' + (tot ? 100 * c[k] / tot : 0) + '%"></span></span><b>' + c[k] + "</b></div>").join("") + "</div>";
+    $("hwPlaceTbl").innerHTML = tbl(["Part"].concat(Object.keys(PLANE).map(k => PLANE[k]), ["Not placed"]), PARTS.map((p, i) => {
+      const cnt = {}; let none = 0; on.forEach(r => { const v = ((r.answers || {}).place || {})[i + 1]; if (v) cnt[v] = (cnt[v] || 0) + 1; else none++; });
+      return [(i + 1) + ". " + esc(p)].concat(Object.keys(PLANE).map(k => cnt[k] || 0), [none]);
+    }));
+    const hard = a => (a.hard || []).filter(h => h.part || h.text).map(h => (h.part ? "<b>" + esc(PARTS[h.part - 1] || h.part) + ":</b> " : "") + esc(h.text || "")).join("<br>");
+    $("hwAnsTbl").innerHTML = tbl(["Student", "Choice", "Why (2b)", "What would change my mind (2c)", "Hardest placements (1b)", "Firepath vs OpenFlow (1c)"], rows.map(r => {
+      const a = r.answers || {};
+      return [esc(r.name || "") + "<br><span class=\"fine\">" + esc(r.email) + "</span>" + (late(r) ? '<br><span class="err">late</span>' : ""), esc(a.choice || "—"), esc(a.why || ""), esc(a.change || ""), hard(a), esc(a.diff || "")];
+    }));
+  }
+
   async function load() {
     $("err").hidden = true;
-    try { show(await window.MH.rpc("all_submissions", { p_key: $("key").value })); $("reload").hidden = false; }
+    try {
+      const key = $("key").value;
+      show(await window.MH.rpc("all_submissions", { p_key: key })); $("reload").hidden = false;
+      try { showHomework(await window.MH.rpc("all_homework", { p_key: key })); } catch (e2) { $("sum").textContent += " (Homework answers are not available yet: run supabase/homework.sql.)"; }
+    }
     catch (e) { $("err").textContent = e.message; $("err").hidden = false; }
   }
   $("keyForm").addEventListener("submit", e => { e.preventDefault(); load(); });

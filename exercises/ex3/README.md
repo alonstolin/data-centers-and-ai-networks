@@ -52,3 +52,7 @@ under `/preview/` for review before merging.
 ## Layout
 
 The page is a console: the map on the left, an inspector on the right, and four mission steps in the top bar (Inspect, Drain, Explain, Submit). In Inspect, picking a diagnosis moves on to the next port of the open switch; keys 1-6 pick a diagnosis.
+
+## Homework page
+
+`site/homework.html` is the Unit 3 homework (Jupiter and SDN). It has two visuals (a diagram of the Firepath parts that reacts to the table, and an animation of what happens when a link fails under options A, B and C) and an answer form that replaces the Google Form. Answers go to Supabase (`supabase/homework.sql`, run once) and appear on `instructor.html`: the A/B/C tally (answers after Sun Nov 15, 13:00 Israel time are marked late and not counted), the 1a placements, and every written answer.
