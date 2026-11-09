@@ -40,7 +40,7 @@
       const seg = t => { const up = P[t][1] < ny ? t : sw, lo = up === t ? sw : t, a = P[up], b = P[lo]; const pts = [a[0], a[1] + 16, b[0], b[1] - (isT(lo) ? 12 : 16)]; return up === sw ? pts : [pts[2], pts[3], pts[0], pts[1]]; };
       const ln = (t, cls) => { const q = seg(t); return '<line class="' + cls + '" x1="' + q[0] + '" y1="' + q[1] + '" x2="' + q[2] + '" y2="' + q[3] + '"/>'; };
       const pulse = t => { const q = seg(t); return '<circle class="pb-pulse" r="4.5"><animateMotion dur="2s" repeatCount="indefinite" path="M' + q[0] + "," + q[1] + " L" + q[2] + "," + q[3] + '"/></circle>'; };
-      h += ring(plan, "pb-plan-ring");
+      if (!match) h += ring(plan, "pb-plan-ring");
       if (down) h += ln(plan, "pb-cable pb-cut");
       else if (!heard || !P[heard]) h += ln(plan, "pb-cable pb-silent");
       else if (match) h += ln(heard, "pb-cable" + (hi ? " pb-noisy" : "")) + pulse(heard) + ring(heard, "pb-ok-ring");
@@ -74,7 +74,7 @@
     Object.values(pairs).sort((x, y) => ORDER[x.st] - ORDER[y.st]).forEach(p => {
       const [x1, y1] = P[p.a], [x2, y2] = P[p.b];
       p.key = p.a + "|" + p.b;
-      if (o.selPair === p.key || o.probePair === p.key) h += '<line class="lk-sel" x1="' + x1 + '" y1="' + (y1 + 16) + '" x2="' + x2 + '" y2="' + (y2 - (p.b.startsWith("T") ? 12 : 16)) + '"/>';
+      if (o.selPair === p.key || (!o.panel && o.probePair === p.key)) h += '<line class="lk-sel" x1="' + x1 + '" y1="' + (y1 + 16) + '" x2="' + x2 + '" y2="' + (y2 - (p.b.startsWith("T") ? 12 : 16)) + '"/>';
       const ya = y1 + (p.a.startsWith("SP") ? 16 : 16), yb = y2 - (p.b.startsWith("T") ? 12 : 16);
       h += '<line class="lk lk-' + p.st + '" x1="' + x1 + '" y1="' + ya + '" x2="' + x2 + '" y2="' + yb + '"' + (p.st === "confirmed" ? ' filter="url(#glow)"' : "") + "><title>" + esc(p.a + " \u2194 " + p.b + "\n" + p.tips.join("\n")) + "</title></line>";
     });

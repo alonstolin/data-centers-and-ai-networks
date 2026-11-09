@@ -320,7 +320,7 @@ footer { margin-top: 8px; }
 #map .pt-static { cursor: default; opacity: .45; }
 #map .pt-static text { font: 500 10px var(--mono); fill: var(--muted); }
 #map .pb-plan { fill: none; stroke: var(--dash); stroke-width: 2; stroke-dasharray: 6 5; }
-#map .pb-cable { fill: none; stroke: var(--ok); stroke-width: 3; stroke-linecap: round; }
+#map .pb-cable { fill: none; stroke: var(--ok); stroke-width: 2.4; stroke-linecap: round; }
 #map .pb-cable.pb-bad { stroke: var(--bad); }
 #map .pb-cable.pb-noisy { stroke-dasharray: 3 3; stroke: var(--warn); }
 #map .pb-cable.pb-cut, #map .pb-cable.pb-silent { stroke: #9AA7B2; stroke-dasharray: 4 4; filter: none; }
