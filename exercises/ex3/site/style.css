@@ -158,7 +158,7 @@ footer { margin-top: 8px; }
 .jack:hover { border-color: var(--muted); }
 .jack:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 .jack.sel { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent-glow), 0 0 14px var(--accent-glow); }
-.jack .led { width: 9px; height: 9px; border-radius: 50%; }
+.jack .led { width: 9px; height: 9px; border-radius: 50%; box-shadow: none; }
 .jack .sock { width: 40px; height: 26px; border-radius: 4px; background: var(--sock-bg); border: 2px solid var(--sock-line); position: relative; }
 .jack .sock::after { content: ""; position: absolute; left: 50%; bottom: -2px; width: 12px; height: 5px; margin-left: -6px; background: var(--sock-line); }
 .jack .pn { font: 600 0.9rem var(--mono); color: var(--accent); }
