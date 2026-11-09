@@ -16,7 +16,7 @@
     <span class="brand"><i class="led"></i>JR-16 <small>fabric bring-up</small></span>
     <div class="status-strip" id="strip">
       <div><span class="k">Faults confirmed</span><span class="v" id="sFaults">&ndash;</span></div>
-      <div><span class="k">Switches reported</span><span class="v" id="sReported">&ndash;</span></div>
+      <div title="One switch is silent, so at most 15 can report."><span class="k">Switches reported</span><span class="v" id="sReported">&ndash;</span></div>
       <div class="fabric"><span class="k">Fabric</span><span class="v" id="sFabric">&ndash;</span></div>
     </div>
     <button class="theme-btn" id="themeBtn" type="button">&#9790; Dark</button>
@@ -26,7 +26,7 @@
   <header class="hero">
     <p class="eyebrow">Data Centers &amp; AI Networks, Unit 3: Jupiter Rising</p>
     <h1>Miswire Hunt</h1>
-    <p class="lede">This is a 16-switch fabric (the whole network of switches and cables that connects the servers) with five cabling mistakes hidden in it. Each of you is one switch and can only see your own ports, so you have to compare notes to find them. Until all five are found, the fabric stays down.</p>
+    <p class="lede">This is a 16-switch fabric (the whole network of switches and cables that connects the servers) with five hidden faults. Each of you is one switch and can only see your own ports, so you have to compare notes to find them. Until all five are found, the fabric stays down.</p>
     <ol class="steps">
       <li><b>Join.</b> <span>Enter your email. You get one switch.</span></li>
       <li><b>Check.</b> <span>Look at each of your ports. Does what the switch heard match the plan?</span></li>
@@ -56,7 +56,7 @@
       <input id="email" type="email" required autocomplete="email" placeholder="you@example.com">
       <button class="btn primary" type="submit">Take my switch</button>
     </form>
-    <p class="fine">We only store a scrambled version of your email, so the same email gets the same switch next time. No password, no grade.</p>
+    <p class="fine">We only store a scrambled version of your email, so the same email gets the same switch next time. No password.</p>
     <p class="err" id="joinErr" hidden></p>
   </section>
 
@@ -132,7 +132,7 @@
       <li><i class="lg lg-unknown"></i>No report yet</li>
       <li><i class="lg lg-half"></i>One end says OK</li>
       <li><i class="lg lg-verified"></i>Both ends say OK</li>
-      <li><i class="lg lg-suspect"></i>Someone flagged a problem</li>
+      <li><i class="lg lg-suspect"></i>One end reports a problem</li>
       <li><i class="lg lg-confirmed"></i>Confirmed fault</li>
     </ul>
     <div class="linkcard" id="linkCard" hidden></div>

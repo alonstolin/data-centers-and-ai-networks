@@ -46,8 +46,9 @@
     $("iRep").textContent = st.reporters;
     $("iFaults").textContent = done + " / " + st.faults_total;
     $("iWrong").textContent = st.wrong_flags;
-    $("sFabric").textContent = done === st.faults_total ? "UP" : "DOWN";
-    $("strip").classList.toggle("up", done === st.faults_total);
+    const up = st.faults_total > 0 && done === st.faults_total;
+    $("sFabric").textContent = up ? "UP" : "DOWN";
+    $("strip").classList.toggle("up", up);
     $("faultList").innerHTML = (st.all_faults || []).map(f =>
       '<article class="fault ok"><h3>' + (f.confirmed ? "Confirmed: " : "Open: ") + esc(f.title) + "</h3><p>" + esc(f.explanation) + ' <span class="ref">(' + esc(f.ref) + ")</span></p></article>").join("");
     const ak = st.answer_key || {};

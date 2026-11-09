@@ -29,7 +29,7 @@
         const kind = c === p.best ? "best" : p.ok.indexOf(c) >= 0 ? "ok" : "no";
         const head = kind === "best" ? "Best fit." : kind === "ok" ? "Defensible." : "Look again.";
         const best = (PLANES.filter(x => x[0] === p.best)[0] || [])[1];
-        fb = '<p class="pl-fb ' + kind + '"><b>' + head + "</b> " + (kind === "best" ? "" : "Most people place it on <b>" + esc(best) + "</b>. ") + esc(p.why) + "</p>";
+        fb = '<p class="pl-fb ' + kind + '"><b>' + head + "</b> " + (kind === "best" ? "" : "The best fit is <b>" + esc(best) + "</b>. ") + esc(p.why) + "</p>";
       }
       return '<li class="pl-row"><div class="pl-name"><b>' + (i + 1) + ". " + esc(p.n) + "</b><span>" + esc(p.what) + '</span></div><div class="pl-opts" role="group" aria-label="Plane for ' + esc(p.n) + '">' +
         PLANES.map(pl => '<button type="button" class="pl-btn' + (c === pl[0] ? " on" : "") + '" data-i="' + i + '" data-p="' + pl[0] + '" aria-pressed="' + (c === pl[0]) + '">' + pl[1] + "</button>").join("") + "</div>" + fb + "</li>";

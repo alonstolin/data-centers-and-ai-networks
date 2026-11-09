@@ -139,8 +139,8 @@
     try {
       const sent = await rpc("submit_report", { p_hash: me.hash, p_labels: me.labels });
       me.sent = true; me.mine = Object.assign({}, me.labels);
-      $("reportMsg").textContent = "Sent: " + sent + " ports. Watch the map below.";
       renderPanel(); renderRc();
+      $("reportMsg").textContent = "Sent: " + sent + " ports. Watch the map below.";
       await refresh();
       $("mapCard").scrollIntoView({ behavior: "smooth", block: "start" });
     } catch (err) { $("reportMsg").textContent = err.message; }
@@ -219,7 +219,7 @@
     diffEvents(st);
     $("sFaults").textContent = done.length + " / " + st.faults_total;
     const sw = new Set((st.ports || []).map(p => p.s));
-    $("sReported").textContent = sw.size + " / 16";
+    $("sReported").textContent = sw.size + " / 15";
     $("sFabric").textContent = allUp ? "UP" : "DOWN";
     $("strip").classList.toggle("up", allUp);
     $("faultList").innerHTML = (allUp ? '<div class="up-banner">FABRIC UP. All five problems are confirmed. Firepath may route. What each problem was gets revealed in class.</div>' : '<p class="faults-sum">' + done.length + " of " + st.faults_total + " problems confirmed</p>") +
