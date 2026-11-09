@@ -349,3 +349,16 @@ footer { margin-top: 8px; }
 .status-strip #sProgBox .v { font: 600 1rem var(--mono); }
 .status-strip #sProgBox.up { border-color: var(--ok); } .status-strip #sProgBox.up .v { color: var(--ok); }
 #labelDock .cheat { margin-top: 12px; }
+
+/* clearer how-to */
+.how ol { margin: 8px 0 0; padding-left: 1.3em; }
+.how ol li { margin: 2px 0; }
+.how b { font-family: inherit; color: var(--ink); }
+.cheat ol { margin: 6px 0 8px; padding-left: 1.4em; }
+.cheat ol li { margin: 3px 0; }
+.cheat ol li b { color: var(--accent); }
+.probe-tbl { border-collapse: collapse; margin-top: 8px; font: 0.85rem var(--mono); width: 100%; max-width: 640px; }
+.probe-tbl th { text-align: left; font: 600 0.68rem var(--mono); text-transform: uppercase; letter-spacing: .06em; color: var(--muted); padding: 4px 10px 4px 0; }
+.probe-tbl td { padding: 4px 10px 4px 0; }
+.probe-tbl td.bad { color: var(--bad); font-weight: 700; }
+.cheat ol, .how ol { list-style: decimal; }

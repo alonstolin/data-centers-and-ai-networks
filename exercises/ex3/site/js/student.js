@@ -98,8 +98,10 @@
     probed.add(port);
     const peerSw = r.expected && r.expected !== "-" ? r.expected.split(" ")[0] : null;
     probePair = null; if (peerSw) { [me.switch + "|" + peerSw, peerSw + "|" + me.switch].forEach(k => { if (lastPairs[k]) probePair = k; }); }
-    const silent = r.discovered === "-";
-    $("probeText").innerHTML = "<b>Port " + esc(port) + "</b>: the plan says <b>" + esc(r.expected) + "</b> (dashed outline). It heard <b>" + (silent ? "nothing" : esc(r.discovered)) + "</b>. PHY " + esc(r.phy) + ", peer hears you: " + esc(r.peer_hears) + ", error rate " + esc(r.err) + ".";
+    const silent = r.discovered === "-", bad = x => ' class="bad"';
+    $("probeText").innerHTML = "<b>Port " + esc(port) + "</b>" +
+      '<table class="probe-tbl"><thead><tr><th>Plan says</th><th>Heard</th><th>PHY</th><th>Peer hears you</th><th>Error rate</th></tr></thead><tbody><tr>' +
+      "<td>" + esc(r.expected) + "</td><td" + (!silent && r.discovered !== r.expected ? bad() : "") + ">" + (silent ? "nothing" : esc(r.discovered)) + "</td><td" + (r.phy === "DOWN" ? bad() : "") + ">" + esc(r.phy) + "</td><td" + (r.peer_hears === "no" ? bad() : "") + ">" + esc(r.peer_hears) + "</td><td" + (r.err !== "<1e-12" ? bad() : "") + ">" + esc(r.err) + "</td></tr></tbody></table>";
     renderPanel();
   }
 

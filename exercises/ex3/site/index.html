@@ -80,7 +80,14 @@
   <section class="card" id="mapCard">
     <div class="console-head">
       <div><h2>Shared fabric map</h2>
-        <p class="how" id="mapHow" hidden>Your switch is highlighted. Its ports are the <b>tabs on its cables</b>. <b>Click a tab</b> to probe that cable: the <b>dashed outline</b> is the switch the plan expects, the <b>solid line</b> goes to the switch it really heard.</p>
+        <div class="how" id="mapHow" hidden>
+          <p><b>The goal:</b> together, the class finds the 5 broken cables. <b>Your job:</b> check each port of your switch and say what is wrong with it, or that it is OK. A broken cable is confirmed when the switches at both of its ends have labeled their ports correctly.</p>
+          <ol>
+            <li><b>Click a port tab</b> on your switch (the little tabs on its cables).</li>
+            <li>Compare the <b>plan</b> (dashed outline) with what the switch <b>heard</b> (solid line). The table under the map shows the details.</li>
+            <li>Give the port a <b>label</b>. When all ports are labeled, press <b>Send report</b>.</li>
+          </ol>
+        </div>
         <p class="fine" id="mapIntro">Everyone&rsquo;s reports show up here every few seconds. <b>Click a cable</b> to see what each end said. You can flag up to 5 cables you think are broken.</p>
         <p class="notice" id="mapJoin">Join above to get your switch. The map stays grey until people send reports.</p></div>
       <button class="btn ghost" id="refresh" type="button">Refresh</button>
@@ -95,18 +102,18 @@
       <li><i class="lg lg-confirmed"></i>Confirmed fault</li>
     </ul>
     <div id="labelDock" hidden>
-      <p class="probe-text" id="probeText">Click a port tab on your switch to probe it.</p>
+      <div class="probe-text" id="probeText">Click a port tab on your switch to probe it.</div>
       <div class="cheat" aria-label="How to pick a label">
-        <h3>Which label?</h3>
-        <ul>
-          <li><i style="--tc:var(--ok)"></i><b>OK</b> The peer is the one in the plan, it hears you, and there are no errors.</li>
-          <li><i style="--tc:var(--bad)"></i><b>Miswired</b> The peer is a different port than the plan says.</li>
-          <li><i style="--tc:#FF8C42"></i><b>One-way</b> You hear the peer, but <code>peer hears you</code> says no.</li>
-          <li><i style="--tc:var(--warn)"></i><b>High errors</b> The peer is right, but the error rate is high.</li>
-          <li><i style="--tc:#9AA7B2"></i><b>Link down</b> <code>PHY</code> is DOWN. There is no signal on the cable.</li>
-          <li><i style="--tc:#B58CFF"></i><b>Peer silent</b> <code>PHY</code> is up, but you hear nothing from the peer.</li>
-        </ul>
-        <p class="fine"><code>PHY</code> is the physical link. <code>ND</code> (Neighbor Discovery) is how a switch finds out who is at the other end of a cable. Some faults cannot be seen from one switch, so also look at the shared map.</p>
+        <h3>Which label? Check in this order</h3>
+        <ol>
+          <li><code>PHY</code> is DOWN: no signal on the cable. <b>Link down</b></li>
+          <li>PHY is up but you heard nothing from the peer: <b>Peer silent</b></li>
+          <li>You heard a different port than the plan says: <b>Miswired</b></li>
+          <li>The right peer, but <code>peer hears you</code> is no: <b>One-way</b></li>
+          <li>The right peer, both directions work, but the error rate is high: <b>High errors</b></li>
+          <li>None of the above: <b>OK</b></li>
+        </ol>
+        <p class="fine"><code>PHY</code> is the physical link. <code>ND</code> (Neighbor Discovery) is how a switch finds out who is at the other end of a cable. Some faults can only be seen from the other end, which is why the class compares notes on the map.</p>
       </div>
       <div class="tray-head"><b>Labels</b> <span class="fine" id="trayHint"></span></div>
       <div class="tray" id="tray"></div>
