@@ -24,7 +24,7 @@
 
   $("switchUser").addEventListener("click", () => {
     store.del(KEY); me = null;
-    $("consoleCard").hidden = true; $("rcCard").hidden = true; window.MH_PLANES.update(false, false); $("doneCard").hidden = true; $("joinCard").hidden = false; $("mapJoin").hidden = false;
+    $("consoleCard").hidden = true; $("labelDock").hidden = true; $("rcCard").hidden = true; window.MH_PLANES.update(false, false); $("doneCard").hidden = true; $("joinCard").hidden = false; $("mapJoin").hidden = false;
     $("email").value = ""; $("email").focus();
     drawMap();
   });
@@ -42,8 +42,9 @@
     const dark = me.rows.length === 0;
     $("darkPanel").hidden = !dark;
     $("tablePanel").hidden = dark;
+    $("labelDock").hidden = dark;
     renderPanel();
-    if (me.rows.length) { selPort = me.rows[0].port; renderPanel(); renderProbe(selPort); }
+    if (me.rows.length) { selPort = me.rows[0].port; renderProbe(selPort); } else renderPanel();
     renderRc();
     drawMap();
   }
@@ -54,29 +55,14 @@
   let selLabel = null, selPort = null; const probed = new Set();
   const rowOf = p => me.rows.filter(r => r.port === p)[0];
 
-  const GROUP = { d: "Down ports (toward the tier below)", u: "Up ports (toward the tier above)", p: "Ports" };
-  function jack(r) {
-    const l = me.labels[r.port], st = l ? LABELS[l] : (probed.has(r.port) ? "probed" : "not probed");
-    return '<button type="button" class="jack' + (selPort === r.port ? " sel" : "") + (probed.has(r.port) && !l ? " seen" : "") + '" data-port="' + esc(r.port) + '" aria-label="Port ' + esc(r.port) + ", " + (l ? "labeled " + LABELS[l] : (probed.has(r.port) ? "probed, not labeled" : "not probed")) + '">' +
-      '<span class="led" style="background:' + (l ? LCOL[l] : "var(--idle)") + (l ? ";box-shadow:0 0 8px " + LCOL[l] : "") + '"></span>' +
-      '<span class="sock"></span><span class="pn">' + esc(r.port) + '</span><span class="pl">' + st + "</span></button>";
-  }
-  function serverPorts() {
-    if (!me || !/^T\d/.test(me.switch)) return "";
-    let j = "";
-    for (let i = 1; i <= 8; i++) j += '<div class="jack static" aria-hidden="true"><span class="led"></span><span class="sock"></span><span class="pn">s' + i + '</span><span class="pl">server</span></div>';
-    return '<div class="fp-group fp-static"><div class="fp-title">Server ports (to the servers in your rack, not part of the puzzle)</div><div class="fp-row">' + j + "</div></div>";
-  }
   function renderPanel() {
-    const groups = [];
-    me.rows.forEach(r => { const g = r.port.charAt(0).toLowerCase(); let G = groups.filter(x => x.g === g)[0]; if (!G) groups.push(G = { g, rows: [] }); G.rows.push(r); });
-    $("face").innerHTML = groups.map(G => '<div class="fp-group"><div class="fp-title">' + (G.g === "p" ? (/^T/.test(me.switch) ? "Up ports (toward the aggregation tier)" : /^SP/.test(me.switch) ? "Down ports (toward the aggregation tier)" : "Ports") : (GROUP[G.g] || "Ports")) + '</div><div class="fp-row">' + G.rows.map(jack).join("") + "</div></div>").join("") + serverPorts();
     $("tray").innerHTML = Object.keys(LABELS).map(k => '<span role="button" tabindex="0" class="tag' + (selLabel === k ? " sel" : "") + '" draggable="true" data-label="' + k + '" aria-pressed="' + (selLabel === k) + '" title="' + HINT[k] + '" style="--tc:' + LCOL[k] + '"><i></i>' + LABELS[k] + "</span>").join("");
     $("trayHint").innerHTML = selLabel ? "<b>" + LABELS[selLabel] + "</b> is selected. Now click a port to put it there." : "Drag a label onto a port, or click a label first and then a port.";
     const n = me.rows.length, done = Object.keys(me.labels).length;
     $("sendReport").disabled = !n;
     $("reportMsg").textContent = done === n ? (me.sent ? "Report on file. You can change labels and send again." : "All ports labeled. Send your report.") : done + " of " + n + " ports labeled. Label every port, then send.";
     renderTable();
+    drawMap();
   }
 
   function renderTable() {
@@ -84,17 +70,20 @@
       '</td><td class="' + (r.phy === "DOWN" ? "bad" : "") + '">' + esc(r.phy) + "</td><td>" + esc(r.err) + "</td><td>" + (me.labels[r.port] ? LABELS[me.labels[r.port]] : "\u2014") + "</td></tr>").join("");
   }
 
-  function setLabel(port, label) { me.labels[port] = label; renderPanel(); if (selPort === port) renderProbe(port); }
+  function setLabel(port, label) { me.labels[port] = label; renderPanel(); }
 
-  $("face").addEventListener("click", e => {
-    const j = e.target.closest("[data-port]"); if (!j) return;
+  $("map").addEventListener("click", e => {
+    const j = e.target.closest("[data-port]"); if (!j || !me) return;
     const port = j.getAttribute("data-port");
     if (selLabel && selPort === port) { setLabel(port, selLabel); return; }
-    selPort = port; renderPanel(); renderProbe(port);
+    selPort = port; renderProbe(port);
     if (selLabel) setLabel(port, selLabel);
   });
-  $("face").addEventListener("dragover", e => { if (e.target.closest("[data-port]")) e.preventDefault(); });
-  $("face").addEventListener("drop", e => {
+  $("map").addEventListener("keydown", e => {
+    if ((e.key === "Enter" || e.key === " ") && e.target.closest && e.target.closest("[data-port]")) { e.preventDefault(); e.target.closest("[data-port]").dispatchEvent(new MouseEvent("click", { bubbles: true })); }
+  });
+  $("map").addEventListener("dragover", e => { if (e.target.closest("[data-port]")) e.preventDefault(); });
+  $("map").addEventListener("drop", e => {
     const j = e.target.closest("[data-port]"); if (!j) return; e.preventDefault();
     const l = e.dataTransfer.getData("text/plain"); if (!LABELS[l]) return;
     selPort = j.getAttribute("data-port"); setLabel(selPort, l); renderProbe(selPort);
@@ -103,33 +92,15 @@
   $("tray").addEventListener("keydown", e => { if ((e.key === "Enter" || e.key === " ") && e.target.closest("[data-label]")) { e.preventDefault(); e.target.closest("[data-label]").click(); } });
   $("tray").addEventListener("dragstart", e => { const t = e.target.closest("[data-label]"); if (t) e.dataTransfer.setData("text/plain", t.dataset.label); });
 
-  // The probe: plan on the right in dashes, reality in solid, an ND pulse running along the cable.
+  // The probe is drawn on the map itself (see MH_MAP): plan dashed, what was heard solid.
   function renderProbe(port) {
-    const r = rowOf(port), svg = $("probe"); if (!r) return;
-    if (!probed.has(port)) { probed.add(port); renderPanel(); }
+    const r = rowOf(port); if (!r) return;
+    probed.add(port);
     const peerSw = r.expected && r.expected !== "-" ? r.expected.split(" ")[0] : null;
     probePair = null; if (peerSw) { [me.switch + "|" + peerSw, peerSw + "|" + me.switch].forEach(k => { if (lastPairs[k]) probePair = k; }); }
-    drawMap();
-    const down = r.phy === "DOWN", silent = r.discovered === "-", match = !silent && r.discovered === r.expected, hi = r.err !== "<1e-12";
-    const node = (x, y, w, t1, t2, cls) => '<g class="pn-box ' + cls + '"><rect x="' + x + '" y="' + y + '" width="' + w + '" height="44" rx="6"/><text x="' + (x + w / 2) + '" y="' + (y + 19) + '" text-anchor="middle" class="t1">' + t1 + '</text><text x="' + (x + w / 2) + '" y="' + (y + 35) + '" text-anchor="middle" class="t2">' + t2 + "</text></g>";
-    let h = "", cableEnd = 330;
-    h += node(14, 78, 108, me.switch + " " + port, "you", "me");
-    const realY = match ? 100 : 150, yEnd = down ? 100 : realY;
-    // plan (dashed ghost)
-    if (!match) h += '<polyline class="plan" points="122,100 300,100 350,44 380,44"/>' + node(380, 22, 126, r.expected, "plan says", "ghost");
-    // reality
-    const pts = down ? "122,100 250,100" : (match ? "122,100 380,100" : "122,100 300,100 350,150 380,150");
-    h += '<polyline class="cable ' + (hi ? "noisy" : "") + (down ? " cut" : "") + '" id="cab" points="' + pts + '"/>';
-    if (down) h += '<text x="262" y="106" class="cross">\u2715</text><text x="262" y="132" text-anchor="middle" class="hint">no cable (PHY down)</text>';
-    else if (match) h += node(380, 78, 126, r.discovered, "matches plan", "peer ok");
-    else if (silent) h += node(380, 128, 126, "?", "silence", "peer none");
-    else h += node(380, 128, 126, r.discovered, "ND heard", "peer bad");
-    if (!down && !silent) h += '<circle r="5" class="pulse"><animateMotion dur="1.6s" repeatCount="indefinite" path="' + (match ? "M122,100 L380,100" : "M122,100 L300,100 L350,150 L380,150") + '" keyPoints="1;0" keyTimes="0;1" calcMode="linear"/></circle>';
-    // return direction
-    if (!down) h += '<text x="200" y="' + (match ? 128 : 84) + '" text-anchor="middle" class="ret ' + (r.peer_hears === "yes" ? "yes" : r.peer_hears === "no" ? "no" : "unk") + '">peer hears you: ' + esc(r.peer_hears) + "</text>";
-    h += '<text x="200" y="' + (match ? 144 : 176) + '" text-anchor="middle" class="err ' + (hi ? "hi" : "") + '">error rate ' + esc(r.err) + "</text>";
-    svg.innerHTML = h;
-    $("probeText").textContent = "Port " + port + ": plan " + r.expected + ", heard " + (silent ? "nothing" : r.discovered) + ", PHY " + r.phy + ", peer hears you: " + r.peer_hears + ", errors " + r.err + ".";
+    const silent = r.discovered === "-";
+    $("probeText").innerHTML = "<b>Port " + esc(port) + "</b>: the plan says <b>" + esc(r.expected) + "</b> (dashed circle). It heard <b>" + (silent ? "nothing" : esc(r.discovered)) + "</b>. PHY " + esc(r.phy) + ", peer hears you: " + esc(r.peer_hears) + ", error rate " + esc(r.err) + ".";
+    renderPanel();
   }
 
   $("sendReport").addEventListener("click", async () => {
@@ -186,7 +157,10 @@
   // ---------- shared map ----------
   function drawMap() {
     const base = lastStatus ? fromStatus(lastStatus) : { latest: {}, reported: new Set(), confirmed: new Set() };
-    lastPairs = render($("map"), Object.assign(base, { probePair, me: me && me.switch, flash, selPair, myflags: me ? me.flags : [] }));
+    const ap = document.activeElement && document.activeElement.getAttribute && document.activeElement.getAttribute("data-port");
+    const panel = me && me.rows.length ? { sw: me.switch, rows: me.rows, labels: me.labels, sel: selPort, probed } : null;
+    lastPairs = render($("map"), Object.assign(base, { probePair, me: me && me.switch, flash, selPair, myflags: me ? me.flags : [], panel }));
+    if (ap) { const f = $("map").querySelector('[data-port="' + ap + '"]'); if (f) f.focus(); }
     renderLink();
   }
 

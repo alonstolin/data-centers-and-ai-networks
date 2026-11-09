@@ -78,7 +78,7 @@
     </div>
 
     <div id="tablePanel">
-      <p class="how">Click a port. The picture shows the <b>plan</b> (dashed) and what the switch really <b>heard</b> (solid). Pick the label that fits. When all your ports have a label, press <b>Send report</b>. The highlighted line on the map is the cable of the port you are looking at.</p>
+      <p class="how">Your switch is drawn at the <b>bottom of the map</b>. <b>Click a port</b> on it: a cable runs into the network. The <b>dashed circle</b> is the switch the plan says should be there. The <b>solid cable</b> goes to the switch it really heard. Then give the port a label. When all your ports have a label, press <b>Send report</b>.</p>
       <div class="cheat" aria-label="How to pick a label">
         <h3>Which label?</h3>
         <ul>
@@ -91,13 +91,6 @@
         </ul>
         <p class="fine"><code>PHY</code> is the physical link. <code>ND</code> (Neighbor Discovery) is how a switch finds out who is at the other end of a cable. Some faults cannot be seen from one switch, so also look at the shared map.</p>
       </div>
-      <div class="faceplate" id="face" role="group" aria-label="Front panel of your switch"></div>
-      <div class="probe-card">
-        <svg id="probe" viewBox="0 0 520 200" role="img" aria-label="Probe of the selected port"></svg>
-        <p class="probe-text" id="probeText">Select a port above to probe it.</p>
-      </div>
-      <div class="tray-head"><b>Labels</b> <span class="fine" id="trayHint"></span></div>
-      <div class="tray" id="tray"></div>
       <details class="guide">
         <summary>What do the fields mean? (and the raw table)</summary>
         <dl>
@@ -114,10 +107,6 @@
           </table>
         </div>
       </details>
-      <div class="row">
-        <button class="btn primary" id="sendReport" type="button">Send report</button>
-        <span class="fine" id="reportMsg"></span>
-      </div>
     </div>
   </section>
 
@@ -137,6 +126,15 @@
       <li><i class="lg lg-suspect"></i>One end reports a problem</li>
       <li><i class="lg lg-confirmed"></i>Confirmed fault</li>
     </ul>
+    <div id="labelDock" hidden>
+      <p class="probe-text" id="probeText">Click a port on your switch to probe it.</p>
+      <div class="tray-head"><b>Labels</b> <span class="fine" id="trayHint"></span></div>
+      <div class="tray" id="tray"></div>
+      <div class="row">
+        <button class="btn primary" id="sendReport" type="button">Send report</button>
+        <span class="fine" id="reportMsg"></span>
+      </div>
+    </div>
     <div class="linkcard" id="linkCard" hidden></div>
     <div class="feed-head"><b>Live feed</b></div>
     <ul class="feed" id="feed"><li class="fine">Waiting for the first report…</li></ul>
