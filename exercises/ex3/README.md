@@ -41,3 +41,10 @@ under `/preview/` for review before merging.
 4. Bridge to Firepath: this check is possible only because every switch has the same intended
    topology. What would OSPF do with a miswired link? (The paper: a miscabled link can lead to
    forwarding loops.)
+
+## Saving and class results
+
+- The page gives no feedback while students play. Work is kept in the browser (`localStorage`) and sent to Supabase when the student presses **Submit** (optional nickname, anonymous id).
+- Run `supabase/submissions.sql` once in the Supabase SQL Editor. It creates `submissions`, `submit_work` and `all_submissions`.
+- `site/instructor.html` shows class results. It asks for the instructor key stored in `settings` (`k = 'instructor_key'`).
+- Part 2 (planes) still gives instant feedback.

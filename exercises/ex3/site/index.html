@@ -15,9 +15,9 @@
   <div class="topbar-in">
     <span class="brand"><i class="led"></i>JR-16 <small>fabric bring-up</small></span>
     <div class="status-strip" id="strip">
-      <div><span class="k">Faults found</span><span class="v" id="sFaults">0 / 5</span></div>
       <div><span class="k">Ports diagnosed</span><span class="v" id="sDiag">0 / 62</span></div>
-      <div class="fabric" title="Turns green when all 5 faults are found"><span class="k">Fabric</span><span class="v" id="sFabric">DOWN</span></div>
+      <div><span class="k">Links drained</span><span class="v" id="sDrain">0</span></div>
+      <div class="fabric" title="Turns green after you submit"><span class="k">Submitted</span><span class="v" id="sSub">NO</span></div>
     </div>
     <button class="theme-btn" id="themeBtn" type="button">&#9790; Dark</button>
   </div>
@@ -28,14 +28,14 @@
     <h1>Miswire Hunt</h1>
     <details class="about" id="about" open>
       <summary>About this exercise</summary>
-      <p class="lede">A small data-center network of 16 switches has <b>five hidden faults</b>. You can see the whole network. Open each switch, probe its ports and say what is wrong with them. Your progress is saved in this browser.</p>
+      <p class="lede">A small data-center network of 16 switches has <b>five hidden faults</b>. You can see the whole network. Open each switch, probe its ports and say what is wrong with them. Your work is saved in this browser while you go, and you send it with the Submit button at the end. You will not see the answers now: we go through them in class.</p>
       <ol class="steps">
         <li><b>Open a switch</b> by clicking it on the map.</li>
         <li><b>Probe and diagnose</b> its ports: does what the switch heard match the plan?</li>
-        <li>When both ends of a broken cable are diagnosed correctly, the cable turns <b>red</b>: you found a fault.</li>
-        <li>Find all five, then <b>answer</b> two short root-cause questions. You are done after this step.</li>
+        <li>Open the <b>Firepath master</b> and take the links you think are broken out of routing.</li>
+        <li>Answer two short root-cause questions, then <b>Submit</b>. You are done after this step.</li>
       </ol>
-      <p class="fine">Optional: Part 2, where you place the parts of Firepath on the SDN planes.</p>
+      <p class="fine">Optional: Part 2, where you place the parts of Firepath on the SDN planes (this part does tell you right away).</p>
     </details>
   </header>
 
@@ -54,7 +54,7 @@
     <div class="console-head">
       <div><h2>The fabric</h2>
         <div class="how">
-          <p><b>The goal:</b> find the 5 broken cables. A cable counts as found when the switches at both of its ends have been diagnosed correctly.</p>
+          <p><b>The goal:</b> find the 5 hidden faults. Check the ports, say what is wrong with each one, and later take the broken links out of routing. There is no feedback while you work; we discuss the results in class.</p>
           <ol>
             <li><b>Click a switch</b> on the map. Its ports appear as little tabs on its cables.</li>
             <li><b>Click a port tab.</b> Compare the <b>plan</b> (dashed outline) with what the switch <b>heard</b> (solid line). The table under the map shows the details.</li>
@@ -66,9 +66,9 @@
     <div class="map-wrap"><svg id="map" viewBox="0 0 960 500" role="img" aria-label="Map of the JR-16 fabric"></svg></div>
     <ul class="legend">
       <li><i class="lg lg-unknown"></i>Not diagnosed yet</li>
+      <li><i class="lg lg-half"></i>One end diagnosed OK</li>
       <li><i class="lg lg-verified"></i>Both ends diagnosed OK</li>
-      <li><i class="lg lg-suspect"></i>One end reports a problem</li>
-      <li><i class="lg lg-confirmed"></i>Fault found</li>
+      <li><i class="lg lg-suspect"></i>You diagnosed a problem</li>
       <li class="mleg" hidden><i class="lg lg-drained"></i>Drained by the master</li>
     </ul>
     <p class="notice" id="selHint">Click any switch on the map to open its ports.</p>
@@ -94,7 +94,6 @@
       <div class="tray-head"><b>Diagnoses</b> <span class="fine" id="trayHint"></span></div>
       <div class="tray" id="tray"></div>
       <div class="row">
-        <button class="btn" id="checkBtn" type="button">Check my diagnoses</button>
         <span class="fine" id="reportMsg"></span>
       </div>
       <details class="guide">
@@ -115,9 +114,8 @@
     </div>
     <div id="masterDock" hidden>
       <h3 class="dock-title">Firepath master</h3>
-      <p class="intro" id="masterLock">The master wakes up after you find your first fault.</p>
-      <div id="masterBody" hidden>
-        <p class="intro">The <b>Firepath master</b> collects link state from every switch over the control network (CPN) and hands it to the switches, which compute their own forwarding tables (Section 5.2.2). A link that Neighbor Discovery marks down is left out of routing. <b>You play the master:</b> take the broken links out of routing (&ldquo;drain&rdquo; them) and keep every working link in. Click a cable on the map, or tick it in the list. Then press <b>Recompute routes</b>.</p>
+      <div id="masterBody">
+        <p class="intro">The <b>Firepath master</b> collects link state from every switch over the control network (CPN) and hands it to the switches, which compute their own forwarding tables (Section 5.2.2). A link that Neighbor Discovery marks down is left out of routing. <b>You play the master:</b> take the broken links out of routing (&ldquo;drain&rdquo; them) and keep every working link in. Click a cable on the map, or tick it in the list. <b>Recompute routes</b> shows how many equal-cost paths are left between some ToRs. You get no verdict: decide from what you saw on the switches.</p>
         <details class="guide" open><summary>All 32 links</summary>
           <table class="mlinks"><thead><tr><th>Drain</th><th>Link</th><th>Your diagnosis of the two ends</th></tr></thead><tbody id="mlinkRows"></tbody></table>
         </details>
@@ -125,13 +123,12 @@
         <div class="mres" id="masterRes" hidden></div>
       </div>
     </div>
-    <div id="faultList" class="faults"></div>
   </section>
 
   <section class="card" id="rcCard" hidden>
     <h2>Root cause</h2>
-    <p class="fine" id="rcLock">Find at least one fault first, then come back.</p>
-    <form id="rcForm" hidden>
+    <p class="fine">Use what you saw on the switches around the faults.</p>
+    <form id="rcForm">
       <fieldset>
         <legend>1. On AG3 and AG4, every port that connects to <b>T7</b> has a working link but hears nothing. What most likely happened?</legend>
         <label><input type="radio" name="q1" value="cables"> Two separate cable faults</label>
@@ -150,15 +147,22 @@
     </form>
   </section>
 
+  <section class="card" id="submitCard">
+    <h2>Submit your work</h2>
+    <p class="fine">This sends your diagnoses, the links you drained and your answers to the instructors. You can submit again to update it. Nothing is graded. We look at the class results together.</p>
+    <div class="row"><label for="nick">Name or nickname (optional)</label> <input id="nick" type="text" maxlength="60" placeholder="optional" autocomplete="off"> <button class="btn primary" id="submitBtn" type="button">Submit my work</button></div>
+    <p class="fine" id="submitMsg"></p>
+  </section>
+
   <section class="card" id="doneCard" hidden>
     <h2>Your progress</h2>
     <ul class="done-list" id="doneList"></ul>
-    <p class="fine">You are done when all 5 faults are found and both questions are answered correctly. Part 2 is optional.</p>
+    <p class="fine">You are done when you have diagnosed some ports, answered both questions and submitted. Part 2 and the master are optional practice.</p>
   </section>
 
   <section class="card" id="planeCard" hidden>
     <h2>Where does the control live?</h2>
-    <p class="fine" id="planeLock">Unlocks when you find your first fault.</p>
+    <p class="fine" id="planeLock">Optional practice.</p>
     <div id="planeBody" hidden>
       <p>Software-defined networking (SDN) moves forwarding decisions out of the individual switches and into software that sees the whole network. It uses three terms, the <b>planes</b>:</p>
       <ul class="pl-def">
@@ -178,6 +182,8 @@
   <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
   <footer class="fine">Based on A. Singh et al., &ldquo;Jupiter Rising: A Decade of Clos Topologies and Centralized Control in Google's Datacenter Network&rdquo;, SIGCOMM &rsquo;15, Section 5.2.1 (p. 192) and Section 5.3. The JR-16 fabric and its faults are made up for this exercise.</footer>
 </main>
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
 <script src="js/puzzle.js"></script>
 <script src="js/topology.js"></script>
 <script src="js/map.js"></script>

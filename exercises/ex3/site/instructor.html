@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Miswire Hunt: class results</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="style.css">
+<script src="js/theme.js"></script>
+</head>
+<body>
+<div class="topbar"><div class="topbar-in">
+  <span class="brand"><i class="led"></i>JR-16 <small>class results</small></span>
+  <button class="theme-btn" id="themeBtn" type="button">&#9790; Dark</button>
+</div></div>
+<main>
+  <section class="card">
+    <h2>Class results</h2>
+    <form id="keyForm" class="join"><label for="key">Instructor key</label><input id="key" type="password" autocomplete="off" required><button class="btn primary" type="submit">Load</button><button class="btn" id="reload" type="button" hidden>Reload</button></form>
+    <p class="err" id="err" hidden></p>
+    <p class="fine" id="sum"></p>
+  </section>
+  <section class="card" id="faultsCard" hidden><h2>Faults: who found them</h2><p class="fine">A fault counts as found for a student when at least two different switches at its ends were diagnosed correctly.</p><div id="faults"></div></section>
+  <section class="card" id="portsCard" hidden><h2>Diagnoses on the fault ports</h2><div class="tbl-wrap"><table class="ports" id="portTbl"></table></div></section>
+  <section class="card" id="wrongCard" hidden><h2>Ports students got wrong most often</h2><div class="tbl-wrap"><table class="ports" id="wrongTbl"></table></div></section>
+  <section class="card" id="rcCard2" hidden><h2>Root cause answers</h2><div id="rcBars"></div></section>
+  <section class="card" id="masterCard" hidden><h2>Firepath master: links drained</h2><p class="fine">Broken links are marked. A student drained everything correctly when exactly the 8 broken links are out.</p><div class="tbl-wrap"><table class="ports" id="drainTbl"></table></div></section>
+  <section class="card" id="studentsCard" hidden><h2>Students</h2><div class="tbl-wrap"><table class="ports" id="stuTbl"></table></div></section>
+</main>
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script src="js/puzzle.js"></script>
+<script src="js/topology.js"></script>
+<script src="js/map.js"></script>
+<script src="js/instructor.js"></script>
+</body>
+</html>
