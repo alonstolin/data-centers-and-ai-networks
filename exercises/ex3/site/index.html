@@ -164,6 +164,26 @@
     </form>
   </section>
 
+
+  <section class="card" id="planeCard" hidden>
+    <h2>Where does the control live?</h2>
+    <p class="fine" id="planeLock">Send your report first. This part does not depend on anyone else.</p>
+    <div id="planeBody" hidden>
+      <p>Software-defined networking (SDN) moves forwarding decisions out of the individual switches and into software that sees the whole network. It uses three terms, the <b>planes</b>:</p>
+      <ul class="pl-def">
+        <li><b>Data plane.</b> Forwards each packet by looking it up in a table in the switch hardware.</li>
+        <li><b>Control plane.</b> Decides what goes into those tables, for example by computing shortest paths.</li>
+        <li><b>Management plane.</b> Configures, monitors and upgrades the devices.</li>
+      </ul>
+      <p>Google built its own control plane, <b>Firepath</b>, long before &ldquo;SDN&rdquo; was a common term. Place each of its parts on a plane. You get an answer right away, and there is nothing to submit.</p>
+      <p class="fine" id="planeCount">0 of 7 placed</p>
+      <ol class="pl-list" id="planeList"></ol>
+      <div class="pl-done" id="planeDone" hidden>
+        <b>Look at the split.</b> The master holds the topology for the whole fabric, but each client computes its own forwarding table. In a textbook OpenFlow design the controller would do both and install ready-made entries. So Firepath is centralized in what it <i>knows</i> and distributed in what it <i>computes</i>. <span class="ref">(Section 5.2.2)</span>
+      </div>
+    </div>
+  </section>
+
   <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
   <footer class="fine">Based on A. Singh et al., &ldquo;Jupiter Rising: A Decade of Clos Topologies and Centralized Control in Google's Datacenter Network&rdquo;, SIGCOMM &rsquo;15, Section 5.2.1 (p. 192) and Section 5.3. The JR-16 fabric and its faults are made up for this exercise.</footer>
 </main>
@@ -171,6 +191,7 @@
 <script src="js/api.js"></script>
 <script src="js/topology.js"></script>
 <script src="js/map.js"></script>
+<script src="js/planes.js"></script>
 <script src="js/student.js"></script>
 </body>
 </html>

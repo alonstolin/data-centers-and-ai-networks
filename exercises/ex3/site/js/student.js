@@ -24,7 +24,7 @@
 
   $("switchUser").addEventListener("click", () => {
     store.del(KEY); me = null;
-    $("consoleCard").hidden = true; $("rcCard").hidden = true; $("joinCard").hidden = false; $("mapJoin").hidden = false;
+    $("consoleCard").hidden = true; $("rcCard").hidden = true; window.MH_PLANES.update(false, false); $("joinCard").hidden = false; $("mapJoin").hidden = false;
     $("email").value = ""; $("email").focus();
     drawMap();
   });
@@ -151,6 +151,7 @@
   function renderRc() {
     const unlocked = me && (me.rows.length === 0 || Object.keys(me.mine).length > 0);
     $("rcLock").hidden = !!unlocked;
+    window.MH_PLANES.update(!!me, !!unlocked);
     $("rcForm").hidden = !unlocked;
     if (me && me.answers) {
       ["q1", "q2"].forEach(q => { const el = document.querySelector('input[name="' + q + '"][value="' + me.answers[q] + '"]'); if (el) el.checked = true; });
