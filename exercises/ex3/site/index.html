@@ -162,8 +162,8 @@
   </div>
 
   <details class="why" id="paperBox">
-    <summary>What to read in the paper (about 2 pages)</summary>
-    <p>A. Singh et al., &ldquo;Jupiter Rising: A Decade of Clos Topologies and Centralized Control in Google&rsquo;s Datacenter Network&rdquo;, SIGCOMM &rsquo;15. Read <b>Section 5.2.1</b> (Neighbor Discovery) in full, the first part of <b>Section 5.2.2</b> (Firepath, with Figures 17 and 18), and the last paragraph of <b>Section 5.3.1</b>. The key passages:</p>
+    <summary>What to read in the paper (about 500 words)</summary>
+    <p>A. Singh et al., &ldquo;Jupiter Rising: A Decade of Clos Topologies and Centralized Control in Google&rsquo;s Datacenter Network&rdquo;, SIGCOMM &rsquo;15. You need three short passages: <b>Section 5.2.1</b> (Neighbor Discovery, one paragraph-block), the paragraph of <b>Section 5.2.2</b> that starts &ldquo;At startup&rdquo; (Firepath), and the last paragraph of <b>Section 5.3.1</b>. They are quoted here:</p>
     <blockquote class="paper">
       <p><b>The plan (Section 5.3.1, used in every step).</b> &ldquo;We distribute a single monolithic cluster configuration to all switches (chassis and ToRs) in the cluster. Each switch simply extracts its relevant portion.&rdquo;</p>
       <p><b>Collect (Section 5.2.2).</b> &ldquo;At startup, each client is loaded with the static topology of the entire fabric called the cluster config. Each client collects the state of its local interfaces from the embedded stack&rsquo;s interface manager and transmits this state to the master. The master constructs a Link State Database (LSD) with a monotonically increasing version number and distributes it to all clients via UDP/IP multicast over the CPN. [&hellip;] On receiving an LSD update, each client computes shortest path forwarding with Equal-Cost MultiPath (ECMP) and programs the hardware forwarding tables local to its switch.&rdquo;</p>
