@@ -2,8 +2,8 @@ name: Deploy ex3 (Miswire Hunt) site
 
 on:
   push:
-    branches: [main]
-    paths: ["exercises/ex3/site/**"]
+    branches: [main, "claude/**"]
+    paths: ["exercises/ex3/site/**", ".github/workflows/ex3-pages.yml"]
   workflow_dispatch:
 
 permissions:
@@ -22,10 +22,23 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
+      # The live site is always main. The branch that triggered this run is published
+      # under /preview/ so changes can be looked at before they are merged.
       - uses: actions/checkout@v4
+        with:
+          ref: main
+          path: main-src
+      - uses: actions/checkout@v4
+        with:
+          path: this-src
+      - name: Assemble site
+        run: |
+          mkdir -p _site/preview
+          cp -r main-src/exercises/ex3/site/. _site/
+          cp -r this-src/exercises/ex3/site/. _site/preview/
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: exercises/ex3/site
+          path: _site
       - id: deployment
         uses: actions/deploy-pages@v4

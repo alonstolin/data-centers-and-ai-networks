@@ -58,7 +58,7 @@
   function jack(r) {
     const l = me.labels[r.port], st = l ? LABELS[l] : (probed.has(r.port) ? "probed" : "not probed");
     return '<button type="button" class="jack' + (selPort === r.port ? " sel" : "") + (probed.has(r.port) && !l ? " seen" : "") + '" data-port="' + esc(r.port) + '" aria-label="Port ' + esc(r.port) + ", " + (l ? "labeled " + LABELS[l] : (probed.has(r.port) ? "probed, not labeled" : "not probed")) + '">' +
-      '<span class="led" style="background:' + (l ? LCOL[l] : "var(--idle)") + '"></span>' +
+      '<span class="led" style="background:' + (l ? LCOL[l] : "var(--idle)") + (l ? ";box-shadow:0 0 8px " + LCOL[l] : "") + '"></span>' +
       '<span class="sock"></span><span class="pn">' + esc(r.port) + '</span><span class="pl">' + st + "</span></button>";
   }
   function renderPanel() {
