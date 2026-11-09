@@ -49,7 +49,7 @@
     pn.rows.forEach(rw => {
       const S2 = spot[rw.port]; if (!S2) return;
       const l = pn.labels[rw.port], sel = pn.sel === rw.port, sn = pn.probed.has(rw.port);
-      h += '<g class="pt' + (sel ? " pt-sel" : "") + (sn && !l ? " pt-seen" : "") + '" data-port="' + esc(rw.port) + '" tabindex="0" role="button" aria-label="Port ' + esc(rw.port) + (l ? ", labeled " + LABELS[l] : sn ? ", probed" : ", not probed") + '"><title>' + esc("Port " + rw.port + " (click to probe)" + (l ? ": " + LABELS[l] : "")) + '</title>' +
+      h += '<g class="pt' + (sel ? " pt-sel" : "") + (sn && !l ? " pt-seen" : "") + '" data-port="' + esc(rw.port) + '" tabindex="0" role="button" aria-label="Port ' + esc(rw.port) + (l ? ", diagnosed as " + LABELS[l] : sn ? ", probed" : ", not probed") + '"><title>' + esc("Port " + rw.port + " (click to probe)" + (l ? ": " + LABELS[l] : "")) + '</title>' +
         '<rect x="' + (S2.x - 13) + '" y="' + (S2.y - 9) + '" width="26" height="18" rx="4"' + (l ? ' style="stroke:' + PCOL[l] + ";fill:color-mix(in srgb," + PCOL[l] + ' 22%,var(--panel))"' : "") + "/>" +
         '<text class="pn" x="' + S2.x + '" y="' + (S2.y + 3.6) + '" text-anchor="middle">' + esc(rw.port) + "</text>" +
         (l ? '<text class="pl" x="' + (S2.x + 15) + '" y="' + (S2.y - 6) + '" style="fill:' + PCOL[l] + '">' + SYM[l] + "</text>" : "") + "</g>";

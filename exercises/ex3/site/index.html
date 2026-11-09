@@ -32,7 +32,7 @@
       <p class="lede">A small data-center network of 16 switches has <b>five hidden faults</b>. You get <b>one switch</b> and can only see its own ports, so you need your classmates&rsquo; reports to find them. If there are more students than switches, some of you share a switch.</p>
       <ol class="steps">
         <li><b>Join</b> with your email. The same email always gets the same switch.</li>
-        <li><b>Probe and label</b> every port of your switch: does what it heard match the plan?</li>
+        <li><b>Probe and diagnose</b> every port of your switch: does what it heard match the plan?</li>
         <li><b>Send your report.</b> It shows up on the shared map.</li>
         <li><b>Answer</b> two short root-cause questions. You are done after this step.</li>
       </ol>
@@ -81,11 +81,11 @@
     <div class="console-head">
       <div><h2>Shared fabric map</h2>
         <div class="how" id="mapHow" hidden>
-          <p><b>The goal:</b> together, the class finds the 5 broken cables. <b>Your job:</b> check each port of your switch and say what is wrong with it, or that it is OK. A broken cable is confirmed when the switches at both of its ends have labeled their ports correctly.</p>
+          <p><b>The goal:</b> together, the class finds the 5 broken cables. <b>Your job:</b> check each port of your switch and say what is wrong with it, or that it is OK. A broken cable is confirmed when the switches at both of its ends have diagnosed their ports correctly.</p>
           <ol>
             <li><b>Click a port tab</b> on your switch (the little tabs on its cables).</li>
             <li>Compare the <b>plan</b> (dashed outline) with what the switch <b>heard</b> (solid line). The table under the map shows the details.</li>
-            <li>Give the port a <b>label</b>. When all ports are labeled, press <b>Send report</b>.</li>
+            <li>Give the port a <b>diagnosis</b> (one of six). When every port has one, press <b>Send report</b>.</li>
           </ol>
         </div>
         <p class="fine" id="mapIntro">Everyone&rsquo;s reports show up here every few seconds. <b>Click a cable</b> to see what each end said. You can flag up to 5 cables you think are broken.</p>
@@ -103,8 +103,8 @@
     </ul>
     <div id="labelDock" hidden>
       <div class="probe-text" id="probeText">Click a port tab on your switch to probe it.</div>
-      <div class="cheat" aria-label="How to pick a label">
-        <h3>Which label? Check in this order</h3>
+      <div class="cheat" aria-label="How to pick a diagnosis">
+        <h3>Which diagnosis? Check in this order</h3>
         <ol>
           <li><code>PHY</code> is DOWN: no signal on the cable. <b>Link down</b></li>
           <li>PHY is up but you heard nothing from the peer: <b>Peer silent</b></li>
@@ -115,7 +115,7 @@
         </ol>
         <p class="fine"><code>PHY</code> is the physical link. <code>ND</code> (Neighbor Discovery) is how a switch finds out who is at the other end of a cable. Some faults can only be seen from the other end, which is why the class compares notes on the map.</p>
       </div>
-      <div class="tray-head"><b>Labels</b> <span class="fine" id="trayHint"></span></div>
+      <div class="tray-head"><b>Diagnoses</b> <span class="fine" id="trayHint"></span></div>
       <div class="tray" id="tray"></div>
       <div class="row">
         <button class="btn primary" id="sendReport" type="button">Send report</button>
@@ -132,7 +132,7 @@
         </dl>
         <div class="tbl-wrap">
           <table class="ports">
-            <thead><tr><th>Port</th><th>Expected peer</th><th>Discovered peer</th><th>Peer hears you</th><th>PHY</th><th>Error rate</th><th>Your label</th></tr></thead>
+            <thead><tr><th>Port</th><th>Expected peer</th><th>Discovered peer</th><th>Peer hears you</th><th>PHY</th><th>Error rate</th><th>Your diagnosis</th></tr></thead>
             <tbody id="portRows"></tbody>
           </table>
           </details>

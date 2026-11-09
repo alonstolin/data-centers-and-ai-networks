@@ -57,10 +57,10 @@
 
   function renderPanel() {
     $("tray").innerHTML = Object.keys(LABELS).map(k => '<span role="button" tabindex="0" class="tag' + (selLabel === k ? " sel" : "") + '" draggable="true" data-label="' + k + '" aria-pressed="' + (selLabel === k) + '" title="' + HINT[k] + '" style="--tc:' + LCOL[k] + '"><i></i>' + LABELS[k] + "</span>").join("");
-    $("trayHint").innerHTML = selLabel ? "<b>" + LABELS[selLabel] + "</b> is selected. Now click a port to put it there." : "Drag a label onto a port, or click a label first and then a port.";
+    $("trayHint").innerHTML = selLabel ? "<b>" + LABELS[selLabel] + "</b> is selected. Now click a port to put it there." : "Drag a diagnosis onto a port, or click one first and then a port.";
     const n = me.rows.length, done = Object.keys(me.labels).length;
     $("sendReport").disabled = !n;
-    $("reportMsg").textContent = done === n ? (me.sent ? "Report on file. You can change labels and send again." : "All ports labeled. Send your report.") : done + " of " + n + " ports labeled. Label every port, then send.";
+    $("reportMsg").textContent = done === n ? (me.sent ? "Report on file. You can change diagnoses and send again." : "All ports diagnosed. Send your report.") : done + " of " + n + " ports diagnosed. Diagnose every port, then send.";
     renderTable();
     drawMap();
   }
@@ -101,13 +101,13 @@
     const silent = r.discovered === "-", bad = x => ' class="bad"';
     $("probeText").innerHTML = "<b>Port " + esc(port) + "</b>" +
       '<table class="probe-tbl"><thead><tr><th>Plan says</th><th>Heard</th><th>PHY</th><th>Peer hears you</th><th>Error rate</th></tr></thead><tbody><tr>' +
-      "<td>" + esc(r.expected) + "</td><td" + (!silent && r.discovered !== r.expected ? bad() : "") + ">" + (silent ? "nothing" : esc(r.discovered)) + "</td><td" + (r.phy === "DOWN" ? bad() : "") + ">" + esc(r.phy) + "</td><td" + (r.peer_hears === "no" ? bad() : "") + ">" + esc(r.peer_hears) + "</td><td" + (r.err !== "<1e-12" ? bad() : "") + ">" + esc(r.err) + "</td></tr></tbody></table>";
+      "<td>" + esc(r.expected) + "</td><td" + (!silent && r.discovered !== r.expected ? bad() : "") + ">" + (silent ? "nothing" : esc(r.discovered)) + "</td><td" + (r.phy === "DOWN" ? bad() : "") + ">" + esc(r.phy) + "</td><td" + (r.peer_hears === "no" ? bad() : "") + ">" + esc(r.peer_hears) + "</td><td" + (r.err !== "<1e-12" ? bad() : "") + ">" + esc(r.err) + "</td></tr></tbody></table><p class=\"fine\">\"Plan says\" comes from the cluster configuration that every switch received (Section 5.3.1).</p>";
     renderPanel();
   }
 
   $("sendReport").addEventListener("click", async () => {
     const n = me.rows.length, done = Object.keys(me.labels).length;
-    if (done < n) { $("reportMsg").textContent = (n - done) + " port" + (n - done > 1 ? "s" : "") + " still need a label."; return; }
+    if (done < n) { $("reportMsg").textContent = (n - done) + " port" + (n - done > 1 ? "s" : "") + " still need a diagnosis."; return; }
     $("sendReport").disabled = true;
     try {
       const sent = await rpc("submit_report", { p_hash: me.hash, p_labels: me.labels });
