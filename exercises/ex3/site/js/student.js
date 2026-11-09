@@ -253,7 +253,9 @@
   $("missions").addEventListener("click", e => { const b = e.target.closest("[data-step]"); if (b) goStep(+b.dataset.step); });
   $("prevBtn").addEventListener("click", () => goStep(step - 1));
   $("nextBtn").addEventListener("click", () => goStep(step + 1));
-  $("paperBtn").addEventListener("click", () => { $("paperBox").open = true; $("paperBox").scrollIntoView({ behavior: "smooth" }); });
+  function showClip(id) { $("paperBox").open = true; const el = $(id) || $("paperBox"); el.scrollIntoView({ behavior: "smooth", block: "center" }); el.classList.remove("flash"); void el.offsetWidth; el.classList.add("flash"); }
+  $("paperBtn").addEventListener("click", () => showClip("paperBox"));
+  document.addEventListener("click", e => { const b = e.target.closest("[data-clip]"); if (b) showClip(b.getAttribute("data-clip")); });
 
   ["q1", "q2"].forEach(q => { const el = document.querySelector('input[name="' + q + '"][value="' + answers[q] + '"]'); if (el) el.checked = true; });
   $("rcForm").addEventListener("change", e => { if (e.target.name) { answers[e.target.name] = e.target.value; touch(); renderMissions(); } });

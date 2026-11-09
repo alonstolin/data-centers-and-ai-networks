@@ -49,6 +49,7 @@
         <p class="step-k">Step 1 · Collect</p>
         <h2>You are the Firepath master</h2>
         <p>The master does not see cables. It learns the state of every link from the switches themselves: each switch reports over the control network (<b>CPN</b>) which of its ports are up (Section 5.2.2). A port is up only when it is both PHY UP and ND UP (Section 5.2.1).</p>
+        <p><button type="button" class="linkbtn" data-clip="clip-522">&#128196; Read it in the paper (Section 5.2.2)</button></p>
         <div class="row"><button class="btn primary" id="collectBtn" type="button">Collect link state from all switches</button></div>
         <div id="lsd" hidden>
           <p class="fine" id="lsdSum"></p>
@@ -65,6 +66,7 @@
           <h2>Pick a switch on the map</h2>
           <p>Each switch checks its cables with <b>Neighbor Discovery</b>: it knows from the plan who should be at the other end, and it listens for who really is.</p>
           <p class="fine">Start anywhere. Spines are on top, ToR switches at the bottom.</p>
+          <p><button type="button" class="linkbtn" data-clip="clip-521">&#128196; Read it in the paper (Section 5.2.1)</button></p>
         </div>
         <div id="s1dark" hidden>
           <p class="step-k">Step 2 · Inspect</p>
@@ -161,14 +163,27 @@
     </aside>
   </div>
 
-  <details class="why" id="paperBox">
+  <details class="why reading" id="paperBox">
     <summary>What to read in the paper (about 500 words)</summary>
-    <p>A. Singh et al., &ldquo;Jupiter Rising: A Decade of Clos Topologies and Centralized Control in Google&rsquo;s Datacenter Network&rdquo;, SIGCOMM &rsquo;15. You need three short passages: <b>Section 5.2.1</b> (Neighbor Discovery, one paragraph-block), the paragraph of <b>Section 5.2.2</b> that starts &ldquo;At startup&rdquo; (Firepath), and the last paragraph of <b>Section 5.3.1</b>. They are quoted here:</p>
-    <blockquote class="paper">
-      <p><b>The plan (Section 5.3.1, used in every step).</b> &ldquo;We distribute a single monolithic cluster configuration to all switches (chassis and ToRs) in the cluster. Each switch simply extracts its relevant portion.&rdquo;</p>
-      <p><b>Collect (Section 5.2.2).</b> &ldquo;At startup, each client is loaded with the static topology of the entire fabric called the cluster config. Each client collects the state of its local interfaces from the embedded stack&rsquo;s interface manager and transmits this state to the master. The master constructs a Link State Database (LSD) with a monotonically increasing version number and distributes it to all clients via UDP/IP multicast over the CPN. [&hellip;] On receiving an LSD update, each client computes shortest path forwarding with Equal-Cost MultiPath (ECMP) and programs the hardware forwarding tables local to its switch.&rdquo;</p>
-      <p><b>Inspect (Section 5.2.1).</b> &ldquo;Building a fabric with thousands of cables invariably leads to multiple cabling errors. Moreover, correctly cabled links may be re-connected incorrectly after maintenance such as linecard replacement. Allowing traffic to use a miscabled link can lead to forwarding loops. Links that fail unidirectionally or develop high packet error rates should also be avoided and scheduled for replacement. [&hellip;] Neighbor Discovery (ND) uses the configured view of cluster topology together with a switch&rsquo;s local ID to determine the expected peer IDs of its local ports. It regularly exchanges its local port ID, expected peer port ID, discovered peer port ID, and link error signal. Doing so allows ND on both ends of a link to verify correct cabling. The Interface Manager (IFM) module on each switch&rsquo;s embedded stack continuously monitors the ND state of each port, declaring a port up to the routing process only if it is both PHY UP and ND UP. [&hellip;] ND also serves as a keepalive protocol to ensure peers are alive and functional. If the remote software has crashed or shut down, peer ND instances will eventually report the failure to the interface manager, which in turn will declare the interface down to the routing process.&rdquo;</p>
-    </blockquote>
+    <p>A. Singh et al., &ldquo;Jupiter Rising: A Decade of Clos Topologies and Centralized Control in Google&rsquo;s Datacenter Network&rdquo;, SIGCOMM &rsquo;15. You need three short passages: <b>Section 5.2.1</b> (Neighbor Discovery, one paragraph-block), the paragraph of <b>Section 5.2.2</b> that starts &ldquo;At startup&rdquo; (Firepath), and the last paragraph of <b>Section 5.3.1</b>. Here they are, cut straight from the paper:</p>
+    <div class="clips">
+      <figure class="clip" id="clip-531">
+        <span class="tape"></span>
+        <img src="img/paper-5-3-1.png" alt="Section 5.3.1: We distribute a single monolithic cluster configuration to all switches (chassis and ToRs) in the cluster. Each switch simply extracts its relevant portion." loading="lazy">
+        <figcaption><b>Section 5.3.1</b> · The plan: the map you see</figcaption>
+      </figure>
+      <figure class="clip" id="clip-522">
+        <span class="tape"></span>
+        <img src="img/paper-5-2-2.png" alt="Section 5.2.2: each client collects the state of its local interfaces and transmits this state to the master. The master constructs a Link State Database (LSD) and distributes it to all clients over the CPN. Each client computes shortest path forwarding with ECMP." loading="lazy">
+        <figcaption><b>Section 5.2.2</b> · Firepath: steps 1 Collect and 3 Drain</figcaption>
+      </figure>
+      <figure class="clip tall" id="clip-521">
+        <span class="tape"></span>
+        <img src="img/paper-5-2-1.png" alt="Section 5.2.1 Neighbor Discovery to Verify Connectivity (full text): ND compares expected and discovered peer IDs, a port is up only if PHY UP and ND UP, and ND also serves as a keepalive protocol." loading="lazy">
+        <figcaption><b>Section 5.2.1</b> · Neighbor Discovery: step 2 Inspect</figcaption>
+      </figure>
+    </div>
+    <p class="fine">Clippings from A. Singh et al., SIGCOMM &rsquo;15 (pages 192-194). Highlights are ours.</p>
   </details>
 
   <section class="card" id="planeCard">
