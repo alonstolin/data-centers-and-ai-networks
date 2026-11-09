@@ -28,15 +28,15 @@
     <h1>Miswire Hunt</h1>
     <p class="lede">This is a 16-switch fabric with five cabling mistakes hidden in it. Each of you is one switch and can only see your own ports, so you have to compare notes to find them. Until all five are found, the fabric stays down.</p>
     <ol class="steps">
-      <li><b>Join.</b> <span>Enter your email to get a switch.</span></li>
-      <li><b>Label.</b> <span>Check each of your ports against the plan.</span></li>
-      <li><b>Report.</b> <span>Your labels show up on the shared map.</span></li>
-      <li><b>Explain.</b> <span>Answer two questions about the root cause.</span></li>
+      <li><b>Join.</b> <span>Enter your email. You get one switch.</span></li>
+      <li><b>Check.</b> <span>Look at each of your ports. Does what the switch heard match the plan?</span></li>
+      <li><b>Label.</b> <span>Mark every port with the label that fits, then send your report.</span></li>
+      <li><b>Answer.</b> <span>Two short questions at the end.</span></li>
     </ol>
     <details class="why" open>
       <summary>Why this matters in Jupiter</summary>
-      <p>&ldquo;Building a fabric with thousands of cables invariably leads to multiple cabling errors.&rdquo; Google's answer was <b>Neighbor Discovery (ND)</b>. Every switch is loaded with the same <b>cluster config</b>, so it knows which peer port should sit at the far end of each cable. ND checks what is really there and exchanges what it found with the peer. A port is declared up to the routing process only if it is both <b>PHY up</b> and <b>ND up</b>. <span class="ref">(Section 5.2.1)</span></p>
-      <p>A problem counts as <b>confirmed</b> once switches on two different sides of it have labeled their ports correctly. When all five are confirmed, the fabric comes up.</p>
+      <p>With thousands of cables, some will always be plugged in wrong. Google's answer was <b>Neighbor Discovery (ND)</b>. Every switch gets the same plan, so it knows which port should be at the far end of each cable. ND checks who is really there and tells the peer what it found. A port is only used for traffic when it is both <b>PHY up</b> and <b>ND up</b>. <span class="ref">(Section 5.2.1)</span></p>
+      <p>A problem is <b>confirmed</b> when switches on both sides of it have labeled their ports correctly. When all five are confirmed, the fabric comes up.</p>
     </details>
   </header>
 
@@ -47,7 +47,7 @@
       <input id="email" type="email" required autocomplete="email" placeholder="you@example.com">
       <button class="btn primary" type="submit">Take my switch</button>
     </form>
-    <p class="fine">We store only a one-way hash of your email, so the same email always gets the same switch. No password, no grade.</p>
+    <p class="fine">We only store a scrambled version of your email, so the same email gets the same switch next time. No password, no grade.</p>
     <p class="err" id="joinErr" hidden></p>
   </section>
 
@@ -63,22 +63,22 @@
 
     <div id="darkPanel" class="dark" hidden>
       <p class="mono">&gt; ssh admin@T7.cpn<br>&gt; connection timed out<br>&gt; ping T7.cpn: 100% packet loss</p>
-      <p>Your switch does not answer on the control plane network, so you have no port table. Your job: use the shared map to work out what happened to <b>T7</b>, and answer the two questions below.</p>
+      <p>Your switch does not answer, so you have no port table. Use the shared map to work out what happened to <b>T7</b>, then answer the two questions below.</p>
     </div>
 
     <div id="tablePanel">
-      <p class="how"><b>1.</b> Click a port to probe it. <b>2.</b> Compare what the <b>plan</b> says should be at the other end with what <b>ND</b> (Neighbor Discovery) actually heard. <b>3.</b> Put the matching label on the port. Label all of your ports, then press Send report. The map's highlighted line is the cable of the port you are probing.</p>
-      <div class="cheat" aria-label="How to read a port">
-        <h3>How to pick a label</h3>
+      <p class="how">Click a port. The picture shows the <b>plan</b> (dashed) and what the switch really <b>heard</b> (solid). Pick the label that fits. When all your ports have a label, press <b>Send report</b>. The highlighted line on the map is the cable of the port you are looking at.</p>
+      <div class="cheat" aria-label="How to pick a label">
+        <h3>Which label?</h3>
         <ul>
-          <li><i style="--tc:var(--ok)"></i><b>OK</b> heard peer = plan, <code>peer hears you: yes</code>, errors below 1e-12</li>
-          <li><i style="--tc:var(--bad)"></i><b>Miswired</b> heard peer is a different port than the plan</li>
-          <li><i style="--tc:#FF8C42"></i><b>One-way</b> you hear the peer but <code>peer hears you: no</code></li>
-          <li><i style="--tc:var(--warn)"></i><b>High errors</b> plan and peer match, but the error rate is high</li>
-          <li><i style="--tc:#9AA7B2"></i><b>Link down</b> <code>PHY</code> is DOWN: there is no working cable</li>
-          <li><i style="--tc:#B58CFF"></i><b>Peer silent</b> PHY is up but you hear nothing from the peer (discovered <code>-</code>)</li>
+          <li><i style="--tc:var(--ok)"></i><b>OK</b> The peer is the one in the plan, it hears you, and there are no errors.</li>
+          <li><i style="--tc:var(--bad)"></i><b>Miswired</b> The peer is a different port than the plan says.</li>
+          <li><i style="--tc:#FF8C42"></i><b>One-way</b> You hear the peer, but <code>peer hears you</code> says no.</li>
+          <li><i style="--tc:var(--warn)"></i><b>High errors</b> The peer is right, but the error rate is high.</li>
+          <li><i style="--tc:#9AA7B2"></i><b>Link down</b> <code>PHY</code> is DOWN. There is no signal on the cable.</li>
+          <li><i style="--tc:#B58CFF"></i><b>Peer silent</b> <code>PHY</code> is up, but you hear nothing from the peer.</li>
         </ul>
-        <p class="fine"><code>PHY</code> is the physical link. <code>ND</code> is the neighbor check each switch runs on every port. A port is only usable when it is PHY up and ND up. Some problems cannot be seen from one switch alone, so check the shared map too.</p>
+        <p class="fine"><code>PHY</code> is the physical link. <code>ND</code> (Neighbor Discovery) is how a switch finds out who is at the other end of a cable. Some faults cannot be seen from one switch, so also look at the shared map.</p>
       </div>
       <div class="faceplate" id="face" role="group" aria-label="Front panel of your switch"></div>
       <div class="probe-card">
@@ -112,9 +112,9 @@
 
   <section class="card" id="mapCard">
     <div class="console-head">
-      <div><h2>Shared fabric map</h2><p class="fine">Built from everyone's reports. <b>Click a link</b> to see what each end said and to put one of your 5 flags on it. Refreshes every few seconds.</p>
-        <p class="notice" id="mapJoin">Join above first. You get your own switch, your port table and 5 flags. Until then the map is read-only and grey, because nobody has reported yet.</p>
-        <p class="fine">The <b>Fabric</b> box at the top turns green when all 5 hidden faults are confirmed.</p></div>
+      <div><h2>Shared fabric map</h2><p class="fine">Everyone's reports show up here and update every few seconds. <b>Click a cable</b> to see what each end said. You can put up to 5 flags on cables you think are broken.</p>
+        <p class="notice" id="mapJoin">Join first, above. You get your own switch and 5 flags. The map is grey until people send reports.</p>
+        <p class="fine">The <b>Fabric</b> box at the top turns green when all 5 faults are confirmed.</p></div>
       <button class="btn ghost" id="refresh" type="button">Refresh</button>
     </div>
     <p class="fine swipe">Swipe the map sideways to see Block B &rarr;</p>
@@ -135,17 +135,17 @@
 
   <section class="card" id="rcCard" hidden>
     <h2>Root cause</h2>
-    <p class="fine" id="rcLock">Send your report first, then come back here. You will need the shared map.</p>
+    <p class="fine" id="rcLock">Send your report first, then come back. You will need the shared map.</p>
     <form id="rcForm" hidden>
       <fieldset>
-        <legend>1. On AG3 and AG4, every port that faces <b>T7</b> shows PHY up but hears no ND. What happened?</legend>
+        <legend>1. On AG3 and AG4, every port that connects to <b>T7</b> has a working link but hears nothing. What most likely happened?</legend>
         <label><input type="radio" name="q1" value="cables"> Four separate cable faults</label>
         <label><input type="radio" name="q1" value="power"> T7 lost power</label>
-        <label><input type="radio" name="q1" value="crash"> T7's switch software crashed</label>
+        <label><input type="radio" name="q1" value="crash"> T7's software crashed</label>
         <label><input type="radio" name="q1" value="miswire"> T7's cables were plugged into the wrong ports</label>
       </fieldset>
       <fieldset>
-        <legend>2. <b>SP3 p6</b> shows PHY up but hears no ND from AG3 u6. What is the most likely cause?</legend>
+        <legend>2. <b>SP3 p6</b> has a working link but hears nothing from AG3 u6. What is the most likely cause?</legend>
         <label><input type="radio" name="q2" value="crash"> AG3's software crashed</label>
         <label><input type="radio" name="q2" value="oneway"> The link works in one direction only</label>
         <label><input type="radio" name="q2" value="miswire"> The cable goes to a different switch</label>
