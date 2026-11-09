@@ -61,10 +61,16 @@
       '<span class="led" style="background:' + (l ? LCOL[l] : "var(--idle)") + (l ? ";box-shadow:0 0 8px " + LCOL[l] : "") + '"></span>' +
       '<span class="sock"></span><span class="pn">' + esc(r.port) + '</span><span class="pl">' + st + "</span></button>";
   }
+  function serverPorts() {
+    if (!me || !/^T\d/.test(me.switch)) return "";
+    let j = "";
+    for (let i = 1; i <= 8; i++) j += '<div class="jack static" aria-hidden="true"><span class="led"></span><span class="sock"></span><span class="pn">s' + i + '</span><span class="pl">server</span></div>';
+    return '<div class="fp-group fp-static"><div class="fp-title">Server ports (to the servers in your rack, not part of the puzzle)</div><div class="fp-row">' + j + "</div></div>";
+  }
   function renderPanel() {
     const groups = [];
     me.rows.forEach(r => { const g = r.port.charAt(0).toLowerCase(); let G = groups.filter(x => x.g === g)[0]; if (!G) groups.push(G = { g, rows: [] }); G.rows.push(r); });
-    $("face").innerHTML = groups.map(G => '<div class="fp-group"><div class="fp-title">' + (GROUP[G.g] || "Ports") + '</div><div class="fp-row">' + G.rows.map(jack).join("") + "</div></div>").join("");
+    $("face").innerHTML = groups.map(G => '<div class="fp-group"><div class="fp-title">' + (G.g === "p" ? (/^T/.test(me.switch) ? "Up ports (toward the aggregation tier)" : /^SP/.test(me.switch) ? "Down ports (toward the aggregation tier)" : "Ports") : (GROUP[G.g] || "Ports")) + '</div><div class="fp-row">' + G.rows.map(jack).join("") + "</div></div>").join("") + serverPorts();
     $("tray").innerHTML = Object.keys(LABELS).map(k => '<span role="button" tabindex="0" class="tag' + (selLabel === k ? " sel" : "") + '" draggable="true" data-label="' + k + '" aria-pressed="' + (selLabel === k) + '" title="' + HINT[k] + '" style="--tc:' + LCOL[k] + '"><i></i>' + LABELS[k] + "</span>").join("");
     $("trayHint").innerHTML = selLabel ? "<b>" + LABELS[selLabel] + "</b> is selected. Now click a port to put it there." : "Drag a label onto a port, or click a label first and then a port.";
     const n = me.rows.length, done = Object.keys(me.labels).length;

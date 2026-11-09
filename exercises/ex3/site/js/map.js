@@ -53,12 +53,18 @@
       if (o.reported && o.reported.has(s)) cls.push("nd-reported");
       if (o.me === s) cls.push("nd-me");
       if (o.flash && o.flash.has(s)) cls.push("nd-flash");
+      if (tor) {
+        // the rack under the ToR: four servers (hosts). They are not part of the puzzle.
+        h += '<g class="rack' + (o.me === s ? " rack-me" : "") + '"><line class="rk-feed" x1="' + x + '" y1="' + (y + hh / 2) + '" x2="' + x + '" y2="' + (y + 28) + '"/><rect class="rk-frame" x="' + (x - 24) + '" y="' + (y + 28) + '" width="48" height="86" rx="4"/>';
+        for (let i = 0; i < 4; i++) h += '<rect class="rk-srv" x="' + (x - 18) + '" y="' + (y + 35 + i * 19) + '" width="36" height="13" rx="2"/><circle class="rk-led" cx="' + (x + 12) + '" cy="' + (y + 41.5 + i * 19) + '" r="1.8"/><line class="rk-slot" x1="' + (x - 13) + '" y1="' + (y + 41.5 + i * 19) + '" x2="' + (x + 3) + '" y2="' + (y + 41.5 + i * 19) + '"/>';
+        h += "</g>";
+      }
       h += '<g class="' + cls.join(" ") + '"><rect x="' + (x - w / 2) + '" y="' + (y - hh / 2) + '" width="' + w + '" height="' + hh + '" rx="5"/>' +
         '<text x="' + x + '" y="' + (y + 4.5) + '" text-anchor="middle">' + s + "</text>" +
-        (o.me === s ? '<text class="you" x="' + x + '" y="' + (y + (tor ? 30 : 34)) + '" text-anchor="middle">\u25B2 YOU</text>' : "") + "</g>";
+        (o.me === s ? '<text class="you" x="' + x + '" y="' + (y + (tor ? 132 : 34)) + '" text-anchor="middle">\u25B2 YOU</text>' : "") + "</g>";
     });
-    h += '<text class="blk" x="260" y="395" text-anchor="middle">BLOCK A</text><text class="blk" x="700" y="395" text-anchor="middle">BLOCK B</text>' +
-         '<text class="tier" x="12" y="56">SPINE</text><text class="tier" x="12" y="204">AGGR.</text><text class="tier" x="12" y="344">ToR</text>';
+    h += '<text class="blk" x="260" y="486" text-anchor="middle">BLOCK A</text><text class="blk" x="700" y="486" text-anchor="middle">BLOCK B</text>' +
+         '<text class="tier" x="12" y="56">SPINE</text><text class="tier" x="12" y="204">AGGR.</text><text class="tier" x="12" y="344">ToR</text><text class="tier" x="12" y="408">SERVERS</text>';
     svg.innerHTML = h;
     return pairs;
   }

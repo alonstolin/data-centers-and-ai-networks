@@ -265,3 +265,15 @@ footer { margin-top: 8px; }
 .feed li { animation: rise .3s ease-out; }
 .tag { transition: background .15s, color .15s; }
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+
+/* racks under the ToR switches */
+#map .rk-frame { fill: var(--panel); stroke: var(--line); stroke-width: 1.4; }
+#map .rk-feed { stroke: var(--line); stroke-width: 1.4; }
+#map .rk-srv { fill: var(--panel2); stroke: var(--line); stroke-width: 1; }
+#map .rk-slot { stroke: var(--line); stroke-width: 1.2; stroke-linecap: round; }
+#map .rk-led { fill: var(--ok); }
+#map .rack-me .rk-frame { stroke: var(--accent); }
+#map .rack-me .rk-feed { stroke: var(--accent); }
+.jack.static { cursor: default; opacity: 0.55; pointer-events: none; }
+.jack.static .pn { color: var(--muted); }
+.jack.static .led { background: var(--ok); opacity: 0.6; }
