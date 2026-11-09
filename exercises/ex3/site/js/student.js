@@ -13,7 +13,8 @@
   try { saved = JSON.parse(store.get(KEY) || "{}") || {}; } catch (e) { saved = {}; }
   const diag = saved.diag || {};           // "SW:port" -> label
   let rcDone = !!saved.rcDone;
-  const persist = () => store.set(KEY, JSON.stringify({ diag, rcDone }));
+  const drained = new Set(saved.drained || []);   // "upper|lower" link keys the student took out of routing
+  const persist = () => store.set(KEY, JSON.stringify({ diag, rcDone, drained: Array.from(drained) }));
 
   const TOTAL_PORTS = Object.values(P.views).reduce((n, v) => n + v.length, 0);
   let sel = null, selPort = null, selLabel = null, prevFound = null;
@@ -39,6 +40,58 @@
     return set;
   }
 
+  // ---------- links, for the master ----------
+  const linkKey = l => l.a.s + "|" + l.b.s;
+  const endF = e => { const t = P.truth[e.s + ":" + e.p]; return t && t.f; };
+  const faultyKeys = new Set(T.links.filter(l => endF(l.a) || endF(l.b)).map(linkKey));
+  let masterRan = false;
+
+  // ECMP: number of shortest paths between two ToRs over the links that are not drained (T7 is crashed: not a node)
+  function paths(src, dst, out) {
+    const adj = {};
+    T.links.forEach(l => {
+      if (out.has(linkKey(l)) || l.a.s === "T7" || l.b.s === "T7") return;
+      (adj[l.a.s] = adj[l.a.s] || []).push(l.b.s); (adj[l.b.s] = adj[l.b.s] || []).push(l.a.s);
+    });
+    const dist = { [src]: 0 }, cnt = { [src]: 1 }, q = [src];
+    while (q.length) {
+      const u = q.shift();
+      (adj[u] || []).forEach(v => {
+        if (dist[v] === undefined) { dist[v] = dist[u] + 1; cnt[v] = 0; q.push(v); }
+        if (dist[v] === dist[u] + 1) cnt[v] += cnt[u];
+      });
+    }
+    return cnt[dst] || 0;
+  }
+  const PAIRS = [["T1", "T8"], ["T4", "T5"], ["T5", "T6"]];
+
+  function renderMaster() {
+    const found = foundFaults().length > 0;
+    $("masterLock").hidden = found; $("masterBody").hidden = !found;
+    if (!found) return;
+    $("mlinkRows").innerHTML = T.links.map(l => {
+      const k = linkKey(l), la = diag[l.a.s + ":" + l.a.p], lb = diag[l.b.s + ":" + l.b.p];
+      return '<tr class="' + (drained.has(k) ? "drain" : "") + '"><td><label><input type="checkbox" data-drain="' + k + '"' + (drained.has(k) ? " checked" : "") + '> drain</label></td><td>' + esc(l.a.s + " " + l.a.p + " \u2194 " + l.b.s + " " + l.b.p) + "</td><td>" + (la ? LABELS[la] : "\u2014") + " / " + (lb ? LABELS[lb] : "\u2014") + "</td></tr>";
+    }).join("");
+    $("drainCount").textContent = drained.size + " link" + (drained.size === 1 ? "" : "s") + " drained.";
+  }
+  function recompute() {
+    const left = Array.from(faultyKeys).filter(k => !drained.has(k)).length, wrong = Array.from(drained).filter(k => !faultyKeys.has(k)).length;
+    const rows = PAIRS.map(p => { const n = paths(p[0], p[1], drained), best = paths(p[0], p[1], faultyKeys); return "<tr><td>" + p[0] + " \u2192 " + p[1] + "</td><td>" + n + " path" + (n === 1 ? "" : "s") + "</td><td class=\"fine\">best possible: " + best + "</td></tr>"; }).join("");
+    let v = "";
+    if (left) v += '<p class="warn">' + left + " broken link" + (left > 1 ? "s are" : " is") + " still in routing. Traffic can be lost on it, and a miswired link can cause forwarding loops (Section 5.2.1).</p>";
+    if (wrong) v += '<p class="warn">' + wrong + " working link" + (wrong > 1 ? "s were" : " was") + " taken out of routing, so there is less capacity than there could be.</p>";
+    if (!left && !wrong) v = '<p class="good">Routing is clean: exactly the broken links are out, and the capacity is as high as it can be.</p>';
+    $("masterRes").hidden = false;
+    $("masterRes").innerHTML = "<table><tbody>" + rows + "</tbody></table>" + v;
+    masterRan = true;
+    renderDone(foundFaults());
+  }
+  const masterClean = () => masterRan && drained.size === faultyKeys.size && Array.from(faultyKeys).every(k => drained.has(k));
+  function toggleDrain(k) { if (drained.has(k)) drained.delete(k); else drained.add(k); masterRan = false; $("masterRes").hidden = true; persist(); refresh(); }
+  $("mlinkRows").addEventListener("change", e => { const c = e.target.closest("[data-drain]"); if (c) toggleDrain(c.getAttribute("data-drain")); });
+  $("recomputeBtn").addEventListener("click", recompute);
+
   // ---------- map ----------
   function drawMap() {
     const found = foundFaults(), reported = new Set();
@@ -48,7 +101,7 @@
     const rows = sel ? rowsOf(sel) : [];
     const panel = sel && rows.length ? { sw: sel, rows, labels, sel: selPort, probed: new Set(rows.filter(r => probed.has(sel + ":" + r.port)).map(r => r.port)) } : null;
     const ap = document.activeElement && document.activeElement.getAttribute && document.activeElement.getAttribute("data-port");
-    render($("map"), { latest: diag, reported, confirmed: faultPorts(found), flags: {}, myflags: [], me: sel, flash: new Set(), selPair: null, probePair: null, panel });
+    render($("map"), { latest: diag, reported, confirmed: faultPorts(found), flags: {}, myflags: [], me: sel === "MASTER" ? null : sel, flash: new Set(), selPair: null, probePair: null, panel, master: true, masterSel: sel === "MASTER", drained });
     if (ap) { const f = $("map").querySelector('[data-port="' + ap + '"]'); if (f) f.focus(); }
   }
 
@@ -75,7 +128,7 @@
   function renderDone(found) {
     const pc = window.MH_PLANES.count(), pt = window.MH_PLANES.total;
     const item = (okk, text, opt) => '<li class="' + (okk ? "ok" : "") + '"><span class="tick" aria-hidden="true">' + (okk ? "✓" : "○") + "</span> " + text + (opt ? ' <span class="fine">(optional)</span>' : "") + "</li>";
-    $("doneList").innerHTML = item(found.length === P.faults.length, "Faults found: " + found.length + " of " + P.faults.length) + item(rcDone, "Both root-cause questions answered correctly") + item(pc === pt, "Firepath parts placed: " + pc + " of " + pt, true);
+    $("doneList").innerHTML = item(found.length === P.faults.length, "Faults found: " + found.length + " of " + P.faults.length) + item(rcDone, "Both root-cause questions answered correctly") + item(masterClean(), "Firepath master: exactly the broken links drained", true) + item(pc === pt, "Firepath parts placed: " + pc + " of " + pt, true);
   }
   document.addEventListener("planes-change", () => renderDone(foundFaults()));
 
@@ -89,8 +142,10 @@
   const HINT = { OK: "Plan and reality agree, both directions", MISWIRED: "A different peer than the plan", ONE_WAY: "Only one direction works", HIGH_ERRORS: "Up and correct, but error rate is high", LINK_DOWN: "PHY down: no working cable", PEER_SILENT: "PHY up but no ND from the peer" };
 
   function renderDock() {
-    const rows = sel ? rowsOf(sel) : [], dark = sel && !rows.length;
+    const isM = sel === "MASTER", rows = sel && !isM ? rowsOf(sel) : [], dark = sel && !isM && !rows.length;
     $("selHint").hidden = !!sel;
+    $("masterDock").hidden = !isM; document.querySelectorAll(".mleg").forEach(e => { e.hidden = !isM && !drained.size; });
+    if (isM) { renderMaster(); $("labelDock").hidden = true; $("darkPanel").hidden = true; return; }
     $("darkPanel").hidden = !dark;
     $("labelDock").hidden = !(sel && rows.length);
     if (!sel || !rows.length) return;
@@ -128,6 +183,8 @@
       if (selLabel) setDiag(port, selLabel);
       return;
     }
+    const pr = e.target.closest("[data-pair]");
+    if (pr && sel === "MASTER" && !$("masterBody").hidden) { toggleDrain(pr.getAttribute("data-pair")); return; }
     const n = e.target.closest("[data-sw]");
     if (n) openSwitch(n.getAttribute("data-sw"));
   });

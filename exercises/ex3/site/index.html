@@ -69,6 +69,7 @@
       <li><i class="lg lg-verified"></i>Both ends diagnosed OK</li>
       <li><i class="lg lg-suspect"></i>One end reports a problem</li>
       <li><i class="lg lg-confirmed"></i>Fault found</li>
+      <li class="mleg" hidden><i class="lg lg-drained"></i>Drained by the master</li>
     </ul>
     <p class="notice" id="selHint">Click any switch on the map to open its ports.</p>
     <div id="darkPanel" class="dark" hidden>
@@ -111,6 +112,18 @@
             <tbody id="portRows"></tbody>
           </table>
           </details>
+    </div>
+    <div id="masterDock" hidden>
+      <h3 class="dock-title">Firepath master</h3>
+      <p class="intro" id="masterLock">The master wakes up after you find your first fault.</p>
+      <div id="masterBody" hidden>
+        <p class="intro">The <b>Firepath master</b> collects link state from every switch over the control network (CPN) and hands it to the switches, which compute their own forwarding tables (Section 5.2.2). A link that Neighbor Discovery marks down is left out of routing. <b>You play the master:</b> take the broken links out of routing (&ldquo;drain&rdquo; them) and keep every working link in. Click a cable on the map, or tick it in the list. Then press <b>Recompute routes</b>.</p>
+        <details class="guide" open><summary>All 32 links</summary>
+          <table class="mlinks"><thead><tr><th>Drain</th><th>Link</th><th>Your diagnosis of the two ends</th></tr></thead><tbody id="mlinkRows"></tbody></table>
+        </details>
+        <div class="row"><button class="btn primary" id="recomputeBtn" type="button">Recompute routes</button><span class="fine" id="drainCount"></span></div>
+        <div class="mres" id="masterRes" hidden></div>
+      </div>
     </div>
     <div id="faultList" class="faults"></div>
   </section>

@@ -14,7 +14,7 @@
     return "unknown";
   }
 
-  const ORDER = { unknown: 0, half: 1, verified: 2, hidden: 3, suspect: 4, confirmed: 5 };
+  const ORDER = { unknown: 0, half: 1, verified: 2, hidden: 3, suspect: 4, confirmed: 5, drained: 6 };
 
 
   const PCOL = { OK: "var(--ok)", MISWIRED: "var(--bad)", ONE_WAY: "#FF8C42", HIGH_ERRORS: "var(--warn)", LINK_DOWN: "#9AA7B2", PEER_SILENT: "#B58CFF" };
@@ -62,7 +62,7 @@
     // one line per switch pair (the two parallel links are summarised by the worse of the two)
     const pairs = {};
     T.links.forEach(l => {
-      const k = l.a.s + "|" + l.b.s, st = linkState(l, o);
+      const k = l.a.s + "|" + l.b.s, st = (o.drained && o.drained.has(k)) ? "drained" : linkState(l, o);
       const la = o.latest[l.a.s + ":" + l.a.p], lb = o.latest[l.b.s + ":" + l.b.p];
       const line = l.a.s + " " + l.a.p + " \u2194 " + l.b.s + " " + l.b.p + " | " + l.a.s + ": " + (la ? LABELS[la] : "no report") + ", " + l.b.s + ": " + (lb ? LABELS[lb] : "no report");
       const p = pairs[k] || (pairs[k] = { a: l.a.s, b: l.b.s, st: "unknown", tips: [], tier: l.tier });
@@ -88,6 +88,15 @@
       const [x1, y1] = P[p.a], [x2, y2] = P[p.b], yb = y2 - (p.b.startsWith("T") ? 12 : 16), mx = (x1 + x2) / 2, my = ((y1 + 16) + yb) / 2;
       h += '<g class="flag' + (mine.has(p.key) ? " mine" : "") + '" data-pair="' + p.key + '"><circle cx="' + mx + '" cy="' + my + '" r="10"/><text x="' + mx + '" y="' + (my + 4) + '" text-anchor="middle">' + c + "</text></g>";
     });
+    if (o.drained) o.drained.forEach(k => {
+      const [a, b] = k.split("|"); if (!P[a] || !P[b]) return;
+      const mx = (P[a][0] + P[b][0]) / 2, my = ((P[a][1] + 16) + (P[b][1] - (b.startsWith("T") ? 12 : 16))) / 2;
+      h += '<g class="cutmark"><circle cx="' + mx + '" cy="' + my + '" r="8"/><text x="' + mx + '" y="' + (my + 4) + '" text-anchor="middle">\u2715</text></g>';
+    });
+    if (o.master) {
+      h += '<line class="cpn" x1="800" y1="52" x2="780" y2="52"/><g class="nd nd-master' + (o.masterSel ? " nd-me" : "") + '" data-sw="MASTER"><rect x="808" y="34" width="110" height="36" rx="5"/><text x="863" y="49" text-anchor="middle">MASTER</text><text class="sub" x="863" y="63" text-anchor="middle">Firepath</text></g>' +
+        '<text class="tier" x="808" y="86">CPN: connected to</text><text class="tier" x="808" y="98">every switch</text>';
+    }
     T.ALL.forEach(s => {
       const [x, y] = P[s], tor = s.startsWith("T"), w = tor ? 54 : 74, hh = tor ? 24 : 32;
       const cls = ["nd", tor ? "nd-tor" : s.startsWith("AG") ? "nd-ag" : "nd-sp"];

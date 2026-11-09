@@ -8,7 +8,7 @@ link per connected pair). Five faults are hidden in it. The student opens a swit
 (plan from the cluster config vs. what Neighbor Discovery heard, PHY state, error rate, whether the
 peer hears them) and gives each port a diagnosis. A fault is *found* when the switches at two
 different ends of it have been diagnosed correctly; the cable turns red and its explanation is shown.
-Then the student answers two root-cause questions (T7's software crashed; a one-way link) and can do
+After finding a fault, the student can play the **Firepath master** (a node on the map): drain the broken links out of routing, recompute, and see how many equal-cost paths remain between ToRs. Then the student answers two root-cause questions (T7's software crashed; a one-way link) and can do
 Part 2, placing the parts of Firepath on the SDN planes.
 
 The switch T7 is dark (its software crashed), so it has no port table: its neighbours' ports are the clue.
