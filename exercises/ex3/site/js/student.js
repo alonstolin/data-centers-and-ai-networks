@@ -84,18 +84,37 @@
     $("probeHint").hidden = !!r;
     if (!r) return;
     const silent = r.discovered === "-", mism = !silent && r.discovered !== r.expected;
-    $("pvPlan").textContent = r.expected;
-    $("pvHeard").textContent = silent ? "nothing" : r.discovered;
-    $("pvHeard").className = "pv-v" + (silent || mism ? " bad" : "");
-    $("pvArrow").textContent = silent ? "?" : mism ? "≠" : "=";
-    $("pvArrow").className = "pv-arrow" + (silent || mism ? " bad" : "");
+    $("wire").innerHTML = wire(sel + " " + r.port, r);
     const fact = (id, v, bad) => { $(id).textContent = v; $(id).className = bad ? "bad" : ""; };
     fact("pvPhy", r.phy, r.phy === "DOWN");
     fact("pvHears", r.peer_hears, r.peer_hears === "no");
     fact("pvErr", r.err, r.err !== "<1e-12");
     $("dqPort").textContent = sel + " " + r.port;
     const cur = diag[sel + ":" + r.port];
+    $("dbox").classList.toggle("todo", !cur);
     $("dgrid").innerHTML = ORDER_KEYS.map(k => '<button type="button" class="dg' + (cur === k ? " on" : "") + '" data-label="' + k + '" title="' + HINT[k] + '" style="--tc:' + LCOL[k] + '"><i></i>' + LABELS[k] + "</button>").join("");
+  }
+
+
+  // The plan and the reality drawn as port -> cable -> port, with one arrow per direction.
+  function wire(me, r) {
+    const silent = r.discovered === "-", mism = !silent && r.discovered !== r.expected, down = r.phy === "DOWN";
+    const box = (x, y, t, cls) => '<rect class="wb ' + (cls || "") + '" x="' + x + '" y="' + y + '" width="96" height="26" rx="5"/><text class="wt ' + (cls || "") + '" x="' + (x + 48) + '" y="' + (y + 17) + '" text-anchor="middle">' + esc(t) + "</text>";
+    const tri = (x, y, dir, cls) => '<path class="wa ' + cls + '" d="M' + x + " " + y + " l" + (-8 * dir) + " -5 v10 z\"/>";
+    const cross = (x, y) => '<text class="wx" x="' + x + '" y="' + (y + 5) + '" text-anchor="middle">\u2715</text>';
+    let h = '<text class="wl" x="0" y="12">PLAN (cluster config)</text>' + box(0, 18, me, "me") + '<line class="wplan" x1="96" y1="31" x2="234" y2="31"/>' + box(234, 18, r.expected, "");
+    h += '<text class="wl" x="0" y="70">WHAT THE SWITCH SEES</text>' + box(0, 76, me, "me") + box(234, 76, silent ? "nothing" : r.discovered, silent || mism ? "bad" : "ok");
+    if (down) {
+      h += '<line class="wln bad dash" x1="96" y1="89" x2="234" y2="89"/>' + cross(165, 89) + '<text class="wnote bad" x="165" y="113" text-anchor="middle">no signal: PHY down</text>';
+    } else {
+      const out = r.peer_hears === "yes" ? "ok" : r.peer_hears === "no" ? "bad" : "unk", inn = silent ? "bad" : "ok";
+      h += '<line class="wln ' + out + (out === "unk" ? " dash" : "") + '" x1="100" y1="83" x2="224" y2="83"/>' + tri(232, 83, 1, out) + (out === "bad" ? cross(165, 83) : "");
+      h += '<line class="wln ' + inn + (inn === "bad" ? " dash" : "") + '" x1="106" y1="95" x2="230" y2="95"/>' + tri(98, 95, -1, inn) + (inn === "bad" ? cross(165, 95) : "");
+      h += '<text class="wnote" x="165" y="114" text-anchor="middle">\u2192 peer hears you: ' + esc(r.peer_hears) + " \u00b7 \u2190 you hear: " + (silent ? "nothing" : "yes") + "</text>";
+      if (r.err !== "<1e-12") h += '<text class="wnote warn" x="165" y="76" text-anchor="middle">error rate ' + esc(r.err) + "</text>";
+    }
+    if (mism) h += '<text class="wnote bad" x="282" y="66" text-anchor="middle">\u2260 plan</text>';
+    return '<svg viewBox="-2 0 334 120" role="img" aria-label="Plan versus what the switch sees">' + h + "</svg>";
   }
 
   // ---------- step 2: the Firepath master ----------

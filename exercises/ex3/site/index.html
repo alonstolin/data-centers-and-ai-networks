@@ -59,20 +59,17 @@
         <div id="s1sw" hidden>
           <p class="step-k">Step 1 · Inspect</p>
           <h2 id="swTitle"></h2>
-          <ol class="portlist" id="portList"></ol>
           <div class="probe" id="probe" hidden>
-            <div class="pv">
-              <div class="pv-col"><span class="pv-k">Plan says</span><span class="pv-v" id="pvPlan"></span></div>
-              <div class="pv-arrow" id="pvArrow">=</div>
-              <div class="pv-col"><span class="pv-k">Heard</span><span class="pv-v" id="pvHeard"></span></div>
-            </div>
+            <div class="wire" id="wire"></div>
             <dl class="pv-facts">
               <div><dt>PHY</dt><dd id="pvPhy"></dd></div>
               <div><dt>Peer hears you</dt><dd id="pvHears"></dd></div>
               <div><dt>Error rate</dt><dd id="pvErr"></dd></div>
             </dl>
-            <p class="dq">Your diagnosis for <b id="dqPort"></b></p>
-            <div class="dgrid" id="dgrid"></div>
+            <div class="dbox" id="dbox">
+              <p class="dq"><span class="dq-n">&#9654;</span> Pick a diagnosis for <b id="dqPort"></b> <span class="fine">(or press 1-6)</span></p>
+              <div class="dgrid" id="dgrid"></div>
+            </div>
             <details class="cheat">
               <summary>How to choose</summary>
               <ol>
@@ -86,6 +83,8 @@
               <p class="fine">The plan is the cluster configuration that every switch received (Section 5.3.1). Some faults look different from each end, so check both ends of a suspicious cable.</p>
             </details>
           </div>
+          <h3 class="sub">All ports of this switch</h3>
+          <ol class="portlist" id="portList"></ol>
           <p class="fine" id="probeHint">Click a port in the list, or its tab on the map.</p>
         </div>
       </div>

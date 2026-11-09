@@ -442,7 +442,7 @@ body.submitted .led { background: var(--ok); box-shadow: 0 0 9px var(--ok); }
 .pv-facts dt { font: 500 0.7rem var(--sans); color: var(--muted); }
 .pv-facts dd { margin: 0; font: 600 0.92rem var(--mono); }
 .dq { margin: 0 0 6px; font-size: 0.9rem; }
-.dgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.dgrid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; }
 .dg { display: flex; align-items: center; gap: 7px; border: 1.5px solid var(--line); background: var(--panel); color: var(--ink); border-radius: 7px; padding: 8px 9px; font: 600 0.84rem var(--sans); cursor: pointer; transition: border-color .15s, background .15s; }
 .dg i { width: 9px; height: 9px; border-radius: 50%; background: var(--tc); flex: none; }
 .dg:hover { border-color: var(--tc); }
@@ -473,3 +473,27 @@ body.submitted .led { background: var(--ok); box-shadow: 0 0 9px var(--ok); }
 .step-nav { display: flex; justify-content: space-between; gap: 8px; border-top: 1px solid var(--line); padding-top: 12px; margin-top: auto; }
 .step-nav .btn { padding: 7px 12px; font-size: 0.88rem; }
 .step-nav #nextBtn { margin-left: auto; }
+
+/* plan vs reality drawing */
+.wire svg { width: 100%; height: auto; display: block; }
+.wire .wl { font: 600 9.5px var(--mono); fill: var(--muted); letter-spacing: .06em; }
+.wire .wb { fill: var(--panel2); stroke: var(--line); stroke-width: 1.5; }
+.wire .wb.me { stroke: var(--accent); }
+.wire .wb.ok { stroke: var(--ok); }
+.wire .wb.bad { stroke: var(--bad); fill: var(--fault-bg); }
+.wire .wt { font: 600 12px var(--mono); fill: var(--ink); }
+.wire .wt.bad { fill: var(--bad); }
+.wire .wplan { stroke: var(--dash); stroke-width: 2; stroke-dasharray: 6 5; }
+.wire .wln { stroke-width: 2.5; }
+.wire .wln.ok { stroke: var(--ok); } .wire .wa.ok { fill: var(--ok); }
+.wire .wln.bad { stroke: var(--bad); } .wire .wa.bad { fill: var(--bad); }
+.wire .wln.unk { stroke: var(--muted); } .wire .wa.unk { fill: var(--muted); }
+.wire .wln.dash { stroke-dasharray: 4 4; }
+.wire .wx { font: 700 13px var(--sans); fill: var(--bad); }
+.wire .wnote { font: 500 9.5px var(--mono); fill: var(--muted); }
+.wire .wnote.bad { fill: var(--bad); } .wire .wnote.warn { fill: var(--warn); }
+.dbox { border: 1.5px solid var(--line); border-radius: 9px; padding: 10px; margin-top: 4px; }
+.dbox.todo { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); animation: dpulse 1.8s ease-in-out 2; }
+.dq-n { color: var(--accent); }
+.dbox .dq { font-weight: 500; }
+@keyframes dpulse { 50% { box-shadow: 0 0 0 7px var(--accent-glow); } }
