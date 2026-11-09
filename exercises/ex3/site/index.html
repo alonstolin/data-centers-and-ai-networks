@@ -15,10 +15,11 @@
   <div class="topbar-in">
     <span class="brand"><i class="led"></i>Miswire Hunt <small>JR-16 fabric bring-up</small></span>
     <nav class="missions" id="missions" aria-label="Mission steps">
-      <button type="button" class="ms" data-step="1"><span class="ms-n">1</span><span class="ms-t">Inspect</span><span class="ms-v" id="m1v">0 / 62</span></button>
-      <button type="button" class="ms" data-step="2"><span class="ms-n">2</span><span class="ms-t">Drain</span><span class="ms-v" id="m2v">0 links</span></button>
-      <button type="button" class="ms" data-step="3"><span class="ms-n">3</span><span class="ms-t">Explain</span><span class="ms-v" id="m3v">0 / 2</span></button>
-      <button type="button" class="ms" data-step="4"><span class="ms-n">4</span><span class="ms-t">Submit</span><span class="ms-v" id="m4v">not yet</span></button>
+      <button type="button" class="ms" data-step="0"><span class="ms-n">1</span><span class="ms-t">Collect</span><span class="ms-v" id="m0v">0 / 16</span></button>
+      <button type="button" class="ms" data-step="1"><span class="ms-n">2</span><span class="ms-t">Inspect</span><span class="ms-v" id="m1v">0 / 62</span></button>
+      <button type="button" class="ms" data-step="2"><span class="ms-n">3</span><span class="ms-t">Drain</span><span class="ms-v" id="m2v">0 links</span></button>
+      <button type="button" class="ms" data-step="3"><span class="ms-n">4</span><span class="ms-t">Explain</span><span class="ms-v" id="m3v">0 / 2</span></button>
+      <button type="button" class="ms" data-step="4"><span class="ms-n">5</span><span class="ms-t">Submit</span><span class="ms-v" id="m4v">not yet</span></button>
     </nav>
     <button class="theme-btn" id="themeBtn" type="button">&#9790; Dark</button>
   </div>
@@ -26,7 +27,7 @@
 
 <main class="console-main">
   <div class="brief" id="brief">
-    <p><b>Five hidden faults</b> are somewhere in this 16-switch fabric. Work through the four steps above. There is no feedback while you play: your work is saved in this browser, you send it at step 4, and we go through the answers in class. <button type="button" class="linkbtn" id="paperBtn">The paper behind it (Section 5.2.1)</button></p>
+    <p><b>Five hidden faults</b> are somewhere in this 16-switch fabric. Work through the five steps above. There is no feedback while you play: your work is saved in this browser, you send it at step 5, and we go through the answers in class. <button type="button" class="linkbtn" id="paperBtn">What to read in the paper</button></p>
   </div>
 
   <div class="console">
@@ -43,22 +44,36 @@
     </section>
 
     <aside class="inspector" id="inspector" aria-live="polite">
+      <!-- step 0: collect -->
+      <div class="step" id="step0" hidden>
+        <p class="step-k">Step 1 · Collect</p>
+        <h2>You are the Firepath master</h2>
+        <p>The master does not see cables. It learns the state of every link from the switches themselves: each switch reports over the control network (<b>CPN</b>) which of its ports are up (Section 5.2.2). A port is up only when it is both PHY UP and ND UP (Section 5.2.1).</p>
+        <div class="row"><button class="btn primary" id="collectBtn" type="button">Collect link state from all switches</button></div>
+        <div id="lsd" hidden>
+          <p class="fine" id="lsdSum"></p>
+          <h3 class="sub">Link-state database: links that are down</h3>
+          <ul class="flagged" id="lsdDown"></ul>
+          <p class="fine">The master only knows <i>up</i> or <i>down</i>, not why. Inspect the switches to find out what is wrong. Not every problem takes a link down.</p>
+        </div>
+      </div>
+
       <!-- step 1: inspect -->
       <div class="step" id="step1">
         <div class="empty" id="s1empty">
-          <p class="step-k">Step 1 · Inspect</p>
+          <p class="step-k">Step 2 · Inspect</p>
           <h2>Pick a switch on the map</h2>
           <p>Each switch checks its cables with <b>Neighbor Discovery</b>: it knows from the plan who should be at the other end, and it listens for who really is.</p>
           <p class="fine">Start anywhere. Spines are on top, ToR switches at the bottom.</p>
         </div>
         <div id="s1dark" hidden>
-          <p class="step-k">Step 1 · Inspect</p>
+          <p class="step-k">Step 2 · Inspect</p>
           <h2>T7 <span class="role">ToR switch</span></h2>
           <p class="mono term">&gt; ssh admin@T7.cpn<br>&gt; connection timed out<br>&gt; ping T7.cpn: 100% packet loss</p>
           <p>This switch does not answer, so it has no port table. Open its neighbours (AG3, AG4) and look at the ports that face T7.</p>
         </div>
         <div id="s1sw" hidden>
-          <p class="step-k">Step 1 · Inspect</p>
+          <p class="step-k">Step 2 · Inspect</p>
           <h2 id="swTitle"></h2>
           <div class="probe" id="probe" hidden>
             <div class="wire" id="wire"></div>
@@ -92,7 +107,7 @@
 
       <!-- step 2: drain -->
       <div class="step" id="step2" hidden>
-        <p class="step-k">Step 2 · Drain</p>
+        <p class="step-k">Step 3 · Drain</p>
         <h2>You are the Firepath master</h2>
         <p>The master gathers link state from every switch over the control network and the switches compute their routes from it (Section 5.2.2). <b>Click a cable on the map</b> to take it out of routing. Click again to put it back.</p>
         <h3 class="sub">Links where you found a problem</h3>
@@ -106,7 +121,7 @@
 
       <!-- step 3: explain -->
       <div class="step" id="step3" hidden>
-        <p class="step-k">Step 3 · Explain</p>
+        <p class="step-k">Step 4 · Explain</p>
         <h2>Two root-cause questions</h2>
         <form id="rcForm">
           <fieldset>
@@ -129,7 +144,7 @@
 
       <!-- step 4: submit -->
       <div class="step" id="step4" hidden>
-        <p class="step-k">Step 4 · Submit</p>
+        <p class="step-k">Step 5 · Submit</p>
         <h2>Send your work</h2>
         <ul class="done-list" id="doneList"></ul>
         <label class="nick" for="nick">Name or nickname <span class="fine">(optional)</span></label>
@@ -147,12 +162,12 @@
   </div>
 
   <details class="why" id="paperBox">
-    <summary>The paper behind this: Neighbor Discovery (Section 5.2.1)</summary>
+    <summary>What to read in the paper (about 2 pages)</summary>
+    <p>A. Singh et al., &ldquo;Jupiter Rising: A Decade of Clos Topologies and Centralized Control in Google&rsquo;s Datacenter Network&rdquo;, SIGCOMM &rsquo;15. Read <b>Section 5.2.1</b> (Neighbor Discovery) in full, the first part of <b>Section 5.2.2</b> (Firepath, with Figures 17 and 18), and the last paragraph of <b>Section 5.3.1</b>. The key passages:</p>
     <blockquote class="paper">
-      <p>&ldquo;Building a fabric with thousands of cables invariably leads to multiple cabling errors. Moreover, correctly cabled links may be re-connected incorrectly after maintenance such as linecard replacement. Allowing traffic to use a miscabled link can lead to forwarding loops. Links that fail unidirectionally or develop high packet error rates should also be avoided and scheduled for replacement. To address these issues, we developed Neighbor Discovery (ND), an online liveness and peer correctness checking protocol.</p>
-      <p>Neighbor Discovery (ND) uses the configured view of cluster topology together with a switch&rsquo;s local ID to determine the expected peer IDs of its local ports. It regularly exchanges its local port ID, expected peer port ID, discovered peer port ID, and link error signal. Doing so allows ND on both ends of a link to verify correct cabling.</p>
-      <p>The Interface Manager (IFM) module on each switch&rsquo;s embedded stack continuously monitors the ND state of each port, declaring a port up to the routing process only if it is both PHY UP and ND UP.&rdquo;</p>
-      <footer>A. Singh et al., &ldquo;Jupiter Rising: A Decade of Clos Topologies and Centralized Control in Google&rsquo;s Datacenter Network&rdquo;, SIGCOMM &rsquo;15, <b>Section 5.2.1</b> (&ldquo;Neighbor Discovery to Verify Connectivity&rdquo;), p. 192.</footer>
+      <p><b>The plan (Section 5.3.1, used in every step).</b> &ldquo;We distribute a single monolithic cluster configuration to all switches (chassis and ToRs) in the cluster. Each switch simply extracts its relevant portion.&rdquo;</p>
+      <p><b>Collect (Section 5.2.2).</b> &ldquo;At startup, each client is loaded with the static topology of the entire fabric called the cluster config. Each client collects the state of its local interfaces from the embedded stack&rsquo;s interface manager and transmits this state to the master. The master constructs a Link State Database (LSD) with a monotonically increasing version number and distributes it to all clients via UDP/IP multicast over the CPN. [&hellip;] On receiving an LSD update, each client computes shortest path forwarding with Equal-Cost MultiPath (ECMP) and programs the hardware forwarding tables local to its switch.&rdquo;</p>
+      <p><b>Inspect (Section 5.2.1).</b> &ldquo;Building a fabric with thousands of cables invariably leads to multiple cabling errors. Moreover, correctly cabled links may be re-connected incorrectly after maintenance such as linecard replacement. Allowing traffic to use a miscabled link can lead to forwarding loops. Links that fail unidirectionally or develop high packet error rates should also be avoided and scheduled for replacement. [&hellip;] Neighbor Discovery (ND) uses the configured view of cluster topology together with a switch&rsquo;s local ID to determine the expected peer IDs of its local ports. It regularly exchanges its local port ID, expected peer port ID, discovered peer port ID, and link error signal. Doing so allows ND on both ends of a link to verify correct cabling. The Interface Manager (IFM) module on each switch&rsquo;s embedded stack continuously monitors the ND state of each port, declaring a port up to the routing process only if it is both PHY UP and ND UP. [&hellip;] ND also serves as a keepalive protocol to ensure peers are alive and functional. If the remote software has crashed or shut down, peer ND instances will eventually report the failure to the interface manager, which in turn will declare the interface down to the routing process.&rdquo;</p>
     </blockquote>
   </details>
 

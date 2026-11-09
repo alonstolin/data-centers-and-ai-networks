@@ -18,9 +18,9 @@
   const drained = new Set(saved.drained || []);  // "upper|lower" link keys taken out of routing
   const answers = saved.answers || {};           // { q1, q2 }
   let nick = saved.nick || "", submittedAt = saved.submittedAt || null;
-  let step = saved.step || 1;
+  let step = saved.step != null ? saved.step : 0, collected = !!saved.collected, collecting = false;
   const uid = saved.uid || (window.crypto && crypto.randomUUID ? crypto.randomUUID() : "u" + Date.now() + Math.random().toString(36).slice(2));
-  const persist = () => store.set(KEY, JSON.stringify({ uid, diag, drained: Array.from(drained), answers, nick, submittedAt, step }));
+  const persist = () => store.set(KEY, JSON.stringify({ uid, diag, drained: Array.from(drained), answers, nick, submittedAt, step, collected }));
 
   const TOTAL_PORTS = Object.values(P.views).reduce((n, v) => n + v.length, 0);
   let sel = null, selPort = null;
@@ -36,23 +36,25 @@
   function drawMap() {
     const reported = new Set();
     Object.keys(diag).forEach(k => reported.add(k.split(":")[0]));
+    if (step === 0 && collected) T.ALL.forEach(s => { if (P.views[s]) reported.add(s); });
     const showSw = step === 1 && sel;
     const rows = showSw ? rowsOf(sel) : [];
     const labels = {};
     rows.forEach(r => { const l = diag[sel + ":" + r.port]; if (l) labels[r.port] = l; });
     const panel = rows.length ? { sw: sel, rows, labels, sel: selPort, probed: new Set(rows.filter(r => probed.has(sel + ":" + r.port)).map(r => r.port)) } : null;
-    render($("map"), { latest: diag, reported, confirmed: new Set(), flags: {}, myflags: [], me: showSw ? sel : null, flash: new Set(), selPair: null, probePair: null, panel, master: true, masterSel: step === 2, drained });
+    render($("map"), { latest: diag, reported, confirmed: new Set(), flags: {}, myflags: [], me: showSw ? sel : null, flash: new Set(), selPair: null, probePair: null, panel, master: true, masterSel: step === 2 || step === 0, drained });
     $("map").classList.toggle("drainmode", step === 2);
   }
 
   // ---------- mission bar ----------
   function renderMissions() {
     const nd = Object.keys(diag).length, na = (answers.q1 ? 1 : 0) + (answers.q2 ? 1 : 0);
+    $("m0v").textContent = (collected ? 15 : 0) + " / 16";
     $("m1v").textContent = nd + " / " + TOTAL_PORTS;
     $("m2v").textContent = drained.size + (drained.size === 1 ? " link" : " links");
     $("m3v").textContent = na + " / 2";
     $("m4v").textContent = submittedAt ? "sent" : "not yet";
-    const done = { 1: nd > 0, 2: drained.size > 0, 3: na === 2, 4: !!submittedAt };
+    const done = { 0: collected, 1: nd > 0, 2: drained.size > 0, 3: na === 2, 4: !!submittedAt };
     document.querySelectorAll(".ms").forEach(b => {
       const n = +b.dataset.step;
       b.classList.toggle("on", n === step);
@@ -60,10 +62,42 @@
       b.setAttribute("aria-current", n === step ? "step" : "false");
     });
     document.body.classList.toggle("submitted", !!submittedAt);
-    $("prevBtn").hidden = step === 1;
+    $("prevBtn").hidden = step === 0;
     $("nextBtn").hidden = step === 4;
-    $("nextBtn").textContent = ["", "Next: drain links →", "Next: explain →", "Next: submit →"][step] || "";
+    $("nextBtn").textContent = ["Next: inspect switches →", "Next: drain links →", "Next: explain →", "Next: submit →"][step] || "";
   }
+
+  // ---------- step 0: collect link state over the CPN ----------
+  const portUp = r => r.phy === "UP" && r.discovered === r.expected && r.peer_hears === "yes";
+  function endState(e) { const r = rowsOf(e.s).filter(x => x.port === e.p)[0]; return !P.views[e.s] ? "no report" : r && portUp(r) ? "UP" : "DOWN"; }
+  function renderCollect() {
+    $("collectBtn").disabled = collecting;
+    $("collectBtn").textContent = collecting ? "Collecting..." : collected ? "Collect again" : "Collect link state from all switches";
+    $("lsd").hidden = !collected || collecting;
+    if (!collected) return;
+    const down = T.links.filter(l => endState(l.a) !== "UP" || endState(l.b) !== "UP");
+    $("lsdSum").innerHTML = "<b>15 of 16 switches answered.</b> T7 did not answer. " + (T.links.length - down.length) + " links up, " + down.length + " down.";
+    $("lsdDown").innerHTML = down.map(l => {
+      const sa = endState(l.a), sb = endState(l.b), c = x => '<span class="' + (x === "UP" ? "st-up" : "st-down") + '">' + x + "</span>";
+      return '<li><button type="button" class="dl lsd-row" data-open="' + esc(l.a.s) + '"><span></span><span class="dl-t">' + esc(l.a.s + " " + l.a.p + " ↔ " + l.b.s + " " + l.b.p) + '</span><span class="fine">' + c(sa) + " / " + c(sb) + "</span></button></li>";
+    }).join("");
+  }
+  function collect() {
+    if (collecting) return;
+    collecting = true; refresh();
+    const svg = $("map"), M = [863, 70];
+    let h = '<g class="cpn-anim">';
+    T.ALL.forEach((s, i) => {
+      const [x, y] = T.pos[s], back = !!P.views[s];
+      h += '<line class="cpn-ln" x1="' + M[0] + '" y1="' + M[1] + '" x2="' + x + '" y2="' + y + '"/>';
+      h += '<circle class="cpn-pk' + (back ? "" : " lost") + '" r="4" cx="-20" cy="-20"><animateMotion begin="indefinite" dur="' + (back ? 1.4 : 0.7) + 's" fill="freeze" path="M' + M[0] + "," + M[1] + " L" + x + "," + y + (back ? " L" + M[0] + "," + M[1] : "") + '"/></circle>';
+    });
+    svg.insertAdjacentHTML("beforeend", h + "</g>");
+    svg.querySelectorAll(".cpn-anim animateMotion").forEach((a, i) => setTimeout(() => { try { a.beginElement(); } catch (e) {} }, i * 70));
+    setTimeout(() => { collecting = false; collected = true; persist(); refresh(); }, T.ALL.length * 70 + 1600);
+  }
+  $("collectBtn").addEventListener("click", collect);
+  $("lsdDown").addEventListener("click", e => { const b = e.target.closest("[data-open]"); if (b) openSwitch(b.getAttribute("data-open")); });
 
   // ---------- step 1: inspect ----------
   function renderInspect() {
@@ -143,7 +177,7 @@
       const k = linkKey(l), a = diag[l.a.s + ":" + l.a.p], b = diag[l.b.s + ":" + l.b.p];
       return '<li><button type="button" class="dl' + (drained.has(k) ? " on" : "") + '" data-drain="' + k + '"><span class="dl-x">' + (drained.has(k) ? "✕" : "") + '</span><span class="dl-t">' + esc(linkText(l)) + '</span><span class="fine">' + (a ? LABELS[a] : "—") + " / " + (b ? LABELS[b] : "—") + "</span></button></li>";
     };
-    $("flagged").innerHTML = bad.length ? bad.map(item).join("") : '<li class="fine">None yet. Diagnose ports in step 1 first.</li>';
+    $("flagged").innerHTML = bad.length ? bad.map(item).join("") : '<li class="fine">None yet. Diagnose ports in step 2 first.</li>';
     const dl = T.links.filter(l => drained.has(linkKey(l)));
     $("drainList").innerHTML = dl.length ? dl.map(item).join("") : '<li class="fine">Nothing drained.</li>';
     $("drainCount").textContent = "(" + drained.size + ")";
@@ -165,7 +199,8 @@
 
   // ---------- refresh ----------
   function refresh() {
-    [1, 2, 3, 4].forEach(n => { $("step" + n).hidden = n !== step; });
+    [0, 1, 2, 3, 4].forEach(n => { $("step" + n).hidden = n !== step; });
+    if (step === 0) renderCollect();
     if (step === 1) renderInspect();
     if (step === 2) renderDrain();
     if (step === 4) renderSubmit();
@@ -173,7 +208,7 @@
     window.MH_PLANES.update(true, true);
   }
   function touch() { if (submittedAt) { submittedAt = null; $("submitMsg").textContent = ""; } persist(); }
-  function goStep(n) { step = Math.max(1, Math.min(4, n)); persist(); refresh(); }
+  function goStep(n) { step = Math.max(0, Math.min(4, n)); persist(); refresh(); }
 
   function openSwitch(sw) {
     if (sw === "MASTER") { goStep(2); return; }
@@ -226,7 +261,7 @@
   $("nick").value = nick;
   $("nick").addEventListener("input", () => { nick = $("nick").value; persist(); });
   $("submitBtn").addEventListener("click", async () => {
-    if (!Object.keys(diag).length) { $("submitMsg").textContent = "Diagnose a few ports first (step 1)."; return; }
+    if (!Object.keys(diag).length) { $("submitMsg").textContent = "Diagnose a few ports first (step 2)."; return; }
     $("submitBtn").disabled = true; $("submitMsg").textContent = "Sending...";
     try {
       await window.MH.rpc("submit_work", { p_id: uid, p_nick: nick, p_diag: diag, p_drained: Array.from(drained), p_answers: answers });

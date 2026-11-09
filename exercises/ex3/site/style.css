@@ -511,3 +511,8 @@ body.submitted .led { background: var(--ok); box-shadow: 0 0 9px var(--ok); }
 .ans-list li { display: flex; gap: 10px; align-items: flex-start; }
 .ans-n { flex: none; width: 24px; height: 24px; border-radius: 50%; color: #fff; display: grid; place-items: center; font-weight: 700; font-size: 0.85rem; }
 .ans-n.q { background: var(--muted); }
+#map .cpn-ln { stroke: var(--accent); stroke-width: 1; stroke-dasharray: 3 4; opacity: .55; }
+#map .cpn-pk { fill: var(--accent); filter: drop-shadow(0 0 4px var(--accent-glow)); }
+#map .cpn-pk.lost { fill: var(--bad); }
+.st-up { color: var(--ok); font-weight: 600; } .st-down { color: var(--bad); font-weight: 600; }
+.lsd-row { grid-template-columns: 0 1fr auto; }
