@@ -334,3 +334,18 @@ footer { margin-top: 8px; }
 #labelDock .probe-text { font-size: .9rem; color: var(--ink); background: var(--probe-bg); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; margin: 0 0 10px; }
 #map { min-width: 720px; }
 #map .pt:focus { outline: none; }
+
+/* page order: collapsible intro, paper box, feed box */
+.about { margin: 4px 0 0; }
+.about > summary { cursor: pointer; color: var(--accent); font-weight: 600; }
+.about .lede { margin-top: 10px; }
+.why { margin: 0; }
+.why .paper { margin-top: 12px; }
+.feed-box { margin-top: 12px; }
+.feed-box > summary { cursor: pointer; color: var(--accent); font-weight: 600; }
+.status-strip #sProgBox { background: var(--panel); border: 1px solid var(--line); border-radius: 7px; padding: 4px 12px; display: flex; flex-direction: column; min-width: 96px; }
+.status-strip #sProgBox[hidden] { display: none; }
+.status-strip #sProgBox .k { font: 500 0.72rem var(--sans); color: var(--muted); }
+.status-strip #sProgBox .v { font: 600 1rem var(--mono); }
+.status-strip #sProgBox.up { border-color: var(--ok); } .status-strip #sProgBox.up .v { color: var(--ok); }
+#labelDock .cheat { margin-top: 12px; }

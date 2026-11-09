@@ -17,7 +17,8 @@
     <div class="status-strip" id="strip">
       <div><span class="k">Faults confirmed</span><span class="v" id="sFaults">&ndash;</span></div>
       <div title="One switch is silent, so at most 15 can report."><span class="k">Switches reported</span><span class="v" id="sReported">&ndash;</span></div>
-      <div class="fabric"><span class="k">Fabric</span><span class="v" id="sFabric">&ndash;</span></div>
+      <div id="sProgBox" hidden title="Report sent and both questions answered"><span class="k">Your progress</span><span class="v" id="sProg">&ndash;</span></div>
+      <div class="fabric" title="Turns green when all 5 faults are confirmed"><span class="k">Fabric</span><span class="v" id="sFabric">&ndash;</span></div>
     </div>
     <button class="theme-btn" id="themeBtn" type="button">&#9790; Dark</button>
   </div>
@@ -26,28 +27,16 @@
   <header class="hero">
     <p class="eyebrow">Data Centers &amp; AI Networks, Unit 3: Jupiter Rising</p>
     <h1>Miswire Hunt</h1>
-    <p class="lede">This is a 16-switch fabric (the whole network of switches and cables that connects the servers) with five hidden faults. Each of you gets one switch and can only see its own ports, so you have to compare notes to find the faults. With more students than switches, some of you will share a switch, so you can also compare notes with each other. Until all five are found, the fabric stays down.</p>
-    <ol class="steps">
-      <li><b>Join.</b> <span>Enter your email. You get one switch, and the same email always gets the same switch.</span></li>
-      <li><b>Check and label.</b> <span>Look at each of your ports. Does what the switch heard match the plan? Mark each port with the label that fits.</span></li>
-      <li><b>Report.</b> <span>Send your labels. They show up on the shared map.</span></li>
-      <li><b>Answer.</b> <span>Two short questions about the root cause.</span></li>
-      <li><b>Optional.</b> <span>Flag cables you think are broken, and place the parts of Firepath on the SDN planes (Part 2).</span></li>
-    </ol>
-    <p class="fine">You are done after steps 1 to 4. The shared map fills in as classmates report during the week, so check back later. The fabric coming up is a result for the class, not something you have to wait for.</p>
-    <details class="why" open>
-      <summary>Read this first: the paper, in about half a page</summary>
-      <blockquote class="paper">
-        <p>&ldquo;Building a fabric with thousands of cables invariably leads to multiple cabling errors. Moreover, correctly cabled links may be re-connected incorrectly after maintenance such as linecard replacement. Allowing traffic to use a miscabled link can lead to forwarding loops. Links that fail unidirectionally or develop high packet error rates should also be avoided and scheduled for replacement. To address these issues, we developed Neighbor Discovery (ND), an online liveness and peer correctness checking protocol.</p>
-        <p>Neighbor Discovery (ND) uses the configured view of cluster topology together with a switch&rsquo;s local ID to determine the expected peer IDs of its local ports. It regularly exchanges its local port ID, expected peer port ID, discovered peer port ID, and link error signal. Doing so allows ND on both ends of a link to verify correct cabling.</p>
-        <p>The Interface Manager (IFM) module on each switch&rsquo;s embedded stack continuously monitors the ND state of each port, declaring a port up to the routing process only if it is both PHY UP and ND UP.&rdquo;</p>
-        <footer>A. Singh et al., &ldquo;Jupiter Rising: A Decade of Clos Topologies and Centralized Control in Google&rsquo;s Datacenter Network&rdquo;, SIGCOMM &rsquo;15, <b>Section 5.2.1</b> (&ldquo;Neighbor Discovery to Verify Connectivity&rdquo;), p. 192.</footer>
-      </blockquote>
-    </details>
-    <details class="why">
-      <summary>Why this matters in Jupiter</summary>
-      <p>With thousands of cables, some will always be plugged in wrong. Google's answer was <b>Neighbor Discovery (ND)</b>. Every switch gets the same plan, so it knows which port should be at the far end of each cable. ND checks who is really there and tells the peer what it found. A port is only used for traffic when it is both <b>PHY up</b> and <b>ND up</b>. <span class="ref">(Section 5.2.1, p. 192)</span></p>
-      <p>A problem is <b>confirmed</b> when switches on both sides of it have labeled their ports correctly. When all five are confirmed, the fabric comes up.</p>
+    <details class="about" id="about" open>
+      <summary>About this exercise</summary>
+      <p class="lede">A small data-center network of 16 switches has <b>five hidden faults</b>. You get <b>one switch</b> and can only see its own ports, so you need your classmates&rsquo; reports to find them. If there are more students than switches, some of you share a switch.</p>
+      <ol class="steps">
+        <li><b>Join</b> with your email. The same email always gets the same switch.</li>
+        <li><b>Probe and label</b> every port of your switch: does what it heard match the plan?</li>
+        <li><b>Send your report.</b> It shows up on the shared map.</li>
+        <li><b>Answer</b> two short root-cause questions. You are done after this step.</li>
+      </ol>
+      <p class="fine">Optional: flag cables you think are broken, and place the parts of Firepath on the SDN planes. The map fills in as classmates report during the week, so check back later.</p>
     </details>
   </header>
 
@@ -62,6 +51,17 @@
     <p class="err" id="joinErr" hidden></p>
   </section>
 
+  <details class="why" id="paperBox">
+    <summary>The paper behind this: Neighbor Discovery (Section 5.2.1)</summary>
+    <p>With thousands of cables, some will always be plugged in wrong. Google&rsquo;s answer was <b>Neighbor Discovery (ND)</b>: every switch knows from the shared plan which port should be at the far end of each cable, checks who is really there, and tells the peer what it found. A port is only used when it is both <b>PHY up</b> and <b>ND up</b>.</p>
+    <blockquote class="paper">
+      <p>&ldquo;Building a fabric with thousands of cables invariably leads to multiple cabling errors. Moreover, correctly cabled links may be re-connected incorrectly after maintenance such as linecard replacement. Allowing traffic to use a miscabled link can lead to forwarding loops. Links that fail unidirectionally or develop high packet error rates should also be avoided and scheduled for replacement. To address these issues, we developed Neighbor Discovery (ND), an online liveness and peer correctness checking protocol.</p>
+      <p>Neighbor Discovery (ND) uses the configured view of cluster topology together with a switch&rsquo;s local ID to determine the expected peer IDs of its local ports. It regularly exchanges its local port ID, expected peer port ID, discovered peer port ID, and link error signal. Doing so allows ND on both ends of a link to verify correct cabling.</p>
+      <p>The Interface Manager (IFM) module on each switch&rsquo;s embedded stack continuously monitors the ND state of each port, declaring a port up to the routing process only if it is both PHY UP and ND UP.&rdquo;</p>
+      <footer>A. Singh et al., &ldquo;Jupiter Rising: A Decade of Clos Topologies and Centralized Control in Google&rsquo;s Datacenter Network&rdquo;, SIGCOMM &rsquo;15, <b>Section 5.2.1</b> (&ldquo;Neighbor Discovery to Verify Connectivity&rdquo;), p. 192.</footer>
+    </blockquote>
+  </details>
+
   <section class="card" id="consoleCard" hidden>
     <div class="console-head">
       <div>
@@ -71,14 +71,31 @@
       </div>
       <button class="btn ghost" id="switchUser" type="button">Not you? Use another email</button>
     </div>
-
     <div id="darkPanel" class="dark" hidden>
       <p class="mono">&gt; ssh admin@T7.cpn<br>&gt; connection timed out<br>&gt; ping T7.cpn: 100% packet loss</p>
       <p>Your switch does not answer, so you have no port table. Use the shared map to work out what happened to <b>T7</b>, then answer the two questions below.</p>
     </div>
+  </section>
 
-    <div id="tablePanel">
-      <p class="how">Your switch is <b>highlighted on the map</b>. Its ports are the little tabs on its cables (<b>d1, u3, p2 ...</b>). <b>Click a port tab</b> to send a probe down that cable. The <b>dashed circle</b> is the switch the plan says should be at the other end. The <b>solid cable</b> goes to the switch it really heard. Then give the port a label. When all your ports have a label, press <b>Send report</b>.</p>
+  <section class="card" id="mapCard">
+    <div class="console-head">
+      <div><h2>Shared fabric map</h2>
+        <p class="how" id="mapHow" hidden>Your switch is highlighted. Its ports are the <b>tabs on its cables</b>. <b>Click a tab</b> to probe that cable: the <b>dashed outline</b> is the switch the plan expects, the <b>solid line</b> goes to the switch it really heard.</p>
+        <p class="fine" id="mapIntro">Everyone&rsquo;s reports show up here every few seconds. <b>Click a cable</b> to see what each end said. You can flag up to 5 cables you think are broken.</p>
+        <p class="notice" id="mapJoin">Join above to get your switch. The map stays grey until people send reports.</p></div>
+      <button class="btn ghost" id="refresh" type="button">Refresh</button>
+    </div>
+    <p class="fine swipe">Swipe the map sideways to see Block B &rarr;</p>
+    <div class="map-wrap"><svg id="map" viewBox="0 0 960 500" role="img" aria-label="Shared map of the JR-16 fabric"></svg></div>
+    <ul class="legend">
+      <li><i class="lg lg-unknown"></i>No report yet</li>
+      <li><i class="lg lg-half"></i>One end says OK</li>
+      <li><i class="lg lg-verified"></i>Both ends say OK</li>
+      <li><i class="lg lg-suspect"></i>One end reports a problem</li>
+      <li><i class="lg lg-confirmed"></i>Confirmed fault</li>
+    </ul>
+    <div id="labelDock" hidden>
+      <p class="probe-text" id="probeText">Click a port tab on your switch to probe it.</p>
       <div class="cheat" aria-label="How to pick a label">
         <h3>Which label?</h3>
         <ul>
@@ -90,6 +107,12 @@
           <li><i style="--tc:#B58CFF"></i><b>Peer silent</b> <code>PHY</code> is up, but you hear nothing from the peer.</li>
         </ul>
         <p class="fine"><code>PHY</code> is the physical link. <code>ND</code> (Neighbor Discovery) is how a switch finds out who is at the other end of a cable. Some faults cannot be seen from one switch, so also look at the shared map.</p>
+      </div>
+      <div class="tray-head"><b>Labels</b> <span class="fine" id="trayHint"></span></div>
+      <div class="tray" id="tray"></div>
+      <div class="row">
+        <button class="btn primary" id="sendReport" type="button">Send report</button>
+        <span class="fine" id="reportMsg"></span>
       </div>
       <details class="guide">
         <summary>What do the fields mean? (and the raw table)</summary>
@@ -105,40 +128,13 @@
             <thead><tr><th>Port</th><th>Expected peer</th><th>Discovered peer</th><th>Peer hears you</th><th>PHY</th><th>Error rate</th><th>Your label</th></tr></thead>
             <tbody id="portRows"></tbody>
           </table>
-        </div>
-      </details>
-    </div>
-  </section>
-
-  <section class="card" id="mapCard">
-    <div class="console-head">
-      <div><h2>Shared fabric map</h2><p class="fine">Everyone's reports show up here and update every few seconds. <b>Click a cable</b> to see what each end said. You can put up to 5 flags on cables you think are broken.</p>
-        <p class="notice" id="mapJoin">Join first, above. You get your own switch and 5 flags. The map is grey until people send reports.</p>
-        <p class="fine">The <b>Fabric</b> box at the top turns green when all 5 faults are confirmed.</p></div>
-      <button class="btn ghost" id="refresh" type="button">Refresh</button>
-    </div>
-    <p class="fine swipe">Swipe the map sideways to see Block B &rarr;</p>
-    <div class="map-wrap"><svg id="map" viewBox="0 0 960 500" role="img" aria-label="Shared map of the JR-16 fabric"></svg></div>
-    <ul class="legend">
-      <li><i class="lg lg-unknown"></i>No report yet</li>
-      <li><i class="lg lg-half"></i>One end says OK</li>
-      <li><i class="lg lg-verified"></i>Both ends say OK</li>
-      <li><i class="lg lg-suspect"></i>One end reports a problem</li>
-      <li><i class="lg lg-confirmed"></i>Confirmed fault</li>
-    </ul>
-    <div id="labelDock" hidden>
-      <p class="probe-text" id="probeText">Click a port tab on your switch (on the map) to probe it.</p>
-      <div class="tray-head"><b>Labels</b> <span class="fine" id="trayHint"></span></div>
-      <div class="tray" id="tray"></div>
-      <div class="row">
-        <button class="btn primary" id="sendReport" type="button">Send report</button>
-        <span class="fine" id="reportMsg"></span>
-      </div>
+          </details>
     </div>
     <div class="linkcard" id="linkCard" hidden></div>
-    <div class="feed-head"><b>Live feed</b></div>
-    <ul class="feed" id="feed"><li class="fine">Waiting for the first report…</li></ul>
     <div id="faultList" class="faults"></div>
+    <details class="feed-box"><summary>Live feed</summary>
+      <ul class="feed" id="feed"><li class="fine">Waiting for the first report…</li></ul>
+    </details>
     <p class="err" id="mapErr" hidden></p>
   </section>
 
@@ -148,13 +144,13 @@
     <form id="rcForm" hidden>
       <fieldset>
         <legend>1. On AG3 and AG4, every port that connects to <b>T7</b> has a working link but hears nothing. What most likely happened?</legend>
-        <label><input type="radio" name="q1" value="cables"> Four separate cable faults</label>
+        <label><input type="radio" name="q1" value="cables"> Two separate cable faults</label>
         <label><input type="radio" name="q1" value="power"> T7 lost power</label>
         <label><input type="radio" name="q1" value="crash"> T7's software crashed</label>
         <label><input type="radio" name="q1" value="miswire"> T7's cables were plugged into the wrong ports</label>
       </fieldset>
       <fieldset>
-        <legend>2. <b>SP3 p6</b> has a working link but hears nothing from AG3 u6. What is the most likely cause?</legend>
+        <legend>2. <b>SP3 p3</b> has a working link but hears nothing from AG3 u3. What is the most likely cause?</legend>
         <label><input type="radio" name="q2" value="crash"> AG3's software crashed</label>
         <label><input type="radio" name="q2" value="oneway"> The link works in one direction only</label>
         <label><input type="radio" name="q2" value="miswire"> The cable goes to a different switch</label>
@@ -164,6 +160,11 @@
     </form>
   </section>
 
+  <section class="card" id="doneCard" hidden>
+    <h2>Your progress</h2>
+    <ul class="done-list" id="doneList"></ul>
+    <p class="fine">You are done when both required items are ticked. Optional items are for extra practice.</p>
+  </section>
 
   <section class="card" id="planeCard" hidden>
     <h2>Where does the control live?</h2>
@@ -182,12 +183,6 @@
         <b>Look at the split.</b> The master holds the topology for the whole fabric, but each client computes its own forwarding table. In a textbook OpenFlow design the controller would do both and install ready-made entries. So Firepath is centralized in what it <i>knows</i> and distributed in what it <i>computes</i>. <span class="ref">(Section 5.2.2)</span>
       </div>
     </div>
-  </section>
-
-  <section class="card" id="doneCard" hidden>
-    <h2>Your progress</h2>
-    <ul class="done-list" id="doneList"></ul>
-    <p class="fine">You are done when both required items are ticked. Optional items are for extra practice.</p>
   </section>
 
   <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>

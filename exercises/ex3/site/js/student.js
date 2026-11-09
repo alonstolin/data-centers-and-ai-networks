@@ -24,7 +24,7 @@
 
   $("switchUser").addEventListener("click", () => {
     store.del(KEY); me = null;
-    $("consoleCard").hidden = true; $("labelDock").hidden = true; $("rcCard").hidden = true; window.MH_PLANES.update(false, false); $("doneCard").hidden = true; $("joinCard").hidden = false; $("mapJoin").hidden = false;
+    $("consoleCard").hidden = true; $("labelDock").hidden = true; $("mapHow").hidden = true; $("about").open = true; $("sProgBox").hidden = true; $("rcCard").hidden = true; window.MH_PLANES.update(false, false); $("doneCard").hidden = true; $("joinCard").hidden = false; $("mapJoin").hidden = false;
     $("email").value = ""; $("email").focus();
     drawMap();
   });
@@ -41,7 +41,7 @@
     $("swRole").textContent = window.MH_TOPO.role(me.switch) + " · " + me.rows.length + " ports";
     const dark = me.rows.length === 0;
     $("darkPanel").hidden = !dark;
-    $("tablePanel").hidden = dark;
+    $("mapHow").hidden = dark; $("about").open = false;
     $("labelDock").hidden = dark;
     renderPanel();
     if (me.rows.length) { selPort = me.rows[0].port; renderProbe(selPort); } else renderPanel();
@@ -99,7 +99,7 @@
     const peerSw = r.expected && r.expected !== "-" ? r.expected.split(" ")[0] : null;
     probePair = null; if (peerSw) { [me.switch + "|" + peerSw, peerSw + "|" + me.switch].forEach(k => { if (lastPairs[k]) probePair = k; }); }
     const silent = r.discovered === "-";
-    $("probeText").innerHTML = "<b>Port " + esc(port) + "</b>: the plan says <b>" + esc(r.expected) + "</b> (dashed circle). It heard <b>" + (silent ? "nothing" : esc(r.discovered)) + "</b>. PHY " + esc(r.phy) + ", peer hears you: " + esc(r.peer_hears) + ", error rate " + esc(r.err) + ".";
+    $("probeText").innerHTML = "<b>Port " + esc(port) + "</b>: the plan says <b>" + esc(r.expected) + "</b> (dashed outline). It heard <b>" + (silent ? "nothing" : esc(r.discovered)) + "</b>. PHY " + esc(r.phy) + ", peer hears you: " + esc(r.peer_hears) + ", error rate " + esc(r.err) + ".";
     renderPanel();
   }
 
@@ -126,6 +126,8 @@
     const sent = me.rows.length === 0 || Object.keys(me.mine || {}).length > 0, ans = !!me.answers;
     const pc = window.MH_PLANES ? window.MH_PLANES.count() : 0, pt = window.MH_PLANES ? window.MH_PLANES.total : 7;
     const item = (ok, text, opt) => '<li class="' + (ok ? "ok" : "") + '"><span class="tick" aria-hidden="true">' + (ok ? "\u2713" : "\u25CB") + "</span> " + text + (opt ? ' <span class="fine">(optional)</span>' : "") + "</li>";
+    $("sProgBox").hidden = false; $("sProg").textContent = ((sent ? 1 : 0) + (ans ? 1 : 0)) + " / 2";
+    $("sProgBox").classList.toggle("up", sent && ans);
     $("doneList").innerHTML = item(sent, me.rows.length ? "Report sent" : "Nothing to report from this switch", false) + item(ans, "Both root-cause questions saved", false) +
       item(me.flags.length > 0, "Flags placed on the map: " + me.flags.length + " of 5", true) + item(pc === pt, "Firepath parts placed: " + pc + " of " + pt, true);
   }
