@@ -24,17 +24,17 @@
 
   $("switchUser").addEventListener("click", () => {
     store.del(KEY); me = null;
-    $("consoleCard").hidden = true; $("rcCard").hidden = true; $("joinCard").hidden = false;
+    $("consoleCard").hidden = true; $("rcCard").hidden = true; $("joinCard").hidden = false; $("mapJoin").hidden = false;
     $("email").value = ""; $("email").focus();
     drawMap();
   });
 
   async function loadMe(hash) {
     const v = await rpc("get_my_view", { p_hash: hash });
-    if (!v) { store.del(KEY); $("joinCard").hidden = false; return; }
+    if (!v) { store.del(KEY); $("joinCard").hidden = false; $("mapJoin").hidden = false; return; }
     me = { hash, flags: v.flags || [], switch: v.switch, rows: v.rows || [], mine: v.mine || {}, labels: Object.assign({}, v.mine || {}), sent: Object.keys(v.mine || {}).length > 0, answers: v.answers };
     selPort = null; selLabel = null;
-    $("joinCard").hidden = true;
+    $("joinCard").hidden = true; $("mapJoin").hidden = true;
     $("consoleCard").hidden = false;
     $("rcCard").hidden = false;
     $("swName").textContent = me.switch;
@@ -203,7 +203,7 @@
     diffEvents(st);
     $("sFaults").textContent = done.length + " / " + st.faults_total;
     const sw = new Set((st.ports || []).map(p => p.s));
-    $("sReported").textContent = sw.size + " / 15";
+    $("sReported").textContent = sw.size + " / 16";
     $("sFabric").textContent = allUp ? "UP" : "DOWN";
     $("strip").classList.toggle("up", allUp);
     $("faultList").innerHTML = (allUp ? '<div class="up-banner">FABRIC UP. All five problems are confirmed. Firepath may route. What each problem was gets revealed in class.</div>' : "") +
