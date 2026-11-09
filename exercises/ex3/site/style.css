@@ -499,3 +499,4 @@ body.submitted .led { background: var(--ok); box-shadow: 0 0 9px var(--ok); }
 @keyframes dpulse { 50% { box-shadow: 0 0 0 7px var(--accent-glow); } }
 .map-head { padding: 2px 4px 8px; font-size: 0.92rem; }
 .map-head b { font: 600 0.78rem var(--mono); text-transform: uppercase; letter-spacing: .08em; color: var(--accent); margin-right: 6px; }
+.portlist { display: grid; grid-template-columns: repeat(2, 1fr); }

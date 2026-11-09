@@ -76,7 +76,7 @@
     $("swTitle").innerHTML = esc(sel) + ' <span class="role">' + esc(T.role(sel)) + "</span>" + '<span class="swprog">' + nd + " / " + rows.length + " diagnosed</span>";
     $("portList").innerHTML = rows.map(r => {
       const d = diag[sel + ":" + r.port], on = r.port === selPort;
-      return '<li><button type="button" class="pl' + (on ? " on" : "") + '" data-port="' + esc(r.port) + '"><span class="pl-p">' + esc(r.port) + '</span><span class="pl-to">→ ' + esc(r.expected) + "</span>" +
+      return '<li><button type="button" class="pl' + (on ? " on" : "") + '" data-port="' + esc(r.port) + '"><span class="pl-p">' + esc(r.port) + '</span><span class="pl-to"></span>' +
         (d ? '<span class="chip" style="--tc:' + LCOL[d] + '">' + LABELS[d] + "</span>" : '<span class="chip none">?</span>') + "</button></li>";
     }).join("");
     const r = rows.filter(x => x.port === selPort)[0];
