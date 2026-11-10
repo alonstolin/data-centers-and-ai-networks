@@ -35,7 +35,7 @@ The answer key is inside `puzzle.js`, so a student who reads the source can see 
 ## Publishing
 
 Merging changes to `site/` on `main` runs `.github/workflows/ex3-pages.yml` and publishes the site at
-`https://shaygol.github.io/data-centers-and-ai-networks/`. A branch named `claude/**` is published
+`https://shaygol.github.io/data-centers-and-ai-networks/`. The `dev` branch is published
 under `/preview/` for review before merging.
 
 ## Saving, deadline and class results

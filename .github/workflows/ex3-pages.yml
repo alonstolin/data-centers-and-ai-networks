@@ -2,7 +2,7 @@ name: Deploy ex3 (Miswire Hunt) site
 
 on:
   push:
-    branches: [main, "claude/**"]
+    branches: [main, dev]
     paths: ["exercises/ex3/site/**", ".github/workflows/ex3-pages.yml"]
   workflow_dispatch:
 
