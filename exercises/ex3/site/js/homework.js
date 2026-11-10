@@ -1,10 +1,10 @@
 // Visuals for the homework page: a mini fabric that shows who does what when a link fails,
-// and a diagram of the Firepath parts that reacts to the table in Part 1.
+// and a diagram of the Firepath parts that reacts to the placement rows of question 1.
 (function () {
-  const S = { S1: [210, 100], S2: [330, 100] }, L = { L1: [90, 250], L2: [210, 250], L3: [330, 250], L4: [450, 250] };
+  const S = { SP1: [210, 100], SP2: [330, 100] }, L = { AG1: [90, 250], AG2: [210, 250], AG3: [330, 250], AG4: [450, 250] };  // a slice of JR-16: two spines over four aggregation switches
   const POS = Object.assign({}, S, L), ALL = Object.keys(POS), M = [530, 100];
   const LINKS = []; Object.keys(S).forEach(s => Object.keys(L).forEach(l => LINKS.push([s, l])));
-  const FAIL = ["S1", "L2"];
+  const FAIL = ["SP1", "AG2"];
   const nodeW = 56, nodeH = 28;
 
   const edge = (a, b, up) => { // point on the edge of node a towards b
@@ -81,9 +81,9 @@
           steps.querySelectorAll("li").forEach((li, j) => { li.classList.toggle("on", j === i); li.classList.toggle("done", j < i); });
           const k = s[0];
           svg.querySelectorAll(".hv-pk").forEach(c => c.remove());
-          if (k === "detect") { svg.querySelector('[data-l="S1L2"]').classList.add("dead"); fx().insertAdjacentHTML("beforeend", '<text class="hv-x" x="210" y="180" text-anchor="middle">&#10005;</text>'); FAIL.forEach(n => node(n).classList.add("alert")); }
+          if (k === "detect") { svg.querySelector('[data-l="SP1AG2"]').classList.add("dead"); fx().insertAdjacentHTML("beforeend", '<text class="hv-x" x="210" y="180" text-anchor="middle">&#10005;</text>'); FAIL.forEach(n => node(n).classList.add("alert")); }
           if (k === "flood") {
-            LINKS.forEach(([a, b], j) => { if (a + b === "S1L2") return; pulse(a, b, j * 90, "gray"); pulse(b, a, j * 90 + 40, "gray"); });
+            LINKS.forEach(([a, b], j) => { if (a + b === "SP1AG2") return; pulse(a, b, j * 90, "gray"); pulse(b, a, j * 90 + 40, "gray"); });
           }
           if (k === "report") FAIL.forEach((n, j) => pulse(n, "HUB", j * 150));
           if (k === "push") { fx().insertAdjacentHTML("beforeend", '<text class="hv-lsd" x="' + (M[0]) + '" y="' + (M[1] + 36) + '" text-anchor="middle">LSD v+1</text>'); ALL.forEach((n, j) => pulse("HUB", n, j * 110, "acc")); }
@@ -128,28 +128,29 @@
     // LSD arrows from master to the two spines and a label
     h += '<g class="hp-part" data-part="3"><rect class="hp-lsd" x="' + (M[0] - 40) + '" y="' + (M[1] + 30) + '" width="80" height="22" rx="4"/><text class="t" x="' + M[0] + '" y="' + (M[1] + 45) + '" text-anchor="middle">LSD</text></g>';
     // ND on links
-    h += '<g class="hp-part" data-part="5"><text class="hp-nd" x="' + ((S.S2[0] + L.L3[0]) / 2 + 0) + '" y="' + ((S.S2[1] + L.L3[1]) / 2) + '" text-anchor="middle">ND &#8596; ND</text><text class="hp-nd" x="' + ((S.S1[0] + L.L1[0]) / 2) + '" y="' + ((S.S1[1] + L.L1[1]) / 2) + '" text-anchor="middle">ND &#8596; ND</text></g>';
+    h += '<g class="hp-part" data-part="5"><text class="hp-nd" x="' + ((S.SP2[0] + L.AG3[0]) / 2 + 0) + '" y="' + ((S.SP2[1] + L.AG3[1]) / 2) + '" text-anchor="middle">ND &#8596; ND</text><text class="hp-nd" x="' + ((S.SP1[0] + L.AG1[0]) / 2) + '" y="' + ((S.SP1[1] + L.AG1[1]) / 2) + '" text-anchor="middle">ND &#8596; ND</text></g>';
     h += badge(1, M[0] - 56, M[1] - 24) + badge(2, 130, 266) + badge(3, M[0] + 46, M[1] + 52) + badge(4, 405, 175) + badge(5, 362, 168) + badge(6, 236, 30) + badge(7, 398, 236);
-    const IDLE = "<b>Hover a row of the table, or a number here.</b> The diagram shows where each part lives. It does not say which plane it belongs to: that is your job in 1a.";
-    root.innerHTML = '<svg class="hv-svg" viewBox="0 0 600 330" role="img" aria-label="The parts of Firepath on a small fabric">' + h + '</svg><div class="hp-info" aria-live="polite">' + IDLE + "</div>";
+    const IDLE = "<b>Hover a number here, or a part below.</b> This is a slice of JR-16: two spines and four aggregation switches. The diagram shows where each part lives. It does not say which plane it belongs to: that is your job in question 1.";
+    root.innerHTML = '<svg class="hv-svg" viewBox="0 0 600 330" role="img" aria-label="The parts of Firepath on a slice of the JR-16 fabric">' + h + '</svg><div class="hp-info" aria-live="polite">' + IDLE + "</div>";
     const info = root.querySelector(".hp-info"), svg = root.querySelector("svg");
     function show(n) {
       svg.querySelectorAll("[data-part]").forEach(e => e.classList.toggle("lit", n && e.getAttribute("data-part") === String(n)));
       svg.classList.toggle("dim", !!n);
-      if (table) table.querySelectorAll("tr[data-part]").forEach(r => r.classList.toggle("lit", n && r.getAttribute("data-part") === String(n)));
+      if (table) table.querySelectorAll(".hwp-row[data-part]").forEach(r => r.classList.toggle("lit", n && r.getAttribute("data-part") === String(n)));
       info.innerHTML = n ? "<b>" + n + ". " + PARTS[n][0] + ".</b> " + PARTS[n][1] : IDLE;
     }
     root.addEventListener("mouseover", e => { const p = e.target.closest("[data-part]"); if (p) show(p.getAttribute("data-part")); });
     root.addEventListener("mouseleave", () => show(null));
     root.addEventListener("focusin", e => { const p = e.target.closest("[data-part]"); if (p) show(p.getAttribute("data-part")); });
     if (table) {
-      table.querySelectorAll("tr[data-part]").forEach(r => { r.addEventListener("mouseenter", () => show(r.getAttribute("data-part"))); r.addEventListener("mouseleave", () => show(null)); r.tabIndex = 0; r.addEventListener("focus", () => show(r.getAttribute("data-part"))); });
+      // the placement rows of question 1: hovering a row, or focusing one of its choices, lights that part in the diagram
+      table.querySelectorAll(".hwp-row[data-part]").forEach(r => { r.addEventListener("mouseenter", () => show(r.getAttribute("data-part"))); r.addEventListener("mouseleave", () => show(null)); r.addEventListener("focusin", () => show(r.getAttribute("data-part"))); });
     }
   }
 
   document.addEventListener("DOMContentLoaded", () => {
     const e1 = document.getElementById("explorerPrimer"); if (e1) mountExplorer(e1, ["A", "C"], { A: "Traditional", C: "SDN (OpenFlow)" });
     const e2 = document.getElementById("explorerChoice"); if (e2) mountExplorer(e2, ["A", "B", "C"]);
-    const p = document.getElementById("partsDiagram"); if (p) mountParts(p, document.getElementById("partsTable"));
+    const p = document.getElementById("partsDiagram"); if (p) mountParts(p, document.getElementById("hwPlace"));
   });
 })();

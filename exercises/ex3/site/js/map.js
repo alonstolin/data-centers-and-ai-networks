@@ -97,6 +97,7 @@
       h += '<line class="cpn" x1="800" y1="52" x2="780" y2="52"/><g class="nd nd-master' + (o.masterSel ? " nd-me" : "") + '" data-sw="MASTER"><rect x="808" y="34" width="110" height="36" rx="5"/><text x="863" y="49" text-anchor="middle">MASTER</text><text class="sub" x="863" y="63" text-anchor="middle">Firepath</text></g>' +
         '<text class="tier" x="808" y="86">CPN: connected to</text><text class="tier" x="808" y="98">every switch</text>';
     }
+    let youTag = "";
     T.ALL.forEach(s => {
       const [x, y] = P[s], tor = s.startsWith("T"), w = tor ? 54 : 74, hh = tor ? 24 : 32;
       const cls = ["nd", tor ? "nd-tor" : s.startsWith("AG") ? "nd-ag" : "nd-sp"];
@@ -110,9 +111,13 @@
         h += "</g>";
       }
       h += '<g class="' + cls.join(" ") + '" data-sw="' + s + '"><rect x="' + (x - w / 2) + '" y="' + (y - hh / 2) + '" width="' + w + '" height="' + hh + '" rx="5"/>' +
-        '<text x="' + x + '" y="' + (y + 4.5) + '" text-anchor="middle">' + s + "</text>" +
-        (o.me === s ? (tor ? '<text class="you" x="' + x + '" y="' + (y + 132) + '" text-anchor="middle">\u25B2 OPEN</text>' : '<text class="you" x="' + (x + w / 2 + 8) + '" y="' + (y + 4) + '">\u25C0 OPEN</text>') : "") + "</g>";
+        '<text x="' + x + '" y="' + (y + 4.5) + '" text-anchor="middle">' + s + "</text></g>";
+      // the "OPEN" tag goes on the side with free space (AG1 and AG3 have a neighbour close on their right), drawn after all switches so none covers it
+      if (o.me === s) youTag = tor ? '<text class="you" x="' + x + '" y="' + (y + 132) + '" text-anchor="middle">\u25B2 OPEN</text>' :
+        (s === "AG1" || s === "AG3") ? '<text class="you" x="' + (x - w / 2 - 8) + '" y="' + (y + 4) + '" text-anchor="end">OPEN \u25B6</text>' :
+        '<text class="you" x="' + (x + w / 2 + 8) + '" y="' + (y + 4) + '">\u25C0 OPEN</text>';
     });
+    h += youTag;
 
     // ---- your switch, zoomed in below the map, with the probe running into the network ----
     const pn = o.panel;

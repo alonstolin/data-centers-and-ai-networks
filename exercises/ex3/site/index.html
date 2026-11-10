@@ -13,237 +13,249 @@
 <body class="console-page">
 <div class="topbar">
   <div class="topbar-in">
-    <span class="brand"><i class="led"></i>Miswire Hunt <small>JR-16 fabric bring-up</small></span>
-    <nav class="missions" id="missions" aria-label="Mission steps">
-      <button type="button" class="ms" data-step="0"><span class="ms-n">1</span><span class="ms-t">Collect</span><span class="ms-v" id="m0v">0 / 16</span></button>
-      <button type="button" class="ms" data-step="1"><span class="ms-n">2</span><span class="ms-t">Inspect</span><span class="ms-v" id="m1v">0 / 62</span></button>
-      <button type="button" class="ms" data-step="2"><span class="ms-n">3</span><span class="ms-t">Drain</span><span class="ms-v" id="m2v">0 links</span></button>
-      <button type="button" class="ms" data-step="3"><span class="ms-n">4</span><span class="ms-t">Explain</span><span class="ms-v" id="m3v">0 / 2</span></button>
-      <button type="button" class="ms" data-step="4"><span class="ms-n">5</span><span class="ms-t">Submit</span><span class="ms-v" id="m4v">not yet</span></button>
-    </nav>
-    <button class="theme-btn" id="themeBtn" type="button">&#9790; Dark</button>
+    <h1 class="brand"><i class="led"></i>Miswire Hunt</h1>
+    <span class="brief-k">Unit 3 homework</span>
+    <div class="topbar-hw">
+      <span class="due"><span class="due-l">Due</span> <b>Sun, Nov 15, 13:00</b></span>
+      <button class="theme-btn" id="themeBtn" type="button">&#9790; Dark</button>
+    </div>
   </div>
 </div>
 
 <main class="console-main">
-  <div class="brief" id="brief">
-    <p><b>Five hidden faults</b> are somewhere in this 16-switch fabric. Work through the five steps above. There is no feedback while you play: your work is saved in this browser, you send it at step 5, and we go through the answers in class. Then answer <a href="#part1">questions 1a&ndash;1c</a> below the game. <b>Both are due Sunday, Nov 15, at 13:00</b>, one hour before class. <button type="button" class="linkbtn" id="paperBtn">What to read in the paper</button></p>
-  </div>
+  <header class="brief" id="brief">
+    <p class="fine">Do A, B and C in order. One Submit, at the bottom of the page, sends B and C. We go through the answers in class.</p>
+  </header>
 
-  <div class="console">
-    <section class="map-pane" aria-label="The plan">
-      <div class="map-head"><b>The plan</b> <span class="fine">This map is the cluster config that every switch received (Section 5.3.1): each line is a cable that <i>should</i> be there. Open a switch to see what it really hears.</span></div>
-      <div class="map-wrap"><svg id="map" viewBox="0 0 960 500" role="img" aria-label="Map of the JR-16 fabric"></svg></div>
-      <ul class="legend" id="legend">
-        <li><i class="lg lg-unknown"></i>Not diagnosed</li>
-        <li><i class="lg lg-half"></i>One end OK</li>
-        <li><i class="lg lg-verified"></i>Both ends OK</li>
-        <li><i class="lg lg-suspect"></i>You found a problem</li>
-        <li><i class="lg lg-drained"></i>Drained</li>
+  <details class="part" id="paperBox">
+    <summary class="part-head"><span class="bpart-n" aria-hidden="true">A</span><h2 id="partAt">Read</h2><span class="part-sub">Four passages of the paper, about 900 words</span><span class="part-chev" aria-hidden="true"></span></summary>
+    <div class="part-body">
+      <p><a href="https://github.com/shaygol/data-centers-and-ai-networks/blob/main/articles/Jupiter%20Rising%20-%20Decade%20of%20Clos%20Topologies%20in%20Google%20Datacenter%20Network_v2.pdf" target="_blank" rel="noopener">&ldquo;Jupiter Rising: A Decade of Clos Topologies and Centralized Control in Google&rsquo;s Datacenter Network&rdquo; SIGCOMM &rsquo;15.</a><br> You need four passages:</p>
+      <ul class="readlist">
+        <li><b>Section 5.2</b> (Routing): the opening paragraph. It names the parts of Firepath you place in Part C.</li>
+        <li><b>Section 5.2.1</b> (Neighbor Discovery): the whole section.</li>
+        <li><b>Section 5.2.2</b> (Firepath): from the start through the paragraph that starts &ldquo;At startup&rdquo;.</li>
+        <li><b>Section 5.3.1</b> (Configuration Generation Approach): the whole section.</li>
       </ul>
-    </section>
-
-    <aside class="inspector" id="inspector" aria-live="polite">
-      <!-- step 0: collect -->
-      <div class="step" id="step0" hidden>
-        <p class="step-k">Step 1 · Collect</p>
-        <h2>You are the Firepath master</h2>
-        <p>The master does not see cables. It learns the state of every link from the switches themselves: each switch reports over the control network (<b>CPN</b>) which of its ports are up (Section 5.2.2). A port is up only when it is both PHY UP and ND UP (Section 5.2.1).</p>
-        <p><button type="button" class="linkbtn" data-clip="clip-522">&#128196; Read it in the paper (Section 5.2.2)</button></p>
-        <div class="row"><button class="btn primary" id="collectBtn" type="button">Collect link state from all switches</button></div>
-        <div id="lsd" hidden>
-          <p class="fine" id="lsdSum"></p>
-          <h3 class="sub">Link-state database: links that are down</h3>
-          <ul class="flagged" id="lsdDown"></ul>
-          <p class="fine">The master only knows <i>up</i> or <i>down</i>, not why. Inspect the switches to find out what is wrong. Not every problem takes a link down.</p>
-        </div>
+      <p>Here they are, cut straight from the paper. Click one to enlarge it.</p>
+      <div class="clips">
+        <figure class="clip" id="clip-52">
+          <span class="tape"></span>
+          <img src="img/paper-5-2.png" alt="Section 5.2 Routing, opening paragraph: all switches are configured with the baseline or intended topology; they learn actual configuration and link state through pair-wise neighbor discovery; each switch exchanges its local view of connectivity with a centralized Firepath master, which redistributes global link state to all switches; switches locally calculate forwarding tables; a Firepath master election protocol keeps it robust; standard BGP is used only for route exchange at the edge of the fabric." loading="lazy">
+          <figcaption><b>Section 5.2</b> · Routing: the parts of Firepath (Part C)</figcaption>
+        </figure>
+        <figure class="clip" id="clip-521">
+          <span class="tape"></span>
+          <img src="img/paper-5-2-1.png" alt="Section 5.2.1 Neighbor Discovery to Verify Connectivity (full text): ND compares expected and discovered peer IDs, a port is up only if PHY UP and ND UP, and ND also serves as a keepalive protocol." loading="lazy">
+          <figcaption><b>Section 5.2.1</b> · Neighbor Discovery: step 2 Inspect</figcaption>
+        </figure>
+        <figure class="clip" id="clip-522">
+          <span class="tape"></span>
+          <img src="img/paper-5-2-2.png" alt="Section 5.2.2 Firepath, through the At startup paragraph: Layer 3 routing to the ToRs via a custom IGP; a Firepath client runs on each fabric switch and redundant Firepath masters run on a subset of spine switches; clients talk to the elected master over the Control Plane Network (CPN). At startup each client is loaded with the cluster config, collects the state of its local interfaces and transmits it to the master; the master builds a Link State Database (LSD) and distributes it to all clients over the CPN; each client computes shortest path forwarding with ECMP." loading="lazy">
+          <figcaption><b>Section 5.2.2</b> · Firepath: steps 1 Collect and 3 Drain</figcaption>
+        </figure>
+        <figure class="clip" id="clip-531">
+          <span class="tape"></span>
+          <img src="img/paper-5-3-1.png" alt="Section 5.3.1 Configuration Generation Approach (full text): the cluster network is viewed top-down as a single static fabric of switches with pre-assigned roles; a pipeline generates the output files, including a common fabric configuration file; a single monolithic cluster configuration is distributed to all switches and each switch extracts its relevant portion." loading="lazy">
+          <figcaption><b>Section 5.3.1</b> · The plan: the map you see</figcaption>
+        </figure>
       </div>
-
-      <!-- step 1: inspect -->
-      <div class="step" id="step1">
-        <div class="empty" id="s1empty">
-          <p class="step-k">Step 2 · Inspect</p>
-          <h2>Pick a switch on the map</h2>
-          <p>Each switch checks its cables with <b>Neighbor Discovery</b>: it knows from the plan who should be at the other end, and it listens for who really is.</p>
-          <p class="fine">Start anywhere. Spines are on top, ToR switches at the bottom.</p>
-          <p><button type="button" class="linkbtn" data-clip="clip-521">&#128196; Read it in the paper (Section 5.2.1)</button></p>
-        </div>
-        <div id="s1dark" hidden>
-          <p class="step-k">Step 2 · Inspect</p>
-          <h2>T7 <span class="role">ToR switch</span></h2>
-          <p class="mono term">&gt; ssh admin@T7.cpn<br>&gt; connection timed out<br>&gt; ping T7.cpn: 100% packet loss</p>
-          <p>This switch does not answer, so it has no port table. Open its neighbours (AG3, AG4) and look at the ports that face T7.</p>
-        </div>
-        <div id="s1sw" hidden>
-          <p class="step-k">Step 2 · Inspect</p>
-          <h2 id="swTitle"></h2>
-          <div class="probe" id="probe" hidden>
-            <div class="wire" id="wire"></div>
-            <dl class="pv-facts">
-              <div><dt>PHY</dt><dd id="pvPhy"></dd></div>
-              <div><dt>Peer hears you</dt><dd id="pvHears"></dd></div>
-              <div><dt>Error rate</dt><dd id="pvErr"></dd></div>
-            </dl>
-            <div class="dbox" id="dbox">
-              <p class="dq"><span class="dq-n">&#9654;</span> Pick a diagnosis for <b id="dqPort"></b> <span class="fine">(or press 1-6)</span></p>
-              <div class="dgrid" id="dgrid"></div>
-            </div>
-            <details class="cheat">
-              <summary>How to choose</summary>
-              <ol>
-                <li><b>PHY</b> DOWN: <b>Link down</b></li>
-                <li>PHY up, heard nothing: <b>Peer silent</b></li>
-                <li>Heard a different port than the map shows: <b>Miswired</b></li>
-                <li>Right peer, but it does not hear you: <b>One-way</b></li>
-                <li>Right peer both ways, error rate high: <b>High errors</b></li>
-                <li>None of these: <b>OK</b></li>
-              </ol>
-              <p class="fine">Some faults look different from each end, so check both ends of a suspicious cable.</p>
-            </details>
-          </div>
-          <h3 class="sub">All ports of this switch</h3>
-          <ol class="portlist" id="portList"></ol>
-          <p class="fine" id="probeHint">Click a port in the list, or its tab on the map.</p>
-        </div>
-      </div>
-
-      <!-- step 2: drain -->
-      <div class="step" id="step2" hidden>
-        <p class="step-k">Step 3 · Drain</p>
-        <h2>You are the Firepath master</h2>
-        <p>The master gathers link state from every switch over the control network and the switches compute their routes from it (Section 5.2.2). <b>Click a cable on the map</b> to take it out of routing. Click again to put it back.</p>
-        <h3 class="sub">Links where you found a problem</h3>
-        <ul class="flagged" id="flagged"></ul>
-        <h3 class="sub">Drained <span class="fine" id="drainCount"></span></h3>
-        <ul class="flagged" id="drainList"></ul>
-        <div class="row"><button class="btn" id="recomputeBtn" type="button">Recompute routes</button></div>
-        <div class="mres" id="masterRes" hidden></div>
-        <p class="fine">Draining a working link costs capacity. A broken link left in costs reliability, and a miswired one can cause forwarding loops (Section 5.2.1).</p>
-      </div>
-
-      <!-- step 3: explain -->
-      <div class="step" id="step3" hidden>
-        <p class="step-k">Step 4 · Explain</p>
-        <h2>Two root-cause questions</h2>
-        <form id="rcForm">
-          <fieldset>
-            <legend>On AG3 and AG4, every port that faces <b>T7</b> has PHY up but hears nothing. What most likely happened?</legend>
-            <label><input type="radio" name="q1" value="cables"> Two separate cable faults</label>
-            <label><input type="radio" name="q1" value="power"> T7 lost power</label>
-            <label><input type="radio" name="q1" value="crash"> T7's software crashed</label>
-            <label><input type="radio" name="q1" value="miswire"> T7's cables are in the wrong ports</label>
-          </fieldset>
-          <fieldset>
-            <legend><b>SP3 p3</b> has PHY up but hears nothing from AG3 u3. What is the most likely cause?</legend>
-            <label><input type="radio" name="q2" value="crash"> AG3's software crashed</label>
-            <label><input type="radio" name="q2" value="oneway"> The link works in one direction only</label>
-            <label><input type="radio" name="q2" value="miswire"> The cable goes to a different switch</label>
-            <label><input type="radio" name="q2" value="down"> The cable is unplugged</label>
-          </fieldset>
-        </form>
-        <p class="fine">Answers are saved as you click.</p>
-      </div>
-
-      <!-- step 4: submit -->
-      <div class="step" id="step4" hidden>
-        <p class="step-k">Step 5 · Submit</p>
-        <h2>Send your work</h2>
-        <ul class="done-list" id="doneList"></ul>
-        <label class="nick" for="nick">Your email</label>
-        <input id="nick" type="email" maxlength="254" autocomplete="email" placeholder="name@example.com" required>
-        <div class="row"><button class="btn primary" id="submitBtn" type="button">Submit my work</button></div>
-        <p class="fine" id="submitMsg"></p>
-        <p class="fine">Nothing is graded. You can change things and submit again.</p>
-      </div>
-
-      <div class="step-nav">
-        <button type="button" class="btn ghost" id="prevBtn">&larr; Back</button>
-        <button type="button" class="btn primary" id="nextBtn">Next step &rarr;</button>
-      </div>
-    </aside>
-  </div>
-
-  <details class="why reading" id="paperBox">
-    <summary>What to read in the paper (about 500 words)</summary>
-    <p>A. Singh et al., &ldquo;Jupiter Rising: A Decade of Clos Topologies and Centralized Control in Google&rsquo;s Datacenter Network&rdquo;, SIGCOMM &rsquo;15. You need three short passages:</p>
-    <ul class="readlist">
-      <li><b>Section 5.2.1</b> (Neighbor Discovery): the whole section, one block of text.</li>
-      <li><b>Section 5.2.2</b> (Firepath): the paragraph that starts &ldquo;At startup&rdquo;.</li>
-      <li><b>Section 5.3.1</b> (Configuration): the last paragraph.</li>
-    </ul>
-    <p>Here they are, cut straight from the paper:</p>
-    <div class="clips">
-      <figure class="clip" id="clip-531">
-        <span class="tape"></span>
-        <img src="img/paper-5-3-1.png" alt="Section 5.3.1: We distribute a single monolithic cluster configuration to all switches (chassis and ToRs) in the cluster. Each switch simply extracts its relevant portion." loading="lazy">
-        <figcaption><b>Section 5.3.1</b> · The plan: the map you see</figcaption>
-      </figure>
-      <figure class="clip" id="clip-522">
-        <span class="tape"></span>
-        <img src="img/paper-5-2-2.png" alt="Section 5.2.2: each client collects the state of its local interfaces and transmits this state to the master. The master constructs a Link State Database (LSD) and distributes it to all clients over the CPN. Each client computes shortest path forwarding with ECMP." loading="lazy">
-        <figcaption><b>Section 5.2.2</b> · Firepath: steps 1 Collect and 3 Drain</figcaption>
-      </figure>
-      <figure class="clip tall" id="clip-521">
-        <span class="tape"></span>
-        <img src="img/paper-5-2-1.png" alt="Section 5.2.1 Neighbor Discovery to Verify Connectivity (full text): ND compares expected and discovered peer IDs, a port is up only if PHY UP and ND UP, and ND also serves as a keepalive protocol." loading="lazy">
-        <figcaption><b>Section 5.2.1</b> · Neighbor Discovery: step 2 Inspect</figcaption>
-      </figure>
+      <p class="fine">Clippings from A. Singh et al., SIGCOMM &rsquo;15 (pages 192-194). Highlights are ours.</p>
     </div>
-    <p class="fine">Clippings from A. Singh et al., SIGCOMM &rsquo;15 (pages 192-194). Highlights are ours.</p>
   </details>
 
-  <section class="card hw-in-game" id="part1">
-    <h2>Questions 1a&ndash;1c: Firepath on the SDN planes <span class="fine">(about 15 minutes, with their own Submit button)</span></h2>
-    <p>Software-defined networking (SDN) moves forwarding decisions out of the individual switches and into software that sees the whole network. It uses three terms, the <b>planes</b>:</p>
-    <ul class="pl-def">
-      <li><b>Data plane.</b> Forwards each packet by looking it up in a table in the switch hardware.</li>
-      <li><b>Control plane.</b> Decides what goes into those tables, for example by computing shortest paths.</li>
-      <li><b>Management plane.</b> Configures, monitors and upgrades the devices.</li>
-    </ul>
-    <p>Traditional networks run the control plane on every switch: each one discovers its neighbors, exchanges routing messages (OSPF, IS-IS, BGP) and computes its own tables. SDN, as OpenFlow defined it, moves the control plane to a logically centralized controller, which computes the forwarding entries and installs them in each switch&rsquo;s flow table. <span class="fine">(N. McKeown et al., &ldquo;OpenFlow: Enabling Innovation in Campus Networks,&rdquo; SIGCOMM CCR 38(2), 2008; reference 18 in Jupiter.)</span></p>
-    <p>Google built its own control plane, <b>Firepath</b>, long before &ldquo;SDN&rdquo; was a common term. You just played its master. Now place its parts on the planes.</p>
-    <p><b>1a.</b> Place each Firepath part on one SDN plane: data, control, management, or outside the SDN picture. All seven are described in Sections 5.1&ndash;5.3 of the paper.</p>
-    <div class="hv hp" id="partsDiagram"></div>
-    <div class="tbl-wrap"><table class="ports hwt" id="partsTable">
-      <thead><tr><th>#</th><th>Part</th><th>What the paper calls it</th></tr></thead>
-      <tbody>
-        <tr data-part="1"><td>1</td><td>Firepath master</td><td>The elected node that collects link state and redistributes it</td></tr>
-        <tr data-part="2"><td>2</td><td>Firepath client</td><td>The process running on every fabric switch</td></tr>
-        <tr data-part="3"><td>3</td><td>Link State Database (LSD)</td><td>The versioned topology state the master sends to clients</td></tr>
-        <tr data-part="4"><td>4</td><td>Control Plane Network (CPN)</td><td>The out-of-band network the master and clients talk over</td></tr>
-        <tr data-part="5"><td>5</td><td>Neighbor Discovery (ND)</td><td>The liveness and peer-correctness check on each link</td></tr>
-        <tr data-part="6"><td>6</td><td>BGP at the cluster border routers (CBRs)</td><td>Route exchange at the edge of the fabric</td></tr>
-        <tr data-part="7"><td>7</td><td>Cluster config</td><td>The static topology of the whole fabric, loaded at startup</td></tr>
-      </tbody>
-    </table></div>
-    <p><b>1b.</b> Pick the two placements you found hardest and explain each in one or two sentences.</p>
-    <p><b>1c.</b> Name one thing Firepath does that a textbook OpenFlow controller would not, and give the section number.</p>
+  <details class="part" id="partB">
+    <summary class="part-head"><span class="bpart-n" aria-hidden="true">B</span><h2 id="partBt">Play the game</h2><span class="part-sub">Find the five hidden faults</span><span class="part-chev" aria-hidden="true"></span></summary>
+    <div class="part-in">
+      <nav class="missions" id="missions" aria-label="Mission steps">
+        <button type="button" class="ms" data-step="0"><span class="ms-n">1</span><span class="ms-t">Collect</span><span class="ms-v" id="m0v">not yet</span></button>
+        <button type="button" class="ms" data-step="1"><span class="ms-n">2</span><span class="ms-t">Inspect</span><span class="ms-v" id="m1v">0 / 62</span></button>
+        <button type="button" class="ms" data-step="2"><span class="ms-n">3</span><span class="ms-t">Drain</span><span class="ms-v" id="m2v">0 links</span></button>
+        <button type="button" class="ms" data-step="3"><span class="ms-n">4</span><span class="ms-t">Explain</span><span class="ms-v" id="m3v">0 / 2</span></button>
+      </nav>
+    <div class="console">
+      <section class="map-pane" aria-label="The plan">
+        <div class="map-head"><b>The Plan:</b> <span class="fine">This map is the cluster config that every switch received as a static configuration (Section 5.3.1). Each line is a cable that <b><i>should</i></b> be there.</span></div>
+        <div class="map-head"><b>Discovery Protocol:</b> <span class="fine">Open a switch to see what it really hears on the links (ND).</span></div>
+        <div class="map-wrap"><svg id="map" viewBox="0 0 960 500" role="img" aria-label="Map of the JR-16 fabric"></svg></div>
+      <p class="fine swipe">Swipe the map sideways to see all of it.</p>
+        <ul class="legend" id="legend">
+          <li><i class="lg lg-unknown"></i>Not diagnosed</li>
+          <li><i class="lg lg-half"></i>One end OK</li>
+          <li><i class="lg lg-verified"></i>Both ends OK</li>
+          <li><i class="lg lg-suspect"></i>You found a problem</li>
+          <li><i class="lg lg-drained"></i>Drained</li>
+        </ul>
+      </section>
 
-    <h3 class="sub">Your answers</h3>
-    <p class="fine">Your draft is saved in this browser while you type. Press <b>Submit</b> at the bottom. It closes <b>Sunday, Nov 15, at 13:00</b>. You can submit again to change your answers before then.</p>
-    <form id="hwForm" novalidate>
-      <fieldset><legend>You</legend>
-        <div class="hw-row"><label for="hwName">Name</label><input id="hwName" type="text" maxlength="120" autocomplete="name"></div>
-        <div class="hw-row"><label for="hwEmail">Email</label><input id="hwEmail" type="email" maxlength="254" autocomplete="email" placeholder="name@example.com" required></div>
-      </fieldset>
-      <fieldset><legend>1a. Place each part on one plane</legend>
-        <div class="hw-grid" id="hwPlace"></div>
-      </fieldset>
-      <fieldset><legend>1b. The two placements you found hardest</legend>
-        <div class="hw-hard">
-          <div class="hw-hcard"><div class="hw-hhead"><b>Hardest #1</b><select id="h1p1" aria-label="Part for hardest placement 1"></select></div><textarea id="h1t1" rows="3" maxlength="1500" placeholder="Why was it hard? One or two sentences."></textarea></div>
-          <div class="hw-hcard"><div class="hw-hhead"><b>Hardest #2</b><select id="h1p2" aria-label="Part for hardest placement 2"></select></div><textarea id="h1t2" rows="3" maxlength="1500" placeholder="Why was it hard? One or two sentences."></textarea></div>
+      <aside class="inspector" id="inspector" aria-live="polite">
+        <!-- step 0: collect -->
+        <div class="step" id="step0" hidden>
+          <p class="step-k">Step 1 · Collect</p>
+          <h3>Collect the state of every link</h3>
+          <p>Firepath&rsquo;s master does not see cables. It learns the state of every link from the switches themselves: each switch reports over the control network (<b>CPN</b>) which of its ports are up (Section 5.2.2). A port is up only when it is both PHY UP and ND UP (Section 5.2.1).</p>
+          <div class="row"><button class="btn primary" id="collectBtn" type="button">Collect link state from all switches</button></div>
+          <div id="lsd" hidden>
+            <p class="fine" id="lsdSum"></p>
+            <h4 class="sub">Link-state database: links that are down</h4>
+            <table class="lsd-tbl" id="lsdDown"></table>
+            <p class="fine">The master only knows <i>up</i> or <i>down</i>, not why. Inspect the switches to find out what is wrong. Not every problem takes a link down.</p>
+          </div>
         </div>
-      </fieldset>
-      <fieldset><legend>1c. One thing Firepath does that a textbook OpenFlow controller would not (with the section number)</legend>
-        <textarea id="h1c" rows="3" maxlength="1500"></textarea>
-      </fieldset>
-      <div class="row"><button class="btn primary" id="hwSubmit" type="submit">Submit answers 1a&ndash;1c</button><span class="fine" id="hwMsg"></span></div>
-    </form>
+
+        <!-- step 1: inspect -->
+        <div class="step" id="step1">
+          <div class="empty" id="s1empty">
+            <p class="step-k">Step 2 · Inspect</p>
+            <h3>Pick a switch on the map</h3>
+            <p>Each switch checks its cables with <b>Neighbor Discovery</b>: it knows from the plan who should be at the other end, and it listens for who really is.</p>
+            <p class="fine">Start anywhere. Spines are on top, ToR switches at the bottom.</p>
+          </div>
+          <div id="s1dark" hidden>
+            <p class="step-k">Step 2 · Inspect</p>
+            <h3>T7 <span class="role">ToR switch</span></h3>
+            <p class="mono term">&gt; ssh admin@T7.cpn<br>&gt; connection timed out<br>&gt; ping T7.cpn: 100% packet loss</p>
+            <p>This switch does not answer, so it has no port table. Open its neighbours (AG3, AG4) and look at the ports that face T7.</p>
+          </div>
+          <div id="s1sw" hidden>
+            <p class="step-k">Step 2 · Inspect</p>
+            <h3 id="swTitle"></h3>
+            <h4 class="sub">Ports of this switch</h4>
+            <ol class="portlist" id="portList"></ol>
+            <p class="fine" id="probeHint">Click a port in the list, or its tab on the map.</p>
+            <div class="probe" id="probe" hidden>
+              <div class="wire" id="wire"></div>
+              <dl class="pv-facts">
+                <div><dt>PHY</dt><dd id="pvPhy"></dd></div>
+                <div><dt>Peer hears you</dt><dd id="pvHears"></dd></div>
+                <div><dt>Error rate</dt><dd id="pvErr"></dd></div>
+              </dl>
+              <div class="dbox" id="dbox">
+                <p class="dq"><span class="dq-n">&#9654;</span> Diagnose <b id="dqPort"></b> <span class="fine">(keys 1-6)</span></p>
+                <div class="dgrid" id="dgrid"></div>
+              </div>
+              <details class="cheat">
+                <summary>How to choose</summary>
+                <table class="how-tbl">
+                  <thead><tr><th>If you see</th><th>Pick</th></tr></thead>
+                  <tbody>
+                    <tr><td>PHY is DOWN</td><td><kbd>5</kbd><i style="--tc:#9AA7B2"></i>Link down</td></tr>
+                    <tr><td>PHY up, heard nothing</td><td><kbd>6</kbd><i style="--tc:#B58CFF"></i>Peer silent</td></tr>
+                    <tr><td>Heard a different port than the map</td><td><kbd>2</kbd><i style="--tc:var(--bad)"></i>Miswired</td></tr>
+                    <tr><td>Right peer, but it does not hear you</td><td><kbd>3</kbd><i style="--tc:#FF8C42"></i>One-way</td></tr>
+                    <tr><td>Right peer both ways, high error rate</td><td><kbd>4</kbd><i style="--tc:var(--warn)"></i>High errors</td></tr>
+                    <tr><td>None of these</td><td><kbd>1</kbd><i style="--tc:var(--ok)"></i>OK</td></tr>
+                  </tbody>
+                </table>
+                <p class="fine">Check both ends of a suspicious cable: a fault can look different from each end.</p>
+              </details>
+            </div>
+          </div>
+        </div>
+
+        <!-- step 2: drain -->
+        <div class="step" id="step2" hidden>
+          <p class="step-k">Step 3 · Drain</p>
+          <h3>Take broken links out of routing</h3>
+          <p>Act on what you found. <b>Click a cable on the map</b>, or a link in the list, to drain it. Click again to put it back. Then press <b>Recompute routes</b>: the master sends the new link state and every switch recomputes its paths (Section 5.2.2).</p>
+          <h4 class="sub">Links where you found a problem</h4>
+          <ul class="flagged" id="flagged"></ul>
+          <h4 class="sub">Drained <span class="fine" id="drainCount"></span></h4>
+          <ul class="flagged" id="drainList"></ul>
+          <div class="row"><button class="btn" id="recomputeBtn" type="button">Recompute routes</button></div>
+          <div class="mres" id="masterRes" hidden></div>
+          <p class="fine">Draining a working link costs capacity. A broken link left in costs reliability, and a miswired one can cause forwarding loops (Section 5.2.1).</p>
+        </div>
+
+        <!-- step 3: explain -->
+        <div class="step" id="step3" hidden>
+          <p class="step-k">Step 4 · Explain</p>
+          <h3>Two root-cause questions</h3>
+          <form id="rcForm">
+            <fieldset>
+              <legend>On AG3 and AG4, every port that faces <b>T7</b> has PHY up but hears nothing. What most likely happened?</legend>
+              <label><input type="radio" name="q1" value="cables"> Two separate cable faults</label>
+              <label><input type="radio" name="q1" value="power"> T7 lost power</label>
+              <label><input type="radio" name="q1" value="crash"> T7's software crashed</label>
+              <label><input type="radio" name="q1" value="miswire"> T7's cables are in the wrong ports</label>
+            </fieldset>
+            <fieldset>
+              <legend><b>SP3 p3</b> has PHY up but hears nothing from AG3 u3. What is the most likely cause?</legend>
+              <label><input type="radio" name="q2" value="crash"> AG3's software crashed</label>
+              <label><input type="radio" name="q2" value="oneway"> The link works in one direction only</label>
+              <label><input type="radio" name="q2" value="miswire"> The cable goes to a different switch</label>
+              <label><input type="radio" name="q2" value="down"> The cable is unplugged</label>
+            </fieldset>
+          </form>
+          <p class="fine">Answers are saved as you click.</p>
+        </div>
+
+        <div class="step-nav">
+          <button type="button" class="btn ghost" id="prevBtn">&larr; Back</button>
+          <button type="button" class="btn primary" id="nextBtn">Next step &rarr;</button>
+        </div>
+      </aside>
+    </div>
+    </div>
+  </details>
+
+  <details class="part" id="partC">
+    <summary class="part-head"><span class="bpart-n" aria-hidden="true">C</span><h2 id="partCt">Answer questions 1&ndash;3</h2><span class="part-sub">Firepath on the SDN planes, about 15 minutes</span><span class="part-chev" aria-hidden="true"></span></summary>
+    <div class="part-in">
+    <section class="card hw-in-game" id="part1">
+      <p>Software-defined networking (SDN) moves forwarding decisions out of the individual switches and into software that sees the whole network. It uses three terms, the <b>planes</b>:</p>
+      <ul class="pl-def">
+        <li><b>Data plane.</b> Forwards each packet by looking it up in a table in the switch hardware.</li>
+        <li><b>Control plane.</b> Decides what goes into those tables, for example by computing shortest paths.</li>
+        <li><b>Management plane.</b> Configures, monitors and upgrades the devices.</li>
+      </ul>
+      <p>Traditional networks run the control plane on every switch: each one discovers its neighbors, exchanges routing messages (OSPF, IS-IS, BGP) and computes its own tables. SDN, as OpenFlow defined it, moves the control plane to a logically centralized controller, which computes the forwarding entries and installs them in each switch&rsquo;s flow table. <span class="fine">(N. McKeown et al., &ldquo;OpenFlow: Enabling Innovation in Campus Networks,&rdquo; SIGCOMM CCR 38(2), 2008; reference 18 in Jupiter.)</span></p>
+      <p>Google built its own control plane, <b>Firepath</b>, long before &ldquo;SDN&rdquo; was a common term. In the game you saw its master collect link state and send it back out. Now place its parts on the planes.</p>
+      <p class="fine">Your draft is saved in this browser while you type. You send it with the one <b>Submit</b> at the bottom of this page.</p>
+      <form id="hwForm" novalidate>
+        <div class="q" role="group" aria-labelledby="q1">
+          <p class="q-t" id="q1"><b>1.</b> Place each Firepath part on one SDN plane: data, control, management, or outside the SDN picture. All seven are described in Sections 5.1&ndash;5.3 of the paper.</p>
+          <div class="q1-wrap">
+            <div class="hv hp" id="partsDiagram"></div>
+            <div class="hw-grid" id="hwPlace"></div>
+          </div>
+        </div>
+        <div class="q" role="group" aria-labelledby="q2">
+          <p class="q-t" id="q2"><b>2.</b> Pick the two placements you found hardest and explain each in one or two sentences.</p>
+          <div class="hw-hard">
+            <div class="hw-hcard"><div class="hw-hhead"><b>Hardest #1</b><select id="h1p1" aria-label="Part for hardest placement 1"></select></div><textarea id="h1t1" aria-label="Why hardest placement 1 was hard" rows="3" maxlength="1500" placeholder="Why was it hard? One or two sentences."></textarea></div>
+            <div class="hw-hcard"><div class="hw-hhead"><b>Hardest #2</b><select id="h1p2" aria-label="Part for hardest placement 2"></select></div><textarea id="h1t2" aria-label="Why hardest placement 2 was hard" rows="3" maxlength="1500" placeholder="Why was it hard? One or two sentences."></textarea></div>
+          </div>
+        </div>
+        <div class="q" role="group" aria-labelledby="q3">
+          <p class="q-t" id="q3"><b>3.</b> Name one thing Firepath does that a textbook OpenFlow controller would not, and give the section number.</p>
+          <textarea id="h1c" aria-label="Answer to question 3" rows="3" maxlength="1500"></textarea>
+        </div>
+      </form>
+    </section>
+    </div>
+  </details>
+
+  <section class="part" id="partS" aria-labelledby="partSt">
+    <div class="part-head"><span class="bpart-n" aria-hidden="true">&#10003;</span><h2 id="partSt">Submit</h2><span class="part-sub">Sends B and C together</span></div>
+    <section class="card" id="submitCard" aria-label="Submit">
+      <p>One Submit sends the game and questions 1&ndash;3 together. It closes <b>Sunday, Nov 15, at 13:00</b>, and you can submit again to change things before then.</p>
+      <ul class="done-list" id="doneList"></ul>
+      <div class="hw-row"><label for="hwName">Name</label><input id="hwName" type="text" maxlength="120" autocomplete="name"></div>
+      <div class="hw-row"><label for="nick">Email</label><input id="nick" type="email" maxlength="254" autocomplete="email" placeholder="name@example.com" required></div>
+      <div class="hw-row"><label for="spent">Time spent</label><input id="spent" type="text" readonly tabindex="-1" aria-describedby="spentNote" value="less than 1 min"></div>
+      <p class="fine" id="spentNote">The time you were active on this page. It is sent with your submission.</p>
+      <div class="row"><button class="btn primary" id="submitBtn" type="button">Submit everything</button></div>
+      <p class="fine" id="submitMsg"></p>
+    </section>
   </section>
 
-  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
-  <footer class="fine">Based on A. Singh et al., &ldquo;Jupiter Rising&rdquo;, SIGCOMM &rsquo;15, Sections 5.2.1, 5.2.2 and 5.3.1. The JR-16 fabric and its faults are made up for this exercise.</footer>
+  <dialog class="clip-modal" id="clipModal" aria-label="Paper clipping, enlarged">
+    <button type="button" class="clip-x" id="clipClose" aria-label="Close">&times;</button>
+    <img id="clipModalImg" alt="">
+    <p class="clip-cap" id="clipModalCap"></p>
+  </dialog>
+  <footer class="fine">Based on A. Singh et al., <a href="https://github.com/shaygol/data-centers-and-ai-networks/blob/main/articles/Jupiter%20Rising%20-%20Decade%20of%20Clos%20Topologies%20in%20Google%20Datacenter%20Network_v2.pdf" target="_blank" rel="noopener">&ldquo;Jupiter Rising&rdquo;</a>, SIGCOMM &rsquo;15, Sections 5.2, 5.2.1, 5.2.2 and 5.3.1. The JR-16 fabric and its faults are made up for this exercise.</footer>
 </main>
 <script src="js/config.js"></script>
 <script src="js/api.js"></script>

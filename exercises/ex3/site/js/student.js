@@ -1,11 +1,11 @@
 // Miswire Hunt, single-player console with delayed feedback.
-// Layout: the map on the left, an inspector on the right, four mission steps in the top bar.
+// Layout: the map on the left, an inspector on the right, four mission steps above them (Collect, Inspect, Drain, Explain).
 // The student's work is kept in localStorage and sent to Supabase only when they press Submit.
 // Nothing here tells the student whether an answer is right: the results are discussed in class.
 (function () {
   const $ = id => document.getElementById(id);
   const { render, LABELS, esc } = window.MH_MAP;
-  const P = window.MH_PUZZLE, T = window.MH_TOPO;
+  const P = window.MH_PUZZLE, T = window.MH_TOPO, HW = window.MH_HW;
   const KEY = "mh-solo-v2";
 
   const store = {
@@ -18,7 +18,7 @@
   const drained = new Set(saved.drained || []);  // "upper|lower" link keys taken out of routing
   const answers = saved.answers || {};           // { q1, q2 }
   let nick = saved.nick || "", submittedAt = saved.submittedAt || null;
-  let step = saved.step != null ? saved.step : 0, collected = !!saved.collected, collecting = false;
+  let step = Math.min(3, saved.step != null ? saved.step : 0), collected = !!saved.collected, collecting = false;
   const uid = saved.uid || (window.crypto && crypto.randomUUID ? crypto.randomUUID() : "u" + Date.now() + Math.random().toString(36).slice(2));
   const persist = () => store.set(KEY, JSON.stringify({ uid, diag, drained: Array.from(drained), answers, nick, submittedAt, step, collected }));
 
@@ -49,12 +49,11 @@
   // ---------- mission bar ----------
   function renderMissions() {
     const nd = Object.keys(diag).length, na = (answers.q1 ? 1 : 0) + (answers.q2 ? 1 : 0);
-    $("m0v").textContent = (collected ? 15 : 0) + " / 16";
+    $("m0v").textContent = collected ? "done" : "not yet";
     $("m1v").textContent = nd + " / " + TOTAL_PORTS;
     $("m2v").textContent = drained.size + (drained.size === 1 ? " link" : " links");
     $("m3v").textContent = na + " / 2";
-    $("m4v").textContent = submittedAt ? "sent" : "not yet";
-    const done = { 0: collected, 1: nd > 0, 2: drained.size > 0, 3: na === 2, 4: !!submittedAt };
+    const done = { 0: collected, 1: nd > 0, 2: drained.size > 0, 3: na === 2 };
     document.querySelectorAll(".ms").forEach(b => {
       const n = +b.dataset.step;
       b.classList.toggle("on", n === step);
@@ -63,8 +62,7 @@
     });
     document.body.classList.toggle("submitted", !!submittedAt);
     $("prevBtn").hidden = step === 0;
-    $("nextBtn").hidden = step === 4;
-    $("nextBtn").textContent = ["Next: inspect switches →", "Next: drain links →", "Next: explain →", "Next: submit →"][step] || "";
+    $("nextBtn").textContent = ["Next: inspect switches →", "Next: drain links →", "Next: explain →", "Next: questions 1–3 ↓"][step] || "";
   }
 
   // ---------- step 0: collect link state over the CPN ----------
@@ -77,10 +75,15 @@
     if (!collected) return;
     const down = T.links.filter(l => endState(l.a) !== "UP" || endState(l.b) !== "UP");
     $("lsdSum").innerHTML = "<b>15 of 16 switches answered.</b> T7 did not answer. " + (T.links.length - down.length) + " links up, " + down.length + " down.";
-    $("lsdDown").innerHTML = down.map(l => {
-      const sa = endState(l.a), sb = endState(l.b), c = x => '<span class="' + (x === "UP" ? "st-up" : "st-down") + '">' + x + "</span>";
-      return '<li><button type="button" class="dl lsd-row" data-open="' + esc(l.a.s) + '"><span></span><span class="dl-t">' + esc(l.a.s + " " + l.a.p + " ↔ " + l.b.s + " " + l.b.p) + '</span><span class="fine">' + c(sa) + " / " + c(sb) + "</span></button></li>";
-    }).join("");
+    // one line per link: the two ends, then what each end reports (a pill each, same width so the columns line up)
+    const pill = x => '<span class="pill ' + (x === "UP" ? "up" : x === "DOWN" ? "down" : "none") + '">' + x + "</span>";
+    const end = e => '<span class="lsd-e"><b>' + esc(e.s) + "</b> " + esc(e.p) + "</span>";
+    const pillOf = (x, e) => { const p = pill(x); return p.replace("<span ", '<span title="' + esc(e.s + " " + e.p + " says " + x) + '" '); };
+    $("lsdDown").innerHTML = '<thead><tr><th scope="col">Link</th><th scope="colgroup" colspan="2">Each end says</th></tr></thead><tbody>' + down.map(l => {
+      const sa = endState(l.a), sb = endState(l.b);
+      return '<tr data-open="' + esc(l.a.s) + '"><td class="lsd-link"><button type="button" class="lsd-go" title="Open ' + esc(l.a.s) + '">' + end(l.a) + " <i>↔</i> " + end(l.b) + "</button></td>" +
+        "<td>" + pillOf(sa, l.a) + "</td><td>" + pillOf(sb, l.b) + "</td></tr>";
+    }).join("") + "</tbody>";
   }
   function collect() {
     if (collecting) return;
@@ -110,9 +113,12 @@
     $("swTitle").innerHTML = esc(sel) + ' <span class="role">' + esc(T.role(sel)) + "</span>" + '<span class="swprog">' + nd + " / " + rows.length + " diagnosed</span>";
     $("portList").innerHTML = rows.map(r => {
       const d = diag[sel + ":" + r.port], on = r.port === selPort;
-      return '<li><button type="button" class="pl' + (on ? " on" : "") + '" data-port="' + esc(r.port) + '"><span class="pl-p">' + esc(r.port) + '</span><span class="pl-to"></span>' +
-        (d ? '<span class="chip" style="--tc:' + LCOL[d] + '">' + LABELS[d] + "</span>" : '<span class="chip none">?</span>') + "</button></li>";
+      // compact: port name and a dot in the diagnosis colour (the full label is in the tooltip and in the probe below)
+      const lab = d ? LABELS[d] : "not diagnosed";
+      return '<li><button type="button" class="pl' + (on ? " on" : "") + '" data-port="' + esc(r.port) + '" title="' + esc(r.port + ": " + lab) + '" aria-label="' + esc(r.port + ": " + lab) + '"><span class="pl-p">' + esc(r.port) + "</span>" +
+        (d ? '<span class="pl-dot" style="--tc:' + LCOL[d] + '"></span>' : '<span class="pl-dot none"></span>') + "</button></li>";
     }).join("");
+    $("portList").style.setProperty("--n", rows.length);  // one row of small tiles, however many ports the switch has
     const r = rows.filter(x => x.port === selPort)[0];
     $("probe").hidden = !r;
     $("probeHint").hidden = !!r;
@@ -186,6 +192,7 @@
     const rows = PAIRS.map(p => { const n = paths(p[0], p[1], drained), full = paths(p[0], p[1], new Set()); return "<tr><td>" + p[0] + " → " + p[1] + '</td><td class="num">' + n + " of " + full + " paths</td></tr>"; }).join("");
     $("masterRes").hidden = false;
     $("masterRes").innerHTML = "<table><tbody>" + rows + "</tbody></table>";
+    $("masterRes").scrollIntoView({ behavior: "smooth", block: "nearest" });
   }
   function toggleDrain(k) { if (drained.has(k)) drained.delete(k); else drained.add(k); $("masterRes").hidden = true; touch(); refresh(); }
 
@@ -193,25 +200,32 @@
   function renderSubmit() {
     const nd = Object.keys(diag).length, answered = !!(answers.q1 && answers.q2);
     const item = (ok, text) => '<li class="' + (ok ? "ok" : "") + '"><span class="tick" aria-hidden="true">' + (ok ? "✓" : "○") + "</span> " + text + "</li>";
-    $("doneList").innerHTML = item(nd > 0, nd + " of " + TOTAL_PORTS + " ports diagnosed") + item(drained.size > 0, drained.size + " link" + (drained.size === 1 ? "" : "s") + " drained") + item(answered, answered ? "Both questions answered" : "Questions not answered yet");
-    if (submittedAt) $("submitMsg").textContent = "Sent at " + new Date(submittedAt).toTimeString().slice(0, 5) + ". Thanks! You can change things and send again.";
+    const hwMissing = HW.missing();
+    $("doneList").innerHTML = item(nd > 0, nd + " of " + TOTAL_PORTS + " ports diagnosed") + item(drained.size > 0, drained.size + " link" + (drained.size === 1 ? "" : "s") + " drained") + item(answered, answered ? "Explain step (step 4): both answered" : "Explain step (step 4): not answered yet") +
+      item(!hwMissing.length, hwMissing.length ? 'Questions <a href="#partC">1&ndash;3</a> not answered yet: ' + hwMissing.join(", ") : "Questions 1&ndash;3 answered");
+    if (submittedAt) say("Sent at " + new Date(submittedAt).toTimeString().slice(0, 5) + ": the game and questions 1–3. Thanks! You can change things and send again until the deadline.");
   }
+  function say(t) { $("submitMsg").textContent = t; }
 
   // ---------- refresh ----------
   function refresh() {
-    [0, 1, 2, 3, 4].forEach(n => { $("step" + n).hidden = n !== step; });
+    [0, 1, 2, 3].forEach(n => { $("step" + n).hidden = n !== step; });
     if (step === 0) renderCollect();
     if (step === 1) renderInspect();
     if (step === 2) renderDrain();
-    if (step === 4) renderSubmit();
+    renderSubmit();
     renderMissions(); drawMap();
   }
-  function touch() { if (submittedAt) { submittedAt = null; $("submitMsg").textContent = ""; } persist(); }
-  function goStep(n) { step = Math.max(0, Math.min(4, n)); persist(); refresh(); }
+  function touch() { if (submittedAt) { submittedAt = null; say(""); } persist(); }
+  // The game has four steps. "Next" after Explain scrolls down to Part C; the one Submit is the card at the bottom of the page.
+  function goStep(n) {
+    if (n >= 4) { openPart("partC"); $("partC").scrollIntoView({ behavior: "smooth", block: "start" }); return; }
+    step = Math.max(0, n); persist(); refresh(); $("inspector").scrollTop = 0;
+  }
 
   function openSwitch(sw) {
     if (sw === "MASTER") { goStep(2); return; }
-    sel = sw; step = 1;
+    sel = sw; step = 1; $("inspector").scrollTop = 0;
     const rows = rowsOf(sw), first = rows.filter(r => !diag[sw + ":" + r.port])[0] || rows[0];
     selPort = first ? first.port : null;
     if (selPort) probed.add(sw + ":" + selPort);
@@ -252,26 +266,87 @@
   $("missions").addEventListener("click", e => { const b = e.target.closest("[data-step]"); if (b) goStep(+b.dataset.step); });
   $("prevBtn").addEventListener("click", () => goStep(step - 1));
   $("nextBtn").addEventListener("click", () => goStep(step + 1));
-  function showClip(id) { $("paperBox").open = true; const el = $(id) || $("paperBox"); el.scrollIntoView({ behavior: "smooth", block: "center" }); el.classList.remove("flash"); void el.offsetWidth; el.classList.add("flash"); }
-  $("paperBtn").addEventListener("click", () => showClip("paperBox"));
+  // Parts A, B and C start collapsed. The page remembers which ones the student opened,
+  // and any jump into a part (a #partX link, the Next button after Explain, "Read it in the paper") opens it first.
+  const OPEN_KEY = "mh-open-v1", PARTS_IDS = ["paperBox", "partB", "partC"];
+  let openIds = []; try { openIds = JSON.parse(store.get(OPEN_KEY) || "[]") || []; } catch (e) { openIds = []; }
+  PARTS_IDS.forEach(id => {
+    const p = $(id); if (openIds.indexOf(id) >= 0) p.open = true;
+    p.addEventListener("toggle", () => store.set(OPEN_KEY, JSON.stringify(PARTS_IDS.filter(x => $(x).open))));
+  });
+  function openPart(id) { const p = $(id); if (p && p.tagName === "DETAILS") p.open = true; }
+  document.addEventListener("click", e => { const a = e.target.closest('a[href^="#"]'); if (a) openPart(a.getAttribute("href").slice(1)); });
+  if (location.hash) openPart(location.hash.slice(1));
+  function showClip(id) { openPart("paperBox"); const el = $(id) || $("paperBox"); el.scrollIntoView({ behavior: "smooth", block: "center" }); el.classList.remove("flash"); void el.offsetWidth; el.classList.add("flash"); }
+  // click a paper clipping to read it larger in a modal (Esc, the x, or a click outside closes it)
+  const clipModal = $("clipModal");
+  function openClip(fig) {
+    const img = fig.querySelector("img"), cap = fig.querySelector("figcaption");
+    $("clipModalImg").src = img.currentSrc || img.src; $("clipModalImg").alt = img.alt;
+    $("clipModalCap").innerHTML = cap ? cap.innerHTML : "";
+    if (clipModal.showModal) clipModal.showModal(); else clipModal.setAttribute("open", "");
+    clipModal.scrollTop = 0;
+  }
+  document.querySelectorAll(".clip").forEach(fig => {
+    const img = fig.querySelector("img"); img.tabIndex = 0; img.setAttribute("role", "button");
+    img.addEventListener("click", () => openClip(fig));
+    img.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); openClip(fig); } });
+  });
+  const closeClip = () => clipModal.close ? clipModal.close() : clipModal.removeAttribute("open");
+  $("clipClose").addEventListener("click", closeClip);
+  clipModal.addEventListener("click", e => { if (e.target === clipModal || e.target.id === "clipModalImg") closeClip(); });
   document.addEventListener("click", e => { const b = e.target.closest("[data-clip]"); if (b) showClip(b.getAttribute("data-clip")); });
 
   ["q1", "q2"].forEach(q => { const el = document.querySelector('input[name="' + q + '"][value="' + answers[q] + '"]'); if (el) el.checked = true; });
   $("rcForm").addEventListener("change", e => { if (e.target.name) { answers[e.target.name] = e.target.value; touch(); renderMissions(); } });
 
+  // ---------- time spent on the page ----------
+  // A second counts only while the tab is visible and the student did something in the last minute.
+  // The total is kept in localStorage across visits, shown read-only in the Submit card and sent with the game (answers.activeSec).
+  const TIME_KEY = "mh-active-v1", IDLE_MS = 60000;
+  let activeSec = Math.max(0, parseInt(store.get(TIME_KEY), 10) || 0), lastAct = Date.now();
+  ["pointerdown", "pointermove", "keydown", "wheel", "touchstart", "scroll"].forEach(ev => window.addEventListener(ev, () => { lastAct = Date.now(); }, { passive: true, capture: true }));
+  const fmtTime = s => s < 60 ? "less than 1 min" : s < 3600 ? Math.floor(s / 60) + " min" : Math.floor(s / 3600) + " h " + String(Math.floor((s % 3600) / 60)).padStart(2, "0") + " min";
+  const showTime = () => { $("spent").value = fmtTime(activeSec); };
+  const saveTime = () => store.set(TIME_KEY, String(activeSec));
+  setInterval(() => {
+    if (document.visibilityState !== "visible" || Date.now() - lastAct >= IDLE_MS) return;
+    activeSec++;
+    if (activeSec % 5 === 0) { saveTime(); showTime(); }
+  }, 1000);
+  ["visibilitychange", "pagehide"].forEach(ev => window.addEventListener(ev, saveTime));
+  showTime();
+
   $("nick").value = nick;
   $("nick").addEventListener("input", () => { nick = $("nick").value; persist(); });
-  $("submitBtn").addEventListener("click", async () => {
+  // One Submit for both parts: the game (submit_work) and questions 1-3 (submit_homework).
+  // Missing answers only warn (they are listed in the Submit card); a partial failure says which part did not go through.
+  const DEADLINE = Date.parse((window.MH_CONFIG || {}).DEADLINE || "");
+  const closed = () => DEADLINE && Date.now() > DEADLINE;
+  async function submitAll() {
+    if (closed()) { say("Submission closed on Sunday, Nov 15, at 13:00. Your work is still saved in this browser."); $("submitBtn").disabled = true; return; }
     nick = $("nick").value.trim(); persist();
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(nick)) { $("submitMsg").textContent = "Enter your email address first."; $("nick").focus(); return; }
-    if (!Object.keys(diag).length) { $("submitMsg").textContent = "Diagnose a few ports first (step 2)."; return; }
-    $("submitBtn").disabled = true; $("submitMsg").textContent = "Sending...";
-    try {
-      await window.MH.rpc("submit_work", { p_id: uid, p_nick: nick, p_diag: diag, p_drained: Array.from(drained), p_answers: answers });
-      submittedAt = Date.now(); persist(); refresh();
-    } catch (err) { $("submitMsg").textContent = "Could not send: " + err.message + " Your work is still saved in this browser. Try again."; }
-    $("submitBtn").disabled = false;
-  });
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(nick)) {
+      say("Enter your email address first."); $("nick").focus(); return;
+    }
+    const busy = b => { $("submitBtn").disabled = b; };
+    busy(true); say("Sending..."); saveTime(); showTime();
+    const [work, hw] = await Promise.allSettled([
+      window.MH.rpc("submit_work", { p_id: uid, p_nick: nick, p_diag: diag, p_drained: Array.from(drained), p_answers: Object.assign({}, answers, { activeSec }) }),
+      HW.send(nick)
+    ]);
+    if (work.status === "fulfilled" && hw.status === "fulfilled") { submittedAt = Date.now(); persist(); refresh(); }
+    else {
+      const ok = [], bad = [];
+      (work.status === "fulfilled" ? ok : bad).push(work.status === "fulfilled" ? "the game" : "the game (" + work.reason.message + ")");
+      (hw.status === "fulfilled" ? ok : bad).push(hw.status === "fulfilled" ? "questions 1–3" : "questions 1–3 (" + hw.reason.message + ")");
+      say((ok.length ? "Sent: " + ok.join(", ") + ". " : "") + "Could not send: " + bad.join(", ") + ". Your work is still saved in this browser. Press Submit again.");
+    }
+    busy(false);
+  }
+  $("submitBtn").addEventListener("click", submitAll);
+  if (closed()) { $("submitBtn").disabled = true; if (!submittedAt) say("Submission closed on Sunday, Nov 15, at 13:00."); }
+  document.addEventListener("mh-hw-change", () => { touch(); renderMissions(); renderSubmit(); });
 
   refresh();
 })();

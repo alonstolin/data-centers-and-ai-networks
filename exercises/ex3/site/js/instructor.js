@@ -45,6 +45,8 @@
     $("answerCard").hidden = false;
   }
 
+  // active time the student spent on the page, sent by the page as answers.activeSec (seconds); older submissions have none
+  const fmtTime = s => typeof s !== "number" ? "—" : s < 60 ? "< 1 min" : s < 3600 ? Math.floor(s / 60) + " min" : Math.floor(s / 3600) + " h " + String(Math.floor((s % 3600) / 60)).padStart(2, "0") + " min";
   function show(subs) {
     answerMap();
     const n = subs.length;
@@ -69,33 +71,29 @@
     $("rcBars").innerHTML = rc("q1", P.rc.q1, { cables: "Two separate cable faults", power: "T7 lost power", crash: "T7's software crashed", miswire: "T7's cables were plugged into the wrong ports" }) +
       rc("q2", P.rc.q2, { crash: "AG3's software crashed", oneway: "The link works in one direction only", miswire: "The cable goes to a different switch", down: "The cable is unplugged" });
     $("drainTbl").innerHTML = tbl(["Link", "Broken?", "Drained by"], T.links.map(l => { const k = linkKey(l), c = subs.filter(s => (s.drained || []).indexOf(k) >= 0).length; return [esc(l.a.s + " " + l.a.p + " ↔ " + l.b.s + " " + l.b.p), faulty.has(k) ? "<b>broken</b>" : "", c + " of " + n]; }));
-    $("stuTbl").innerHTML = tbl(["Email", "Diagnosed", "Wrong", "Faults found", "Q1", "Q2", "Master clean"], subs.map(s => {
+    $("stuTbl").innerHTML = tbl(["Email", "Diagnosed", "Wrong", "Faults found", "Q1", "Q2", "Master clean", "Time on page"], subs.map(s => {
       const d = s.diag || {}, ks = Object.keys(d), w = ks.filter(k => !isOk(d, k)).length, fd = P.faults.filter(f => found(d, f.id)).length, dr = new Set(s.drained || []), a = s.answers || {};
       const clean = dr.size === faulty.size && Array.from(faulty).every(k => dr.has(k));
-      return [esc(s.nick || "(no email)"), ks.length, w, fd + " / " + P.faults.length, a.q1 ? (a.q1 === P.rc.q1 ? "✓" : "✗") : "—", a.q2 ? (a.q2 === P.rc.q2 ? "✓" : "✗") : "—", dr.size ? (clean ? "✓" : "✗ (" + dr.size + ")") : "—"];
+      return [esc(s.nick || "(no email)"), ks.length, w, fd + " / " + P.faults.length, a.q1 ? (a.q1 === P.rc.q1 ? "✓" : "✗") : "—", a.q2 ? (a.q2 === P.rc.q2 ? "✓" : "✗") : "—", dr.size ? (clean ? "✓" : "✗ (" + dr.size + ")") : "—", fmtTime(a.activeSec)];
     }));
   }
 
   // ---------- homework ----------
-  const DEADLINE = Date.parse("2026-11-15T13:00:00+02:00");
+  const DEADLINE = Date.parse((window.MH_CONFIG || {}).DEADLINE || "2026-11-15T13:00:00+02:00");
   const PARTS = ["Firepath master", "Firepath client", "Link State Database (LSD)", "Control Plane Network (CPN)", "Neighbor Discovery (ND)", "BGP at the CBRs", "Cluster config"];
   const PLANE = { data: "Data", control: "Control", management: "Management", outside: "Outside SDN" };
-  const CHOICE = { A: "A. Fully distributed", B: "B. Google's split (Firepath)", C: "C. Fully centralized" };
   function showHomework(rows) {
     $("hwCard").hidden = false;
     const late = r => Date.parse(r.at) > DEADLINE, on = rows.filter(r => !late(r));
     $("hwSum").textContent = rows.length + " submission" + (rows.length === 1 ? "" : "s") + ", " + on.length + " on time, " + (rows.length - on.length) + " late.";
-    const c = { A: 0, B: 0, C: 0 }; on.forEach(r => { const k = (r.answers || {}).choice; if (c[k] !== undefined) c[k]++; });
-    const tot = c.A + c.B + c.C;
-    $("hwTally").innerHTML = '<div class="bars">' + Object.keys(CHOICE).map(k => "<div><span>" + CHOICE[k] + '</span><span class="t"><span class="right" style="width:' + (tot ? 100 * c[k] / tot : 0) + '%"></span></span><b>' + c[k] + "</b></div>").join("") + "</div>";
     $("hwPlaceTbl").innerHTML = tbl(["Part"].concat(Object.keys(PLANE).map(k => PLANE[k]), ["Not placed"]), PARTS.map((p, i) => {
       const cnt = {}; let none = 0; on.forEach(r => { const v = ((r.answers || {}).place || {})[i + 1]; if (v) cnt[v] = (cnt[v] || 0) + 1; else none++; });
       return [(i + 1) + ". " + esc(p)].concat(Object.keys(PLANE).map(k => cnt[k] || 0), [none]);
     }));
     const hard = a => (a.hard || []).filter(h => h.part || h.text).map(h => (h.part ? "<b>" + esc(PARTS[h.part - 1] || h.part) + ":</b> " : "") + esc(h.text || "")).join("<br>");
-    $("hwAnsTbl").innerHTML = tbl(["Student", "Choice", "Why (2b)", "What would change my mind (2c)", "Hardest placements (1b)", "Firepath vs OpenFlow (1c)"], rows.map(r => {
+    $("hwAnsTbl").innerHTML = tbl(["Student", "Hardest placements (question 2)", "Firepath vs OpenFlow (question 3)"], rows.map(r => {
       const a = r.answers || {};
-      return [esc(r.name || "") + "<br><span class=\"fine\">" + esc(r.email) + "</span>" + (late(r) ? '<br><span class="err">late</span>' : ""), esc(a.choice || "—"), esc(a.why || ""), esc(a.change || ""), hard(a), esc(a.diff || "")];
+      return [esc(r.name || "") + "<br><span class=\"fine\">" + esc(r.email) + "</span>" + (late(r) ? '<br><span class="err">late</span>' : ""), hard(a), esc(a.diff || "")];
     }));
   }
 
