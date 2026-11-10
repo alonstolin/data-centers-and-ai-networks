@@ -124,7 +124,7 @@
             <p class="step-k">Step 2 · Inspect</p>
             <h3>Pick a switch on the map</h3>
             <p>Each switch checks its cables with <b>Neighbor Discovery</b>: it knows from the plan who should be at the other end, and it listens for who really is.</p>
-            <p class="fine">Start anywhere. Spines are on top, ToR switches at the bottom (<code>u</code> = uplink to spine, <code>d</code> = downlink to ToR).</p>
+            <p class="fine">Start anywhere. Spines are on top, ToR switches at the bottom (<code>u</code> = uplink to spine, <code>d</code> = downlink to ToR). Step 3 opens when every port is diagnosed; a tick on a switch means all its ports are done, a number is how many are left.</p>
           </div>
           <div id="s1dark" hidden>
             <p class="step-k">Step 2 · Inspect</p>
@@ -173,10 +173,12 @@
           <p class="step-k">Step 3 · Drain</p>
           <h3>Take broken links out of routing</h3>
           <p>Act on what you found. <b>Click a cable on the map</b>, or a link in the list, to drain it. Click again to put it back. Then press <b>Recompute routes</b>: the master sends the new link state and every switch recomputes its paths (Section 5.2.2).</p>
-          <h4 class="sub">Links where you found a problem</h4>
+          <h4 class="sub">Links where you found a problem <span class="fine" id="drainCount"></span></h4>
           <ul class="flagged" id="flagged"></ul>
-          <h4 class="sub">Drained <span class="fine" id="drainCount"></span></h4>
-          <ul class="flagged" id="drainList"></ul>
+          <div id="extraBox" hidden>
+            <h4 class="sub">Also drained: no problem found on these</h4>
+            <ul class="flagged" id="drainList"></ul>
+          </div>
           <div class="row"><button class="btn" id="recomputeBtn" type="button">Recompute routes</button></div>
           <div class="mres" id="masterRes" aria-live="polite" hidden></div>
           <p class="fine">Draining a working link costs capacity. A broken link left in costs reliability, and a miswired one can cause forwarding loops (Section 5.2.1).</p>

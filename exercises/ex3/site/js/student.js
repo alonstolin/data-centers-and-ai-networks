@@ -32,6 +32,9 @@
   const persist = () => store.set(KEY, JSON.stringify({ uid, diag, drained: Array.from(drained), answers, nick, submittedAt, sentAt, sentSnap, step, collected }));
 
   const TOTAL_PORTS = Object.values(P.views).reduce((n, v) => n + v.length, 0);
+  // Drain opens once every port is diagnosed. Saved work that already has a drain in it stays open.
+  const drainOpen = () => Object.keys(diag).length >= TOTAL_PORTS || drained.size > 0;
+  if (step === 2 && !drainOpen()) step = 1;
   let sel = null, selPort = null;
   const probed = new Set();                      // "SW:port"
 
@@ -47,12 +50,14 @@
     const reported = new Set();
     Object.keys(diag).forEach(k => reported.add(k.split(":")[0]));
     if (step === 0 && collected) T.ALL.forEach(s => { if (P.views[s]) reported.add(s); });
+    const prog = {};
+    T.ALL.forEach(s => { const rs = rowsOf(s), n = rs.filter(r => diag[s + ":" + r.port]).length; if (n) prog[s] = [n, rs.length]; });
     const showSw = step === 1 && sel;
     const rows = showSw ? rowsOf(sel) : [];
     const labels = {};
     rows.forEach(r => { const l = diag[sel + ":" + r.port]; if (l) labels[r.port] = l; });
     const panel = rows.length ? { sw: sel, rows, labels, sel: selPort, probed: new Set(rows.filter(r => probed.has(sel + ":" + r.port)).map(r => r.port)) } : null;
-    render($("map"), { latest: diag, reported, confirmed: new Set(), flags: {}, myflags: [], me: showSw ? sel : null, flash: new Set(flashSw ? [flashSw] : []), selPair: null, probePair: null, panel, master: true, masterSel: step === 2 || step === 0, drained });
+    render($("map"), { latest: diag, reported, prog, confirmed: new Set(), flags: {}, myflags: [], me: showSw ? sel : null, flash: new Set(flashSw ? [flashSw] : []), selPair: null, probePair: null, panel, master: true, masterSel: step === 2 || step === 0, drained });
     $("map").classList.toggle("drainmode", step === 2);
   }
 
@@ -67,7 +72,8 @@
     };
     setV("m0v", collected ? "done" : "not yet");
     setV("m1v", nd + " / " + TOTAL_PORTS);
-    setV("m2v", drained.size + (drained.size === 1 ? " link" : " links"));
+    const locked = !drainOpen();
+    setV("m2v", locked ? "locked" : drained.size + (drained.size === 1 ? " link" : " links"));
     setV("m3v", na + " / 2");
     const done = { 0: collected, 1: nd > 0, 2: drained.size > 0, 3: na === 2 };
     document.querySelectorAll(".ms").forEach(b => {
@@ -75,10 +81,13 @@
       b.classList.toggle("on", n === step);
       b.classList.toggle("done", done[n]);
       b.setAttribute("aria-current", n === step ? "step" : "false");
+      if (n === 2) { b.classList.toggle("locked", locked); b.title = locked ? "Opens when all " + TOTAL_PORTS + " ports are diagnosed" : ""; }
     });
+    const nextLocked = step === 1 && locked;
+    $("nextBtn").classList.toggle("locked", nextLocked);
     document.body.classList.toggle("submitted", !!submittedAt);
     $("prevBtn").hidden = step === 0;
-    $("nextBtn").textContent = ["Next: inspect switches →", "Next: drain links →", "Next: explain →", "Next: questions 1–3 ↓"][step] || "";
+    $("nextBtn").textContent = nextLocked ? "Drain opens after all " + TOTAL_PORTS + " ports (" + (TOTAL_PORTS - nd) + " to go)" : ["Next: inspect switches →", "Next: drain links →", "Next: explain →", "Next: questions 1–3 ↓"][step] || "";
   }
 
   // ---------- intro ----------
@@ -217,12 +226,15 @@
     const bad = T.links.filter(l => { const a = diag[l.a.s + ":" + l.a.p], b = diag[l.b.s + ":" + l.b.p]; return (a && a !== "OK") || (b && b !== "OK"); });
     const item = l => {
       const k = linkKey(l), a = diag[l.a.s + ":" + l.a.p], b = diag[l.b.s + ":" + l.b.p];
-      return '<li><button type="button" class="dl' + (drained.has(k) ? " on" : "") + '" data-drain="' + k + '"><span class="dl-x">' + (drained.has(k) ? "✕" : "") + '</span><span class="dl-t">' + esc(linkText(l)) + '</span><span class="fine">' + (a ? LABELS[a] : "—") + " / " + (b ? LABELS[b] : "—") + "</span></button></li>";
+      return '<li><button type="button" class="dl' + (drained.has(k) ? " on" : "") + '" data-drain="' + k + '"><span class="dl-x">' + (drained.has(k) ? "✕" : "") + '</span><span class="dl-t">' + esc(linkText(l)) + '</span><span class="fine">' + (a ? LABELS[a] : "—") + " / " + (b ? LABELS[b] : "—") + '</span><span class="dl-s">' + (drained.has(k) ? "drained" : "in routing") + "</span></button></li>";
     };
     $("flagged").innerHTML = bad.length ? bad.map(item).join("") : '<li class="fine">None yet. Diagnose ports in step 2 first.</li>';
-    const dl = T.links.filter(l => drained.has(linkKey(l)));
-    $("drainList").innerHTML = dl.length ? dl.map(item).join("") : '<li class="fine">Nothing drained.</li>';
-    $("drainCount").textContent = "(" + drained.size + ")";
+    const nBad = bad.filter(l => drained.has(linkKey(l))).length;
+    $("drainCount").textContent = bad.length ? "(" + nBad + " of " + bad.length + " drained)" : "";
+    // a link is listed once: the second list holds only drains with no diagnosis behind them
+    const extra = T.links.filter(l => drained.has(linkKey(l)) && bad.indexOf(l) < 0);
+    $("extraBox").hidden = !extra.length;
+    $("drainList").innerHTML = extra.map(item).join("");
   }
   // ---------- the answer key, used only after REVEAL_AT ----------
   const CFG = window.MH_CONFIG || {};
@@ -419,6 +431,7 @@
   // The game has four steps. "Next" after Explain scrolls down to Part C; the one Submit is the card at the bottom of the page.
   function goStep(n) {
     if (n >= 4) { openPart("partC"); $("partC").scrollIntoView({ behavior: "smooth", block: "start" }); return; }
+    if (n === 2 && !drainOpen()) { n = 1; const m = $("m1v"); m.classList.remove("bump"); void m.offsetWidth; m.classList.add("bump"); }
     step = Math.max(0, n); persist(); refresh(); $("inspector").scrollTop = 0;
   }
 

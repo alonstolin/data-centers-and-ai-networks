@@ -1012,3 +1012,24 @@ details.part[open] > :not(summary) { animation: rise .3s ease-out; }
 .sortb { font: inherit; letter-spacing: inherit; text-transform: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; white-space: nowrap; }
 .sortb:hover { color: var(--ink); }
 th[aria-sort="ascending"] .sortb, th[aria-sort="descending"] .sortb { color: var(--accent); }
+
+/* corner badge on a switch: a tick when all its ports are diagnosed, otherwise how many are left */
+#map .nd-prog circle { fill: var(--panel); stroke: var(--muted); stroke-width: 1.3; }
+#map .nd-prog text { font: 700 10px var(--mono); fill: var(--ink); pointer-events: none; }
+#map .nd-prog-all circle { fill: var(--ok); stroke: var(--ok); }
+#map .nd-prog-all text { fill: #fff; }
+#map .nd-prog { pointer-events: none; }
+
+/* Drain: one row per link, with its state written out; the Drain tab and Next button look locked until every port is diagnosed */
+.dl { grid-template-columns: 18px 1fr auto; row-gap: 1px; }
+.dl-x { grid-row: 1 / 3; align-self: center; }
+.dl-t { grid-column: 2 / 4; white-space: nowrap; }
+.dl .fine { grid-column: 2; grid-row: 2; }
+.dl-s { grid-column: 3; grid-row: 2; font: 600 0.72rem var(--mono); color: var(--muted); text-align: right; }
+.dl.on .dl-s { color: var(--bad); }
+.ms.locked, .step-nav #nextBtn.locked { opacity: .55; cursor: not-allowed; }
+.ms.locked .ms-n { border-style: dashed; }
+
+/* the reload checkbox sits in .join, whose rule stretches every input; keep it small and its label on one line */
+.join input[type="checkbox"] { flex: 0 0 auto; padding: 0; min-width: 0; }
+.join .auto { font-weight: 500; white-space: nowrap; }

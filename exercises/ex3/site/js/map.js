@@ -112,6 +112,12 @@
       }
       h += '<g class="' + cls.join(" ") + '" data-sw="' + s + '"><rect x="' + (x - w / 2) + '" y="' + (y - hh / 2) + '" width="' + w + '" height="' + hh + '" rx="5"/>' +
         '<text x="' + x + '" y="' + (y + 4.5) + '" text-anchor="middle">' + s + "</text></g>";
+      // top-right corner badge: a tick when every port of the switch is diagnosed, else how many are still left
+      const pg = o.prog && o.prog[s];
+      if (pg) {
+        const left = pg[1] - pg[0], bx = x + w / 2 - 1, by = y - hh / 2 + 1;
+        h += '<g class="nd-prog ' + (left ? "nd-prog-some" : "nd-prog-all") + '"><title>' + esc(s + ": " + (left ? left + " of " + pg[1] + " ports still to diagnose" : "all " + pg[1] + " ports diagnosed")) + '</title><circle cx="' + bx + '" cy="' + by + '" r="8"/><text x="' + bx + '" y="' + (by + 3.5) + '" text-anchor="middle">' + (left ? left : "✓") + "</text></g>";
+      }
       // the "OPEN" tag goes on the side with free space (AG1 and AG3 have a neighbour close on their right), drawn after all switches so none covers it
       if (o.me === s) youTag = tor ? '<text class="you" x="' + x + '" y="' + (y + 132) + '" text-anchor="middle">\u25B2 OPEN</text>' :
         (s === "AG1" || s === "AG3") ? '<text class="you" x="' + (x - w / 2 - 8) + '" y="' + (y + 4) + '" text-anchor="end">OPEN \u25B6</text>' :

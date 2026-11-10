@@ -11,7 +11,8 @@ The page has three parts and one Submit:
   1. **Collect**: the Firepath master gathers link state from every switch over the CPN.
   2. **Inspect**: open a switch, probe its ports (plan from the cluster config vs. what Neighbor
      Discovery heard, PHY state, error rate, whether the peer hears them) and give each port a diagnosis.
-  3. **Drain**: take broken links out of routing, recompute, and see what it costs: links and equal-cost
+  3. **Drain** (opens once every port is diagnosed; a switch on the map carries a tick when all its ports are done,
+     or a number for how many are left): take broken links out of routing, recompute, and see what it costs: links and equal-cost
      paths that remain, ToRs left with one uplink or none, and drains that do not match the student's own diagnoses.
   4. **Explain**: two root-cause questions (T7's software crashed; a one-way link).
 - **C. Questions 1-3**: place the parts of Firepath on the SDN planes and explain.
