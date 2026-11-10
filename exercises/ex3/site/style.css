@@ -626,6 +626,7 @@ body.submitted .led { background: var(--ok); box-shadow: 0 0 9px var(--ok); }
 .hp-b text { font: 700 11px var(--sans); fill: var(--accent-ink); pointer-events: none; }
 .hp-client { fill: var(--glow); stroke: var(--accent); stroke-width: 1; }
 .hp-doc { font: 700 12px var(--sans); fill: var(--warn); }
+.hp-fib { font: 700 12px var(--sans); fill: var(--nd-sp); }
 .hp-lsd { fill: var(--panel); stroke: var(--accent); stroke-width: 1.5; }
 .hv-svg .t { font: 600 10px var(--mono); fill: var(--ink); }
 .hp-nd { font: 600 9px var(--mono); fill: var(--nd-sp); paint-order: stroke; stroke: var(--panel2); stroke-width: 4px; }
@@ -893,3 +894,121 @@ details.part[open] .part-chev { transform: rotate(-135deg) translate(-2px, -2px)
 #introMap .lk-unknown { stroke: var(--idle); }
 #introMap .nd rect { fill: var(--panel2); stroke: var(--muted); stroke-width: 3; }
 #introMap .nd-sp rect { stroke: var(--nd-sp); } #introMap .nd-ag rect { stroke: var(--nd-ag); }
+
+/* diagnosis colours that had no token (one-way, link down, peer silent), so the legend, the map and the buttons share them */
+:root { --c-oneway: #D9691F; --c-down: #7F8E9A; --c-silent: #8A5FE0; }
+:root[data-theme="dark"] { --c-oneway: #FF8C42; --c-down: #9AA7B2; --c-silent: #B58CFF; }
+
+/* Recompute routes: what the drains cost */
+.mres-bar { height: 6px; border-radius: 999px; background: var(--sunk); overflow: hidden; margin: 8px 0 2px; }
+.mres-bar span { display: block; height: 100%; background: var(--accent); border-radius: 999px; }
+.mres-notes { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 5px; font-size: 0.78rem; line-height: 1.4; }
+.mres-notes li { padding-left: 10px; border-left: 3px solid var(--line); }
+.mres-notes li.warn { border-left-color: var(--bad); color: var(--ink); font-weight: 400; }
+.mres-notes li.good { border-left-color: var(--ok); color: var(--ink); font-weight: 400; }
+.mres .sub { margin: 10px 0 0; }
+
+/* Submit: "this replaces your earlier submission" */
+.resend { margin-top: 12px; max-width: 620px; border: 1px solid var(--warn); border-left-width: 4px; border-radius: 8px; background: var(--panel2); padding: 12px 14px; }
+.resend:focus { outline: none; }
+.resend p { margin: 0 0 6px; }
+.resend ul { margin: 0; padding-left: 1.2em; font-size: 0.9rem; }
+.resend li.warn { color: var(--bad); font-weight: 600; }
+#lastSent { margin: 10px 0 0; }
+#lastSent:empty, #submitMsg:empty { display: none; }
+
+/* Your results (after the deadline) */ /* .part sets display, which would beat the hidden attribute */
+.part[hidden] { display: none; }
+.res-sum { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; margin: 10px 0 14px; }
+.res-sum > div { background: var(--panel2); border: 1px solid var(--line); border-radius: 8px; padding: 8px 12px; display: flex; flex-direction: column-reverse; }
+.res-sum dt { font: 600 0.66rem var(--mono); letter-spacing: .07em; text-transform: uppercase; color: var(--muted); }
+.res-sum dd { margin: 0; font: 600 1.35rem var(--mono); }
+.res-faults { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.res-faults > li { display: grid; grid-template-columns: 4.6rem minmax(0, 1fr); gap: 12px; border: 1px solid var(--line); border-left: 4px solid var(--muted); border-radius: 8px; padding: 10px 12px; font-size: 0.92rem; }
+.res-faults > li.res-found { border-left-color: var(--ok); }
+.res-faults > li.res-missed { border-left-color: var(--bad); }
+.res-faults > li.res-partly { border-left-color: var(--warn); }
+.res-st { font: 700 0.7rem var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); padding-top: 3px; }
+.res-found .res-st { color: var(--ok); } .res-missed .res-st { color: var(--bad); } .res-partly .res-st { color: var(--warn); }
+.res-ports { margin: 6px 0 0; padding-left: 1.1em; font: 0.8rem var(--mono); color: var(--soft); }
+.res-h { font-size: 0.95rem; margin: 18px 0 6px; }
+.res-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; font-size: 0.92rem; }
+.res-list li { padding-left: 10px; border-left: 3px solid var(--line); }
+.res-list li.bad { border-left-color: var(--bad); } .res-list li.good { border-left-color: var(--ok); }
+@media (max-width: 720px) { .res-sum { grid-template-columns: repeat(2, minmax(0, 1fr)); } .res-faults > li { grid-template-columns: minmax(0, 1fr); gap: 4px; } }
+
+/* Narrow screens: the map fits the screen (an overview), "Zoom in" makes it wide and scrollable, and every switch is also a button under it */
+.swpick { display: none; }
+@media (max-width: 1000px) {
+  .swpick { display: grid; gap: 5px; margin: 0 0 10px; padding-bottom: 10px; border-bottom: 1px solid var(--line); }
+  .swp-row { display: grid; grid-template-columns: 3.2rem repeat(8, minmax(0, 1fr)); gap: 4px; align-items: center; }
+  .swp-k { font: 600 0.62rem var(--mono); letter-spacing: .07em; text-transform: uppercase; color: var(--muted); }
+  .swp { min-height: 40px; padding: 0; border: 1px solid var(--line); border-radius: 6px; background: var(--panel); color: var(--ink); font: 600 0.74rem var(--mono); cursor: pointer; }
+  .swp-some { border-color: var(--ok-dim); border-bottom-width: 3px; }
+  .swp-all { border-color: var(--ok); border-bottom-width: 3px; background: var(--nd-reported); }
+  .swp-dark { border-style: dashed; color: var(--muted); }
+  .swp.on { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent); }
+}
+@media (max-width: 480px) { .swp-row { grid-template-columns: repeat(4, minmax(0, 1fr)); } .swp-k { grid-column: 1 / -1; } }
+@media (max-width: 720px) {
+  #map { min-width: 0; }
+  .map-wrap.zoomed #map { min-width: 780px; }
+  .swipe .linkbtn { margin-right: 6px; }
+}
+
+/* ---------- motion ---------- (all of it is off under prefers-reduced-motion: the rule near the top stops CSS animations, student.js skips the packets) */
+/* the status light breathes until the work on the page is the work that was sent */
+.console-page .led { animation: breathe 2.4s ease-in-out infinite; }
+body.submitted .led { animation: none; }
+@keyframes breathe { 50% { opacity: .4; box-shadow: 0 0 3px var(--bad); } }
+/* a part unfolds instead of snapping open */
+details.part[open] > :not(summary) { animation: rise .3s ease-out; }
+/* the brief picture: packets drifting over the fabric */
+#introMap .ip-pk { fill: var(--accent); opacity: .85; filter: drop-shadow(0 0 6px var(--accent)); }
+/* mission counters tick when they change */
+.ms-v.bump { display: inline-block; animation: bump .4s ease-out; }
+@keyframes bump { 0% { transform: scale(1.4); color: var(--accent); } }
+/* a diagnosis lands like a stamp; a drained cable is snipped */
+#map .pt.stamp, #map .cutmark.snip { transform-box: fill-box; transform-origin: center; }
+#map .pt.stamp { animation: stamp .35s cubic-bezier(.2, 1.6, .4, 1); }
+.pl-dot.stamp { animation: stamp .35s cubic-bezier(.2, 1.6, .4, 1); }
+@keyframes stamp { 0% { transform: scale(1.9); opacity: .2; } }
+#map .cutmark.snip { animation: snip .45s ease-out; }
+@keyframes snip { 0% { transform: scale(2.6) rotate(-120deg); opacity: 0; } }
+/* Recompute routes: link state going out from the master, then one packet per equal-cost path */
+#map .fx { pointer-events: none; }
+#map .fx-pk { fill: var(--accent); filter: drop-shadow(0 0 5px var(--accent)); }
+#map .fx-pk.lsd { fill: var(--nd-ag); filter: none; opacity: .8; }
+#map .fx-tag { font: 700 11px var(--mono); fill: var(--accent); paint-order: stroke; stroke: var(--bg); stroke-width: 4px; animation: rise .25s ease-out; }
+#map .fx-x { font: 700 15px var(--sans); fill: var(--bad); paint-order: stroke; stroke: var(--bg); stroke-width: 4px; animation: fxgone 1.3s ease-out forwards; }
+@keyframes fxgone { 0% { opacity: 0; } 15% { opacity: 1; } 70% { opacity: 1; } 100% { opacity: 0; } }
+.mres-fx { margin: 8px 0 0; }
+/* Submit went through */
+.btn.sent { animation: okpulse .85s ease-out 2; }
+@keyframes okpulse { 0% { box-shadow: 0 0 0 0 var(--ok); } 100% { box-shadow: 0 0 0 16px transparent; } }
+/* Your results: tiles and fault cards rise in one after another, the first time they are on screen */
+#partR.seen .res-sum > div, #partR.seen .res-faults > li { animation: rise .45s ease-out both; }
+#partR.seen .res-sum > div:nth-child(2), #partR.seen .res-faults > li:nth-child(2) { animation-delay: .08s; }
+#partR.seen .res-sum > div:nth-child(3), #partR.seen .res-faults > li:nth-child(3) { animation-delay: .16s; }
+#partR.seen .res-sum > div:nth-child(4), #partR.seen .res-faults > li:nth-child(4) { animation-delay: .24s; }
+#partR.seen .res-faults > li:nth-child(5) { animation-delay: .32s; }
+.res-sum > div.all { border-color: var(--ok); box-shadow: 0 0 0 3px color-mix(in srgb, var(--ok) 22%, transparent); }
+.res-sum > div.all dd { color: var(--ok); }
+
+/* ---------- class results (instructor.html) ---------- */
+.res-sum.six { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); margin: 14px 0 0; }
+.res-sum.six dd { font-size: 1.15rem; }
+.auto { display: inline-flex; align-items: center; gap: 6px; font-size: 0.88rem; color: var(--muted); cursor: pointer; }
+.ibar { margin: 0 0 14px; }
+.ibar-h { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; font-size: 0.95rem; }
+.ibar-h span { font: 500 0.82rem var(--mono); color: var(--muted); white-space: nowrap; }
+.ibar-t { height: 10px; border-radius: 999px; background: var(--panel2); overflow: hidden; margin: 5px 0 6px; }
+.ibar-t span { display: block; height: 100%; background: var(--accent); border-radius: 999px; }
+.ibar .fine { margin: 0; }
+.ibar.slim { margin-bottom: 8px; max-width: 620px; }
+.ibar.slim .ibar-h { font-size: 0.88rem; } .ibar.slim .ibar-h b { font-weight: 500; }
+.heat { display: block; min-width: 2.6em; text-align: center; padding: 3px 8px; border-radius: 5px; background: color-mix(in srgb, var(--accent) calc(var(--h) * 55%), transparent); }
+.split { font: 600 0.62rem var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--warn); border: 1px solid var(--warn); border-radius: 999px; padding: 1px 6px; margin-left: 4px; }
+.sortb { font: inherit; letter-spacing: inherit; text-transform: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; white-space: nowrap; }
+.sortb:hover { color: var(--ink); }
+th[aria-sort="ascending"] .sortb, th[aria-sort="descending"] .sortb { color: var(--accent); }

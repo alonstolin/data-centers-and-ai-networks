@@ -54,7 +54,7 @@
     ["faultsCard", "portsCard", "wrongCard", "rcCard2", "masterCard", "studentsCard"].forEach(id => { $(id).hidden = false; });
     $("faults").innerHTML = P.faults.map(f => {
       const c = subs.filter(s => found(s.diag || {}, f.id)).length;
-      return '<article class="fault ok"><h3>' + esc(f.title) + " · " + c + " of " + n + " (" + pct(c, n) + ')</h3><p>' + esc(f.text) + ' <span class="ref">(' + esc(f.ref) + ")</span></p></article>";
+      return '<div class="ibar"><div class="ibar-h"><b>' + esc(f.title) + "</b><span>" + c + " of " + n + " (" + pct(c, n) + ')</span></div><div class="ibar-t"><span style="width:' + (n ? 100 * c / n : 0) + '%"></span></div><p class="fine">' + esc(f.text) + ' <span class="ref">(' + esc(f.ref) + ")</span></p></div>";
     }).join("");
     const fp = Object.keys(P.truth).sort();
     $("portTbl").innerHTML = tbl(["Port", "Fault", "Right answer"].concat(Object.keys(LABELS).map(k => LABELS[k]), ["Not diagnosed"]), fp.map(k => {
@@ -71,25 +71,25 @@
     $("rcBars").innerHTML = rc("q1", P.rc.q1, { cables: "Two separate cable faults", power: "T7 lost power", crash: "T7's software crashed", miswire: "T7's cables were plugged into the wrong ports" }) +
       rc("q2", P.rc.q2, { crash: "AG3's software crashed", oneway: "The link works in one direction only", miswire: "The cable goes to a different switch", down: "The cable is unplugged" });
     $("drainTbl").innerHTML = tbl(["Link", "Broken?", "Drained by"], T.links.map(l => { const k = linkKey(l), c = subs.filter(s => (s.drained || []).indexOf(k) >= 0).length; return [esc(l.a.s + " " + l.a.p + " ↔ " + l.b.s + " " + l.b.p), faulty.has(k) ? "<b>broken</b>" : "", c + " of " + n]; }));
-    $("stuTbl").innerHTML = tbl(["Email", "Diagnosed", "Wrong", "Faults found", "Q1", "Q2", "Master clean", "Time on page"], subs.map(s => {
-      const d = s.diag || {}, ks = Object.keys(d), w = ks.filter(k => !isOk(d, k)).length, fd = P.faults.filter(f => found(d, f.id)).length, dr = new Set(s.drained || []), a = s.answers || {};
-      const clean = dr.size === faulty.size && Array.from(faulty).every(k => dr.has(k));
-      return [esc(s.nick || "(no email)"), ks.length, w, fd + " / " + P.faults.length, a.q1 ? (a.q1 === P.rc.q1 ? "✓" : "✗") : "—", a.q2 ? (a.q2 === P.rc.q2 ? "✓" : "✗") : "—", dr.size ? (clean ? "✓" : "✗ (" + dr.size + ")") : "—", fmtTime(a.activeSec)];
-    }));
   }
 
   // ---------- homework ----------
   const DEADLINE = Date.parse((window.MH_CONFIG || {}).DEADLINE || "2026-11-15T13:00:00+02:00");
-  const PARTS = ["Firepath master", "Firepath client", "Link State Database (LSD)", "Control Plane Network (CPN)", "Neighbor Discovery (ND)", "BGP at the CBRs", "Cluster config"];
+  const PARTS = ["Firepath master", "Firepath client", "Link State Database (LSD)", "Control Plane Network (CPN)", "Neighbor Discovery (ND)", "BGP at the CBRs", "Cluster config", "Forwarding table"];
   const PLANE = { data: "Data", control: "Control", management: "Management", outside: "Outside SDN" };
   function showHomework(rows) {
     $("hwCard").hidden = false;
     const late = r => Date.parse(r.at) > DEADLINE, on = rows.filter(r => !late(r));
     $("hwSum").textContent = rows.length + " submission" + (rows.length === 1 ? "" : "s") + ", " + on.length + " on time, " + (rows.length - on.length) + " late.";
-    $("hwPlaceTbl").innerHTML = tbl(["Part"].concat(Object.keys(PLANE).map(k => PLANE[k]), ["Not placed"]), PARTS.map((p, i) => {
+    $("hwPlaceTbl").innerHTML = tbl(["Part"].concat(Object.keys(PLANE).map(k => PLANE[k]), ["Not placed", "Agreement"]), PARTS.map((p, i) => {
       const cnt = {}; let none = 0; on.forEach(r => { const v = ((r.answers || {}).place || {})[i + 1]; if (v) cnt[v] = (cnt[v] || 0) + 1; else none++; });
-      return [(i + 1) + ". " + esc(p)].concat(Object.keys(PLANE).map(k => cnt[k] || 0), [none]);
+      const placed = on.length - none, top = Math.max(0, ...Object.keys(PLANE).map(k => cnt[k] || 0)), agree = placed ? Math.round(100 * top / placed) : null;
+      const cell = k => '<span class="heat" style="--h:' + (placed ? (cnt[k] || 0) / placed : 0) + '">' + (cnt[k] || 0) + "</span>";
+      return [(i + 1) + ". " + esc(p)].concat(Object.keys(PLANE).map(cell), [none, agree === null ? "—" : agree + "%" + (agree < 60 ? ' <span class="split">split</span>' : "")]);
     }));
+    // question 2: how many students named each part as one of their two hardest
+    const hc = PARTS.map((p, i) => on.filter(r => ((r.answers || {}).hard || []).some(h => String(h.part) === String(i + 1))).length), hmax = Math.max(1, ...hc);
+    $("hwHard").innerHTML = PARTS.map((p, i) => '<div class="ibar slim"><div class="ibar-h"><b>' + (i + 1) + ". " + esc(p) + "</b><span>" + hc[i] + '</span></div><div class="ibar-t"><span style="width:' + (100 * hc[i] / hmax) + '%"></span></div></div>').join("");
     const hard = a => (a.hard || []).filter(h => h.part || h.text).map(h => (h.part ? "<b>" + esc(PARTS[h.part - 1] || h.part) + ":</b> " : "") + esc(h.text || "")).join("<br>");
     $("hwAnsTbl").innerHTML = tbl(["Student", "Hardest placements (question 2)", "Firepath vs OpenFlow (question 3)"], rows.map(r => {
       const a = r.answers || {};
@@ -97,15 +97,84 @@
     }));
   }
 
+  // ---------- overview and the students table (the game and the homework, matched by email) ----------
+  const median = a => { const s = a.slice().sort((x, y) => x - y), m = s.length >> 1; return s.length ? (s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2) : null; };
+  let rows = [], sortKey = "at", sortDir = 1;
+  function buildRows(subs, hw) {
+    const byEmail = {}, used = new Set();
+    hw.forEach(r => { byEmail[(r.email || "").trim().toLowerCase()] = r; });
+    const row = (s, h, email) => {
+      const d = s ? s.diag || {} : {}, ks = Object.keys(d), a = s ? s.answers || {} : {}, dr = new Set(s ? s.drained || [] : []), ha = h ? h.answers || {} : {};
+      const hard = (ha.hard || []).filter(x => (x.text || "").trim()).length;
+      return {
+        name: h ? h.name || "" : "", email: email, game: !!s, hw: !!h,
+        diagnosed: s ? ks.length : null, wrong: s ? ks.filter(k => !isOk(d, k)).length : null, faults: s ? P.faults.filter(f => found(d, f.id)).length : null,
+        q1: a.q1 ? (a.q1 === P.rc.q1 ? 1 : 0) : null, q2: a.q2 ? (a.q2 === P.rc.q2 ? 1 : 0) : null,
+        clean: s && dr.size ? (dr.size === faulty.size && Array.from(faulty).every(k => dr.has(k)) ? 1 : 0) : null, drained: dr.size,
+        placed: h ? PARTS.filter((p, i) => (ha.place || {})[i + 1]).length : null, hard: h ? hard : null, diff: h ? ((ha.diff || "").trim() ? 1 : 0) : null,
+        time: typeof a.activeSec === "number" ? a.activeSec : null, at: Math.max(s ? Date.parse(s.at) || 0 : 0, h ? Date.parse(h.at) || 0 : 0)
+      };
+    };
+    const out = subs.map(s => { const e = (s.nick || "").trim().toLowerCase(), h = byEmail[e]; if (h) used.add(e); return row(s, h, e || "(no email)"); });
+    hw.forEach(r => { const e = (r.email || "").trim().toLowerCase(); if (!used.has(e)) out.push(row(null, r, e)); });
+    return out;
+  }
+  const mark = v => v === null ? "—" : v ? "✓" : "✗";
+  const COLS = [
+    ["Name", "name", r => esc(r.name || "—")], ["Email", "email", r => esc(r.email)],
+    ["Diagnosed", "diagnosed", r => r.game ? r.diagnosed : "—"], ["Wrong", "wrong", r => r.game ? r.wrong : "—"],
+    ["Faults found", "faults", r => r.game ? r.faults + " / " + P.faults.length : "—"],
+    ["RC 1", "q1", r => mark(r.q1)], ["RC 2", "q2", r => mark(r.q2)],
+    ["Drains", "clean", r => !r.game ? "—" : r.clean === null ? "none" : r.clean ? "✓" : "✗ (" + r.drained + ")"],
+    ["Q1 placed", "placed", r => r.hw ? r.placed + " / " + PARTS.length : '<span class="err">no answers</span>'],
+    ["Q2", "hard", r => r.hw ? r.hard + " / 2" : "—"], ["Q3", "diff", r => mark(r.diff)],
+    ["Time on page", "time", r => fmtTime(r.time)],
+    ["Last submit", "at", r => r.at ? new Date(r.at).toLocaleString("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) + (r.at > DEADLINE ? ' <span class="err">late</span>' : "") : "—"]
+  ];
+  function drawStudents() {
+    const v = r => { const x = r[sortKey]; return x === null || x === undefined ? -Infinity : x; };
+    const sorted = rows.slice().sort((a, b) => { const x = v(a), y = v(b); return (typeof x === "string" || typeof y === "string" ? String(x).localeCompare(String(y)) : x - y) * sortDir; });
+    $("stuTbl").innerHTML = "<thead><tr>" + COLS.map(c => '<th aria-sort="' + (c[1] === sortKey ? (sortDir > 0 ? "ascending" : "descending") : "none") + '"><button type="button" class="sortb" data-sort="' + c[1] + '">' + c[0] + (c[1] === sortKey ? (sortDir > 0 ? " ▲" : " ▼") : "") + "</button></th>").join("") + "</tr></thead><tbody>" +
+      sorted.map(r => "<tr>" + COLS.map(c => "<td>" + c[2](r) + "</td>").join("") + "</tr>").join("") + "</tbody>";
+  }
+  $("stuTbl").addEventListener("click", e => {
+    const b = e.target.closest("[data-sort]"); if (!b) return;
+    const k = b.getAttribute("data-sort"); sortDir = k === sortKey ? -sortDir : 1; sortKey = k; drawStudents();
+  });
+  $("csvBtn").addEventListener("click", () => {
+    const q = x => '"' + String(x === null || x === undefined ? "" : x).replace(/"/g, '""') + '"';
+    const head = ["name", "email", "ports_diagnosed", "wrong_diagnoses", "faults_found", "root_cause_1", "root_cause_2", "links_drained", "drains_exact", "q1_parts_placed", "q2_answers", "q3_answered", "active_seconds", "last_submit"];
+    const lines = rows.map(r => [r.name, r.email, r.diagnosed, r.wrong, r.faults, r.q1, r.q2, r.game ? r.drained : null, r.clean, r.placed, r.hard, r.diff, r.time, r.at ? new Date(r.at).toISOString() : ""].map(q).join(","));
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(new Blob(["\ufeff" + head.join(",") + "\r\n" + lines.join("\r\n")], { type: "text/csv" }));
+    a.download = "miswire-hunt-students.csv"; document.body.appendChild(a); a.click(); a.remove();
+  });
+  function overview(subs, hw) {
+    const g = rows.filter(r => r.game), n = g.length, avg = n ? (g.reduce((t, r) => t + r.faults, 0) / n).toFixed(1) : "—";
+    const both = g.filter(r => r.q1 === 1 && r.q2 === 1).length, clean = g.filter(r => r.clean === 1).length, med = median(g.filter(r => r.time !== null).map(r => r.time));
+    const tile = (v, k) => "<div><dt>" + k + "</dt><dd>" + v + "</dd></div>";
+    $("tiles").innerHTML = tile(n, "Game submissions") + tile(hw.length, "Homework answers") + tile(rows.filter(r => r.game && !r.hw).length, "Game without answers") +
+      tile(avg + " / " + P.faults.length, "Faults found, average") + tile(pct(both, n), "Both root causes right") + tile(pct(clean, n), "Exact drains") + tile(med === null ? "—" : fmtTime(Math.round(med)), "Time on page, median");
+    $("tiles").hidden = false;
+  }
+
+  let timer = null;
   async function load() {
     $("err").hidden = true;
     try {
       const key = $("key").value;
-      show(await window.MH.rpc("all_submissions", { p_key: key })); $("reload").hidden = false;
-      try { showHomework(await window.MH.rpc("all_homework", { p_key: key })); } catch (e2) { $("sum").textContent += " (Homework answers are not available yet: run supabase/homework.sql.)"; }
+      const subs = await window.MH.rpc("all_submissions", { p_key: key });
+      show(subs); $("reload").hidden = false; $("autoWrap").hidden = false;
+      try { sessionStorage.setItem("mh-ikey", key); } catch (e) {}   // kept for this tab only, so a reload of the page does not ask again
+      let hw = [];
+      try { hw = await window.MH.rpc("all_homework", { p_key: key }); showHomework(hw); } catch (e2) { $("sum").textContent += " (Homework answers are not available yet: run supabase/homework.sql.)"; }
+      rows = buildRows(subs, hw); drawStudents(); overview(subs, hw);
+      $("sum").textContent += " Loaded at " + new Date().toTimeString().slice(0, 8) + ".";
     }
-    catch (e) { $("err").textContent = e.message; $("err").hidden = false; }
+    catch (e) { $("err").textContent = e.message; $("err").hidden = false; $("auto").checked = false; }
   }
   $("keyForm").addEventListener("submit", e => { e.preventDefault(); load(); });
   $("reload").addEventListener("click", load);
+  $("auto").addEventListener("change", () => { clearInterval(timer); if ($("auto").checked) timer = setInterval(load, 30000); });
+  try { const k = sessionStorage.getItem("mh-ikey"); if (k) { $("key").value = k; load(); } } catch (e) {}
 })();

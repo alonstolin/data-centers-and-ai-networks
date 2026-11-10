@@ -113,7 +113,8 @@
     4: ["Control Plane Network (CPN)", "The separate, out-of-band network that the master and the clients talk over."],
     5: ["Neighbor Discovery (ND)", "The liveness and peer-correctness check that runs on each link, between the two switches at its ends."],
     6: ["BGP at the cluster border routers (CBRs)", "Route exchange at the edge of the fabric: the CBRs speak BGP with outside networks and hand routes to Firepath."],
-    7: ["Cluster config", "The static topology of the whole fabric. Every switch is loaded with the same file at startup."]
+    7: ["Cluster config", "The static topology of the whole fabric. Every switch is loaded with the same file at startup."],
+    8: ["Forwarding table", "The table in each switch that every packet is looked up in. The Firepath client computes its entries (Section 5.2)."]
   };
   function mountParts(root, table) {
     const badge = (n, x, y) => '<g class="hp-b" data-part="' + n + '" tabindex="0" role="button" aria-label="Part ' + n + ': ' + PARTS[n][0] + '"><circle cx="' + x + '" cy="' + y + '" r="11"/><text x="' + x + '" y="' + (y + 4) + '" text-anchor="middle">' + n + "</text></g>";
@@ -125,11 +126,13 @@
     h += ALL.map(n => '<g class="hp-part" data-part="2"><rect class="hp-client" x="' + (POS[n][0] - nodeW / 2 + 3) + '" y="' + (POS[n][1] + nodeH / 2 - 1) + '" width="' + (nodeW - 6) + '" height="13" rx="3"/><text class="sub" x="' + POS[n][0] + '" y="' + (POS[n][1] + nodeH / 2 + 9) + '" text-anchor="middle">client</text></g>').join("");
     // config doc on each switch
     h += ALL.map(n => '<g class="hp-part" data-part="7"><text class="hp-doc" x="' + (POS[n][0] - nodeW / 2 - 8) + '" y="' + (POS[n][1] - nodeH / 2 + 8) + '" text-anchor="middle">&#9636;</text></g>').join("");
+    // forwarding table on each switch
+    h += ALL.map(n => '<g class="hp-part" data-part="8"><text class="hp-fib" x="' + (POS[n][0] + nodeW / 2 + 8) + '" y="' + (POS[n][1] - nodeH / 2 + 8) + '" text-anchor="middle">&#9638;</text></g>').join("");
     // LSD arrows from master to the two spines and a label
     h += '<g class="hp-part" data-part="3"><rect class="hp-lsd" x="' + (M[0] - 40) + '" y="' + (M[1] + 30) + '" width="80" height="22" rx="4"/><text class="t" x="' + M[0] + '" y="' + (M[1] + 45) + '" text-anchor="middle">LSD</text></g>';
     // ND on links
     h += '<g class="hp-part" data-part="5"><text class="hp-nd" x="' + ((S.SP2[0] + L.AG3[0]) / 2 + 0) + '" y="' + ((S.SP2[1] + L.AG3[1]) / 2) + '" text-anchor="middle">ND &#8596; ND</text><text class="hp-nd" x="' + ((S.SP1[0] + L.AG1[0]) / 2) + '" y="' + ((S.SP1[1] + L.AG1[1]) / 2) + '" text-anchor="middle">ND &#8596; ND</text></g>';
-    h += badge(1, M[0] - 56, M[1] - 24) + badge(2, 130, 266) + badge(3, M[0] + 46, M[1] + 52) + badge(4, 405, 175) + badge(5, 362, 168) + badge(6, 236, 30) + badge(7, 398, 236);
+    h += badge(1, M[0] - 56, M[1] - 24) + badge(2, 130, 266) + badge(3, M[0] + 46, M[1] + 52) + badge(4, 405, 175) + badge(5, 362, 168) + badge(6, 236, 30) + badge(7, 398, 236) + badge(8, 502, 236);
     const IDLE = "<b>Hover a number here, or a part below.</b> This is a slice of JR-16: two spines and four aggregation switches. The diagram shows where each part lives. It does not say which plane it belongs to: that is your job in question 1.";
     root.innerHTML = '<svg class="hv-svg" viewBox="0 0 600 330" role="img" aria-label="The parts of Firepath on a slice of the JR-16 fabric">' + h + '</svg><div class="hp-info" aria-live="polite">' + IDLE + "</div>";
     const info = root.querySelector(".hp-info"), svg = root.querySelector("svg");

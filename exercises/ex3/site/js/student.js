@@ -1,12 +1,18 @@
 // Miswire Hunt, single-player console with delayed feedback.
 // Layout: the map on the left, an inspector on the right, four mission steps above them (Collect, Inspect, Drain, Explain).
 // The student's work is kept in localStorage and sent to Supabase only when they press Submit.
-// Nothing here tells the student whether an answer is right: the results are discussed in class.
+// Before REVEAL_AT (js/config.js, by default the deadline) nothing here tells the student whether an answer is right.
+// After it the page shows their own results (the "Your results" part) and what really happens to the links they left in.
 (function () {
   const $ = id => document.getElementById(id);
   const { render, LABELS, esc } = window.MH_MAP;
   const P = window.MH_PUZZLE, T = window.MH_TOPO, HW = window.MH_HW;
   const KEY = "mh-solo-v2";
+  // every moving thing on the page is skipped for people who asked their system for less motion (the CSS does the same for its own animations)
+  const REDUCED = !!(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches);
+  // elements are redrawn from scratch on every change, so a one-shot animation is a class added to the fresh element
+  const pop = (selector, cls) => { const e = document.querySelector(selector); if (e) e.classList.add(cls); };
+  let flashSw = null, fxTimers = [];  // the switch that just got its last diagnosis; timers of the packets on the map
 
   const store = {
     get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
@@ -18,9 +24,12 @@
   const drained = new Set(saved.drained || []);  // "upper|lower" link keys taken out of routing
   const answers = saved.answers || {};           // { q1, q2 }
   let nick = saved.nick || "", submittedAt = saved.submittedAt || null;
+  // submittedAt: set while the work on the page is exactly what was sent. sentAt and sentSnap: the last successful Submit
+  // (time and a copy of what went out), kept after later edits so a second Submit can say what it is about to replace.
+  let sentAt = saved.sentAt || saved.submittedAt || null, sentSnap = saved.sentSnap || null;
   let step = Math.min(3, saved.step != null ? saved.step : 0), collected = !!saved.collected, collecting = false;
   const uid = saved.uid || (window.crypto && crypto.randomUUID ? crypto.randomUUID() : "u" + Date.now() + Math.random().toString(36).slice(2));
-  const persist = () => store.set(KEY, JSON.stringify({ uid, diag, drained: Array.from(drained), answers, nick, submittedAt, step, collected }));
+  const persist = () => store.set(KEY, JSON.stringify({ uid, diag, drained: Array.from(drained), answers, nick, submittedAt, sentAt, sentSnap, step, collected }));
 
   const TOTAL_PORTS = Object.values(P.views).reduce((n, v) => n + v.length, 0);
   let sel = null, selPort = null;
@@ -29,11 +38,12 @@
   const rowsOf = sw => (P.views[sw] || []).map(a => ({ port: a[0], expected: a[1], discovered: a[2], peer_hears: a[3], phy: a[4], err: a[5] }));
   const linkKey = l => l.a.s + "|" + l.b.s;
   const ORDER_KEYS = ["OK", "MISWIRED", "ONE_WAY", "HIGH_ERRORS", "LINK_DOWN", "PEER_SILENT"];
-  const LCOL = { OK: "var(--ok)", MISWIRED: "var(--bad)", ONE_WAY: "#FF8C42", HIGH_ERRORS: "var(--warn)", LINK_DOWN: "#9AA7B2", PEER_SILENT: "#B58CFF" };
+  const LCOL = { OK: "var(--ok)", MISWIRED: "var(--bad)", ONE_WAY: "var(--c-oneway)", HIGH_ERRORS: "var(--warn)", LINK_DOWN: "var(--c-down)", PEER_SILENT: "var(--c-silent)" };
   const HINT = { OK: "Plan and reality agree, both directions", MISWIRED: "A different peer than the plan", ONE_WAY: "Only one direction works", HIGH_ERRORS: "Up and correct, but error rate is high", LINK_DOWN: "PHY down: no working cable", PEER_SILENT: "PHY up but nothing heard from the peer" };
 
   // ---------- map ----------
   function drawMap() {
+    fxTimers.forEach(clearTimeout); fxTimers = [];  // a redraw replaces the SVG, and the packets on it
     const reported = new Set();
     Object.keys(diag).forEach(k => reported.add(k.split(":")[0]));
     if (step === 0 && collected) T.ALL.forEach(s => { if (P.views[s]) reported.add(s); });
@@ -42,17 +52,23 @@
     const labels = {};
     rows.forEach(r => { const l = diag[sel + ":" + r.port]; if (l) labels[r.port] = l; });
     const panel = rows.length ? { sw: sel, rows, labels, sel: selPort, probed: new Set(rows.filter(r => probed.has(sel + ":" + r.port)).map(r => r.port)) } : null;
-    render($("map"), { latest: diag, reported, confirmed: new Set(), flags: {}, myflags: [], me: showSw ? sel : null, flash: new Set(), selPair: null, probePair: null, panel, master: true, masterSel: step === 2 || step === 0, drained });
+    render($("map"), { latest: diag, reported, confirmed: new Set(), flags: {}, myflags: [], me: showSw ? sel : null, flash: new Set(flashSw ? [flashSw] : []), selPair: null, probePair: null, panel, master: true, masterSel: step === 2 || step === 0, drained });
     $("map").classList.toggle("drainmode", step === 2);
   }
 
   // ---------- mission bar ----------
   function renderMissions() {
     const nd = Object.keys(diag).length, na = (answers.q1 ? 1 : 0) + (answers.q2 ? 1 : 0);
-    $("m0v").textContent = collected ? "done" : "not yet";
-    $("m1v").textContent = nd + " / " + TOTAL_PORTS;
-    $("m2v").textContent = drained.size + (drained.size === 1 ? " link" : " links");
-    $("m3v").textContent = na + " / 2";
+    const setV = (id, t) => {
+      const el = $(id), first = !el.dataset.set; el.dataset.set = "1";
+      if (el.textContent === t) return;
+      el.textContent = t;
+      if (!first) { el.classList.remove("bump"); void el.offsetWidth; el.classList.add("bump"); }
+    };
+    setV("m0v", collected ? "done" : "not yet");
+    setV("m1v", nd + " / " + TOTAL_PORTS);
+    setV("m2v", drained.size + (drained.size === 1 ? " link" : " links"));
+    setV("m3v", na + " / 2");
     const done = { 0: collected, 1: nd > 0, 2: drained.size > 0, 3: na === 2 };
     document.querySelectorAll(".ms").forEach(b => {
       const n = +b.dataset.step;
@@ -72,6 +88,11 @@
     render(svg, { latest: {}, reported: new Set(), confirmed: new Set(), flags: {}, myflags: [], me: null, flash: new Set(), selPair: null, probePair: null, panel: null, master: false, masterSel: false, drained: new Set() });
     svg.setAttribute("viewBox", "70 22 850 340");
     svg.querySelectorAll(".rack, .tier, .blk, .hit, title").forEach(e => e.remove());
+    // a few packets drift over the picture. Decoration only: the links are a fixed spread and say nothing about the faults.
+    if (!REDUCED) svg.insertAdjacentHTML("beforeend", [1, 6, 11, 12, 17, 21, 26, 31].map((i, n) => {
+      const l = T.links[i], a = T.pos[l.a.s], b = T.pos[l.b.s];
+      return '<circle class="ip-pk" r="7"><animateMotion dur="' + (2.4 + (n % 4) * 0.5) + 's" begin="' + (n * 0.45) + 's" repeatCount="indefinite" calcMode="linear" keyTimes="0;1" keyPoints="' + (n % 2 ? "1;0" : "0;1") + '" path="M' + a[0] + "," + (a[1] + 16) + " L" + b[0] + "," + (b[1] - 14) + '"/></circle>';
+    }).join(""));
   })();
 
   // ---------- step 0: collect link state over the CPN ----------
@@ -114,6 +135,12 @@
   // ---------- step 1: inspect ----------
   function renderInspect() {
     const rows = sel ? rowsOf(sel) : [], dark = sel === "T7";
+    // the switch picker (narrow screens): one button per switch, grouped by tier, with how far its ports are diagnosed
+    $("swPick").innerHTML = [["Spine", T.SP], ["Aggr.", T.AG], ["ToR", T.TOR]].map(g => '<div class="swp-row"><span class="swp-k">' + g[0] + "</span>" + g[1].map(s => {
+      const rs = rowsOf(s), n = rs.filter(r => diag[s + ":" + r.port]).length, st = !rs.length ? "dark" : n === rs.length ? "all" : n ? "some" : "none";
+      const tip = !rs.length ? "does not answer" : n + " of " + rs.length + " ports diagnosed";
+      return '<button type="button" class="swp swp-' + st + (s === sel ? " on" : "") + '" data-sw="' + s + '" aria-pressed="' + (s === sel) + '" aria-label="' + s + ": " + tip + '" title="' + tip + '">' + s + "</button>";
+    }).join("") + "</div>").join("");
     $("s1empty").hidden = !!sel;
     $("s1dark").hidden = !dark;
     $("s1sw").hidden = !(sel && rows.length);
@@ -197,13 +224,172 @@
     $("drainList").innerHTML = dl.length ? dl.map(item).join("") : '<li class="fine">Nothing drained.</li>';
     $("drainCount").textContent = "(" + drained.size + ")";
   }
-  function recompute() {
-    const rows = PAIRS.map(p => { const n = paths(p[0], p[1], drained), full = paths(p[0], p[1], new Set()); return "<tr><td>" + p[0] + " → " + p[1] + '</td><td class="num">' + n + " of " + full + " paths</td></tr>"; }).join("");
-    $("masterRes").hidden = false;
-    $("masterRes").innerHTML = "<table><tbody>" + rows + "</tbody></table>";
-    $("masterRes").scrollIntoView({ behavior: "smooth", block: "nearest" });
+  // ---------- the answer key, used only after REVEAL_AT ----------
+  const CFG = window.MH_CONFIG || {};
+  const REVEAL = Date.parse(CFG.REVEAL_AT || CFG.DEADLINE || "");
+  const revealed = () => !!REVEAL && Date.now() >= REVEAL;
+  const accepted = k => (P.truth[k] ? P.truth[k].a : ["OK"]);
+  const isRight = k => !!diag[k] && accepted(k).indexOf(diag[k]) >= 0;
+  const endKey = e => e.s + ":" + e.p;
+  const truthOf = e => (P.truth[endKey(e)] ? P.truth[endKey(e)].a : []);
+  const brokenLinks = T.links.filter(l => P.truth[endKey(l.a)] || P.truth[endKey(l.b)]);
+  const brokenKeys = new Set(brokenLinks.map(linkKey));
+  // what a broken link does to traffic if it stays in routing
+  function effect(l) {
+    const a = truthOf(l.a), all = a.concat(truthOf(l.b)), name = "<b>" + esc(linkText(l)) + "</b>";
+    if (a.indexOf("MISWIRED") >= 0) {
+      const r = rowsOf(l.a.s).filter(x => x.port === l.a.p)[0], want = r.expected.split(" ")[0], got = r.discovered.split(" ")[0];
+      return name + ": " + esc(l.a.s) + " forwards a packet for " + esc(want) + " on " + esc(l.a.p) + ", but that cable goes to " + esc(got) + ". " + esc(got) + " is not the destination, so it sends the packet back up, and it can go round like this until its TTL runs out: a forwarding loop.";
+    }
+    if (all.indexOf("LINK_DOWN") >= 0) return name + ": there is no working cable. Every packet sent on it is dropped.";
+    if (all.indexOf("ONE_WAY") >= 0) return name + ": it works in one direction only. Packets in the other direction are lost.";
+    if (all.indexOf("HIGH_ERRORS") >= 0) return name + ": it is up and correctly cabled, but many packets arrive corrupted and are dropped.";
+    return name + ": the switch at the far end does not run, so nothing sent on it is forwarded.";
   }
-  function toggleDrain(k) { if (drained.has(k)) drained.delete(k); else drained.add(k); $("masterRes").hidden = true; touch(); refresh(); }
+  const leftIn = () => brokenLinks.filter(l => !drained.has(linkKey(l)));
+  const wasted = () => T.links.filter(l => drained.has(linkKey(l)) && !brokenKeys.has(linkKey(l)));
+
+  // What the drains cost, from the plan alone (no answer key): links, ToR uplinks and equal-cost paths that remain.
+  function capacity() {
+    const tors = T.TOR.filter(t => t !== "T7"), none = new Set();
+    let now = 0, full = 0, cut = 0;
+    tors.forEach((a, i) => tors.slice(i + 1).forEach(b => { const n = paths(a, b, drained); now += n; full += paths(a, b, none); if (!n) cut++; }));
+    const up = t => T.links.filter(l => l.b.s === t && !drained.has(linkKey(l))).length;
+    return { now, full, cut, pct: full ? Math.round(100 * now / full) : 0, isolated: tors.filter(t => up(t) === 0), single: tors.filter(t => up(t) === 1) };
+  }
+  function recompute() {
+    const c = capacity(), none = new Set();
+    const tr = (k, v, cls) => "<tr><td>" + k + '</td><td class="num' + (cls ? " " + cls : "") + '">' + v + "</td></tr>";
+    let h = "<table><tbody>" + tr("Links in routing", (T.links.length - drained.size) + " of " + T.links.length) +
+      tr("Equal-cost paths, all ToR pairs", c.pct + "%", c.pct < 50 ? "warn" : "") +
+      PAIRS.map(p => { const n = paths(p[0], p[1], drained); return tr(p[0] + " → " + p[1], n + " of " + paths(p[0], p[1], none) + " paths", n ? "" : "warn"); }).join("") + "</tbody></table>";
+    h += '<div class="mres-bar" role="img" aria-label="' + c.pct + ' percent of the equal-cost paths remain"><span style="width:' + c.pct + '%"></span></div>';
+    const notes = [];
+    if (c.isolated.length) notes.push(["warn", "<b>" + c.isolated.join(", ") + "</b> " + (c.isolated.length === 1 ? "has" : "have") + " no uplink left: the servers in " + (c.isolated.length === 1 ? "that rack" : "those racks") + " are cut off."]);
+    if (c.single.length) notes.push(["", "<b>" + c.single.join(", ") + "</b> " + (c.single.length === 1 ? "is" : "are") + " down to one uplink: one more failure cuts the rack off."]);
+    if (c.cut) notes.push(["warn", c.cut + " ToR pair" + (c.cut === 1 ? " has" : "s have") + " no path at all."]);
+    // consistency with the student's own diagnoses (this does not use the answer key)
+    const dOf = l => [diag[endKey(l.a)], diag[endKey(l.b)]], isBad = x => x && x !== "OK";
+    const still = T.links.filter(l => !drained.has(linkKey(l)) && dOf(l).some(isBad));
+    const noReason = T.links.filter(l => drained.has(linkKey(l)) && !dOf(l).some(isBad));
+    if (still.length) notes.push(["", still.length + " link" + (still.length === 1 ? "" : "s") + " you diagnosed as faulty " + (still.length === 1 ? "is" : "are") + " still in routing." + (still.some(l => dOf(l).indexOf("MISWIRED") >= 0) ? " A miswired link that carries traffic can cause a forwarding loop (Section 5.2.1)." : "")]);
+    if (noReason.length) notes.push(["", noReason.length + " drained link" + (noReason.length === 1 ? " has" : "s have") + " no fault diagnosis from you: that capacity is given up without a recorded reason."]);
+    if (!drained.size) notes.push(["", "Nothing is drained, so the fabric keeps its full capacity and every link, broken or not, still carries traffic."]);
+    if (notes.length) h += '<ul class="mres-notes">' + notes.map(n => '<li class="' + n[0] + '">' + n[1] + "</li>").join("") + "</ul>";
+    if (revealed()) {
+      const li = leftIn(), w = wasted();
+      h += '<h4 class="sub">What really happens</h4><ul class="mres-notes">' +
+        (li.length ? li.map(l => '<li class="warn">' + effect(l) + "</li>").join("") : '<li class="good">No broken link is left in routing.</li>') +
+        (w.length ? "<li>" + w.length + " working link" + (w.length === 1 ? "" : "s") + " drained for nothing: " + w.map(l => esc(linkText(l))).join(", ") + ".</li>" : "") + "</ul>";
+    }
+    if (!REDUCED) h += '<p class="fine mres-fx">On the map: the master sends the new link state, then one packet takes each equal-cost path for the three pairs above.</p>';
+    $("masterRes").hidden = false;
+    $("masterRes").innerHTML = h;
+    $("masterRes").scrollIntoView({ behavior: "smooth", block: "nearest" });
+    traffic();
+  }
+
+  // ---------- traffic on the map after Recompute ----------
+  // One packet per equal-cost path for each of the three ToR pairs, so ECMP is something you see and a drain visibly thins it.
+  // Before REVEAL_AT every packet follows the plan. After it, a packet that meets a broken link left in routing is dropped there,
+  // or bounces between two switches if the link is miswired.
+  function stopTraffic() { fxTimers.forEach(clearTimeout); fxTimers = []; const g = $("map").querySelector(".fx"); if (g) g.remove(); }
+  function allPaths(src, dst) {
+    const adj = {};
+    T.links.forEach(l => {
+      if (drained.has(linkKey(l)) || l.a.s === "T7" || l.b.s === "T7") return;
+      (adj[l.a.s] = adj[l.a.s] || []).push(l.b.s); (adj[l.b.s] = adj[l.b.s] || []).push(l.a.s);
+    });
+    const dist = { [dst]: 0 }, q = [dst], out = [];
+    while (q.length) { const u = q.shift(); (adj[u] || []).forEach(v => { if (dist[v] === undefined) { dist[v] = dist[u] + 1; q.push(v); } }); }
+    if (dist[src] === undefined) return out;
+    (function walk(u, p) { if (u === dst) { out.push(p); return; } adj[u].forEach(v => { if (dist[v] === dist[u] - 1) walk(v, p.concat(v)); }); })(src, [src]);
+    return out;
+  }
+  // where a packet on this path really ends up: the points it visits, and "ok", "drop" or "loop"
+  function fate(path, idx) {
+    const pts = [T.pos[path[0]]], rowAt = e => rowsOf(e.s).filter(x => x.port === e.p)[0];
+    for (let i = 1; i < path.length; i++) {
+      const u = path[i - 1], v = path[i], l = T.links.filter(x => (x.a.s === u && x.b.s === v) || (x.a.s === v && x.b.s === u))[0];
+      if (revealed() && brokenKeys.has(linkKey(l))) {
+        const down = l.a.s === u, from = down ? l.a : l.b, kinds = truthOf(l.a).concat(truthOf(l.b)), r = rowAt(from), got = r && r.discovered !== "-" ? r.discovered.split(" ")[0] : null;
+        if (down && truthOf(l.a).indexOf("MISWIRED") >= 0) { pts.push(T.pos[got], T.pos[u], T.pos[got], T.pos[u], T.pos[got]); return { pts, end: "loop" }; }
+        const passes = kinds.indexOf("LINK_DOWN") >= 0 ? false :
+          truthOf(from).indexOf("MISWIRED") >= 0 ? got === v :              // a swapped pair of cables still reaches the same switch upwards
+          kinds.indexOf("ONE_WAY") >= 0 ? r.peer_hears !== "no" :           // only the dead direction loses packets
+          kinds.indexOf("HIGH_ERRORS") >= 0 ? idx % 2 === 0 : false;        // a noisy link corrupts some of them
+        if (!passes) { const a = T.pos[u], b = T.pos[v]; pts.push([(a[0] + b[0]) / 2, (a[1] + b[1]) / 2]); return { pts, end: "drop" }; }
+      }
+      pts.push(T.pos[v]);
+    }
+    return { pts, end: "ok" };
+  }
+  function traffic() {
+    stopTraffic();
+    if (REDUCED) return;
+    const svg = $("map"); svg.insertAdjacentHTML("beforeend", '<g class="fx"></g>');
+    const g = svg.querySelector(".fx"), later = (ms, fn) => fxTimers.push(setTimeout(fn, ms));
+    const mark = (p, cls, text, ms) => { g.insertAdjacentHTML("beforeend", '<text class="' + cls + '" x="' + p[0] + '" y="' + p[1] + '" text-anchor="middle">' + text + "</text>"); const t = g.lastChild; later(ms, () => t.remove()); };
+    const fly = (pts, cls, dur, at, done) => later(at, () => {
+      g.insertAdjacentHTML("beforeend", '<circle class="fx-pk ' + cls + '" r="4.5"><animateMotion begin="indefinite" dur="' + dur + 's" fill="freeze" path="M' + pts.map(p => p[0] + "," + p[1]).join(" L") + '"/></circle>');
+      const c = g.lastChild; try { c.firstChild.beginElement(); } catch (e) {}
+      later(dur * 1000, () => { c.remove(); if (done) done(); });
+    });
+    T.ALL.forEach((s, i) => { if (P.views[s]) fly([[863, 70], T.pos[s]], "lsd", 0.7, i * 40); });
+    PAIRS.forEach((p, k) => {
+      const ps = allPaths(p[0], p[1]), t0 = 1500 + k * 3000, a = T.pos[p[0]], b = T.pos[p[1]];
+      later(t0, () => { mark([a[0], a[1] - 20], "fx-tag", p[0] + " → " + p[1], 2800); mark([b[0], b[1] - 20], "fx-tag", "to " + p[1], 2800); });
+      if (!ps.length) { later(t0, () => mark([a[0], a[1] - 34], "fx-x", "no path", 2600)); return; }
+      ps.forEach((path, j) => {
+        const f = fate(path, j), end = f.pts[f.pts.length - 1];
+        fly(f.pts, "", 0.42 * (f.pts.length - 1), t0 + j * 110, f.end === "ok" ? null : () => mark([end[0], end[1] + 5], "fx-x", f.end === "loop" ? "↻" : "✕", 1300));
+      });
+    });
+  }
+
+  // ---------- your results (after REVEAL_AT) ----------
+  let resSig = null;
+  // the cards rise in the first time the part scrolls into view
+  if (window.IntersectionObserver) new IntersectionObserver((es, io) => { if (es.some(e => e.isIntersecting)) { $("partR").classList.add("seen"); io.disconnect(); } }, { threshold: 0.05 }).observe($("partR"));
+  else $("partR").classList.add("seen");
+  function renderResults() {
+    const show = revealed();
+    $("partR").hidden = !show;
+    if (!show) return;
+    const sig = JSON.stringify([diag, Array.from(drained), answers]);
+    if (sig === resSig) return;
+    resSig = sig;
+    const portText = k => k.replace(":", " ");
+    const faults = P.faults.map(f => {
+      const ports = Object.keys(P.truth).filter(k => P.truth[k].f === f.id), right = ports.filter(isRight);
+      const st = new Set(right.map(k => k.split(":")[0])).size >= 2 ? "found" : right.length ? "partly" : "missed";
+      return { f, ports, st };
+    });
+    const nFound = faults.filter(x => x.st === "found").length;
+    const dk = Object.keys(diag), nRight = dk.filter(isRight).length;
+    const falseAlarm = dk.filter(k => !P.truth[k] && diag[k] !== "OK");
+    const li = leftIn(), w = wasted();
+    const tile = (v, k, all) => "<div" + (all ? ' class="all"' : "") + "><dt>" + k + "</dt><dd>" + v + "</dd></div>";
+    $("resSum").innerHTML = tile(nFound + " / " + P.faults.length, "Faults found", nFound === P.faults.length) + tile(nRight + " / " + dk.length, "Diagnoses right") +
+      tile((brokenLinks.length - li.length) + " / " + brokenLinks.length, "Broken links drained") + tile(w.length, "Working links drained");
+    const WORD = { found: "Found", partly: "Partly", missed: "Missed" };
+    $("resFaults").innerHTML = faults.map(x => '<li class="res-' + x.st + '"><span class="res-st">' + WORD[x.st] + "</span><div><b>" + esc(x.f.title) + ".</b> " + esc(x.f.text) + ' <span class="fine">(' + esc(x.f.ref) + ')</span><ul class="res-ports">' +
+      x.ports.map(k => "<li><b>" + esc(portText(k)) + "</b> is " + accepted(k).map(a => LABELS[a]).join(" or ") + ". You: " + (diag[k] ? LABELS[diag[k]] + (isRight(k) ? " ✓" : " ✗") : "not diagnosed") + "</li>").join("") + "</ul></div></li>").join("");
+    $("resDrain").innerHTML = (li.length ? li.map(l => '<li class="bad">Left in routing. ' + effect(l) + "</li>").join("") : '<li class="good">Every broken link is drained.</li>') +
+      (w.length ? "<li>" + w.length + " working link" + (w.length === 1 ? "" : "s") + " drained, which only costs capacity: " + w.map(l => esc(linkText(l))).join(", ") + ".</li>" : '<li class="good">No working link is drained.</li>') +
+      (falseAlarm.length ? "<li>" + falseAlarm.length + " healthy port" + (falseAlarm.length === 1 ? "" : "s") + " diagnosed as faulty: " + falseAlarm.map(k => esc(portText(k))).join(", ") + ".</li>" : "");
+    const label = (q, v) => { const el = document.querySelector('input[name="' + q + '"][value="' + v + '"]'); return el ? el.parentNode.textContent.trim() : ""; };
+    $("resRc").innerHTML = ["q1", "q2"].map((q, i) => {
+      const ok = answers[q] === P.rc[q];
+      return '<li class="' + (ok ? "good" : "bad") + '"><b>Question ' + (i + 1) + ".</b> " + (answers[q] ? "You: " + esc(label(q, answers[q])) + (ok ? " ✓" : " ✗. Right answer: " + esc(label(q, P.rc[q])) + ".") : "Not answered. Right answer: " + esc(label(q, P.rc[q])) + ".") + "</li>";
+    }).join("");
+  }
+  function toggleDrain(k) {
+    const cut = !drained.has(k);
+    if (cut) drained.add(k); else drained.delete(k);
+    $("masterRes").hidden = true; touch(); refresh();
+    if (cut) pop('#map .cutmark[data-cut="' + k + '"]', "snip");
+  }
 
   // ---------- step 4: submit ----------
   function renderSubmit() {
@@ -212,7 +398,11 @@
     const hwMissing = HW.missing();
     $("doneList").innerHTML = item(nd > 0, nd + " of " + TOTAL_PORTS + " ports diagnosed") + item(drained.size > 0, drained.size + " link" + (drained.size === 1 ? "" : "s") + " drained") + item(answered, answered ? "Explain step (step 4): both answered" : "Explain step (step 4): not answered yet") +
       item(!hwMissing.length, hwMissing.length ? 'Questions <a href="#partC">1&ndash;3</a> not answered yet: ' + hwMissing.join(", ") : "Questions 1&ndash;3 answered");
-    if (submittedAt) say("Sent at " + new Date(submittedAt).toTimeString().slice(0, 5) + ": the game and questions 1–3. Thanks! You can change things and send again until the deadline.");
+    $("lastSent").textContent = !sentAt ? "" : "Last submitted " + when(sentAt) + ". " + (submittedAt ? "Nothing has changed since." : closed() ? "Changes made after that were not sent." : "You have changes that are not sent yet.");
+  }
+  function when(ts) {
+    const d = new Date(ts), hm = d.toTimeString().slice(0, 5);
+    return d.toDateString() === new Date().toDateString() ? "today at " + hm : "on " + d.toLocaleDateString("en-GB", { day: "numeric", month: "short" }) + " at " + hm;
   }
   function say(t) { $("submitMsg").textContent = t; }
 
@@ -222,10 +412,10 @@
     if (step === 0) renderCollect();
     if (step === 1) renderInspect();
     if (step === 2) renderDrain();
-    renderSubmit();
+    renderSubmit(); renderResults();
     renderMissions(); drawMap();
   }
-  function touch() { if (submittedAt) { submittedAt = null; say(""); } persist(); }
+  function touch() { if (submittedAt) { submittedAt = null; say(""); } $("resend").hidden = true; persist(); }
   // The game has four steps. "Next" after Explain scrolls down to Part C; the one Submit is the card at the bottom of the page.
   function goStep(n) {
     if (n >= 4) { openPart("partC"); $("partC").scrollIntoView({ behavior: "smooth", block: "start" }); return; }
@@ -238,17 +428,34 @@
     const rows = rowsOf(sw), first = rows.filter(r => !diag[sw + ":" + r.port])[0] || rows[0];
     selPort = first ? first.port : null;
     if (selPort) probed.add(sw + ":" + selPort);
-    persist(); refresh();
+    persist(); refresh(); centerOn(sw);
   }
+  // Narrow screens: the map shows the whole fabric by default; "Zoom in" makes it wide and scrollable, centred on the open switch.
+  function centerOn(sw) {
+    const wrap = document.querySelector(".map-wrap");
+    if (!wrap.classList.contains("zoomed") || !T.pos[sw]) return;
+    wrap.scrollLeft = T.pos[sw][0] / 960 * $("map").getBoundingClientRect().width - wrap.clientWidth / 2;
+  }
+  $("zoomBtn").addEventListener("click", () => {
+    const z = document.querySelector(".map-wrap").classList.toggle("zoomed");
+    $("zoomBtn").textContent = z ? "Show the whole map" : "Zoom in";
+    $("zoomBtn").setAttribute("aria-pressed", z);
+    $("zoomNote").textContent = z ? "Swipe the map sideways to see the rest." : "The whole fabric is shown. Pick a switch on the map or from the list below it.";
+    if (z && sel) centerOn(sel);
+  });
+  $("swPick").addEventListener("click", e => { const b = e.target.closest("[data-sw]"); if (b) openSwitch(b.getAttribute("data-sw")); });
   function selectPort(port) { selPort = port; probed.add(sel + ":" + port); refresh(); }
   function setDiag(label) {
     if (!sel || !selPort) return;
+    const was = diag[sel + ":" + selPort], stamped = selPort;
     diag[sel + ":" + selPort] = label; touch();
     // move on to the next port of this switch that has no diagnosis yet
     const rows = rowsOf(sel), i = rows.findIndex(r => r.port === selPort);
     const next = rows.slice(i + 1).concat(rows.slice(0, i)).filter(r => !diag[sel + ":" + r.port])[0];
     if (next) { selPort = next.port; probed.add(sel + ":" + next.port); }
+    else if (!was) { const sw = sel; flashSw = sw; setTimeout(() => { if (flashSw === sw) flashSw = null; }, 2900); }  // the last port of this switch
     refresh();
+    pop('#map .pt[data-port="' + stamped + '"]', "stamp"); pop('#portList [data-port="' + stamped + '"] .pl-dot', "stamp");
   }
 
   // ---------- events ----------
@@ -332,19 +539,62 @@
   // Missing answers only warn (they are listed in the Submit card); a partial failure says which part did not go through.
   const DEADLINE = Date.parse((window.MH_CONFIG || {}).DEADLINE || "");
   const closed = () => DEADLINE && Date.now() > DEADLINE;
-  async function submitAll() {
+  // What a Submit sends, kept after it succeeds so the next Submit can list what it would replace.
+  const snapshot = () => ({ diag: Object.assign({}, diag), drained: Array.from(drained).sort(), answers: { q1: answers.q1 || "", q2: answers.q2 || "" }, hw: HW.data(), email: $("nick").value.trim().toLowerCase() });
+  function changes(a, b) {
+    const out = [], add = (t, warn) => out.push([t, !!warn]), n = o => Object.keys(o).length, cnt = (x, y) => x + " → " + y;
+    const na = n(a.diag), nb = n(b.diag), edited = Object.keys(b.diag).filter(k => a.diag[k] && a.diag[k] !== b.diag[k]).length;
+    if (na !== nb) add("Ports diagnosed: " + cnt(na, nb), nb < na);
+    if (edited) add(edited + " diagnos" + (edited === 1 ? "is" : "es") + " changed");
+    if (a.drained.join() !== b.drained.join()) add(a.drained.length !== b.drained.length ? "Links drained: " + cnt(a.drained.length, b.drained.length) : "A different set of links is drained", b.drained.length < a.drained.length);
+    const rc = s => (s.answers.q1 ? 1 : 0) + (s.answers.q2 ? 1 : 0);
+    if (rc(a) !== rc(b)) add("Step 4 questions answered: " + cnt(rc(a), rc(b)), rc(b) < rc(a));
+    else if (a.answers.q1 !== b.answers.q1 || a.answers.q2 !== b.answers.q2) add("A step 4 answer changed");
+    const ha = a.hw || { place: {} }, hb = b.hw, placed = h => Object.keys(h.place || {}).filter(k => h.place[k]).length;
+    const moved = Object.keys(hb.place).filter(k => (ha.place || {})[k] && hb.place[k] && ha.place[k] !== hb.place[k]).length;
+    if (placed(ha) !== placed(hb)) add("Question 1, parts placed: " + cnt(placed(ha), placed(hb)), placed(hb) < placed(ha));
+    if (moved) add("Question 1: " + moved + " placement" + (moved === 1 ? "" : "s") + " changed");
+    const text = (label, ids) => {
+      const was = ids.map(i => (ha[i] || "").trim()).join("\n").trim(), is = ids.map(i => (hb[i] || "").trim()).join("\n").trim();
+      if (was && !is) add(label + " is now empty", true); else if (was !== is) add(label + (was ? " edited" : " added"));
+    };
+    text("Question 2", ["h1p1", "h1t1", "h1p2", "h1t2"]); text("Question 3", ["h1c"]);
+    if ((ha.hwName || "").trim() !== (hb.hwName || "").trim()) add("Name changed");
+    if (a.email && a.email !== b.email) add("Email changed from " + a.email + " to " + b.email + ". Questions 1–3 are stored per email, so the earlier answers stay under the old address.", true);
+    return out;
+  }
+  function askResend(list) {
+    $("resendT").innerHTML = "You already submitted <b>" + when(sentAt) + "</b>. Sending again replaces that submission." + (list ? " Since then:" : "");
+    $("resendList").innerHTML = (list || []).map(c => '<li class="' + (c[1] ? "warn" : "") + '">' + esc(c[0]) + "</li>").join("");
+    $("resend").hidden = false; say(""); $("resend").focus();
+  }
+  $("resendYes").addEventListener("click", () => submitAll(true));
+  $("resendNo").addEventListener("click", () => { $("resend").hidden = true; $("submitBtn").focus(); });
+
+  async function submitAll(confirmed) {
     if (closed()) { say("Submission closed on Sunday, Nov 15, at 13:00. Your work is still saved in this browser."); $("submitBtn").disabled = true; return; }
     nick = $("nick").value.trim(); persist();
+    if (!$("hwName").value.trim()) { say("Enter your name first."); $("hwName").focus(); return; }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(nick)) {
       say("Enter your email address first."); $("nick").focus(); return;
     }
+    // a second Submit replaces the first: say what changed and ask before sending (nothing changed: just send again)
+    if (sentAt && confirmed !== true) {
+      const list = sentSnap ? changes(sentSnap, snapshot()) : null;
+      if (!list || list.length) { askResend(list); return; }
+    }
+    $("resend").hidden = true;
     const busy = b => { $("submitBtn").disabled = b; };
     busy(true); say("Sending..."); saveTime(); showTime();
     const [work, hw] = await Promise.allSettled([
       window.MH.rpc("submit_work", { p_id: uid, p_nick: nick, p_diag: diag, p_drained: Array.from(drained), p_answers: Object.assign({}, answers, { activeSec }) }),
       HW.send(nick)
     ]);
-    if (work.status === "fulfilled" && hw.status === "fulfilled") { submittedAt = Date.now(); persist(); refresh(); }
+    if (work.status === "fulfilled" && hw.status === "fulfilled") {
+      submittedAt = sentAt = Date.now(); sentSnap = snapshot(); persist(); refresh();
+      say("Sent: the game and questions 1–3. Thanks! You can change things and send again until the deadline.");
+      $("submitBtn").classList.add("sent"); setTimeout(() => $("submitBtn").classList.remove("sent"), 1800);
+    }
     else {
       const ok = [], bad = [];
       (work.status === "fulfilled" ? ok : bad).push(work.status === "fulfilled" ? "the game" : "the game (" + work.reason.message + ")");
@@ -353,7 +603,9 @@
     }
     busy(false);
   }
-  $("submitBtn").addEventListener("click", submitAll);
+  $("submitBtn").addEventListener("click", () => submitAll(false));
+  // the results appear by themselves if the page is open when REVEAL_AT passes
+  if (REVEAL && !revealed()) { const t = setInterval(() => { if (revealed()) { clearInterval(t); renderResults(); } }, 30000); }
   if (closed()) { $("submitBtn").disabled = true; if (!submittedAt) say("Submission closed on Sunday, Nov 15, at 13:00."); }
   document.addEventListener("mh-hw-change", () => { touch(); renderMissions(); renderSubmit(); });
 

@@ -25,13 +25,13 @@
 <main class="console-main">
   <header class="brief" id="brief">
     <div class="brief-main">
-      <p class="lead"><b>It&rsquo;s <span id="nowIL">03:12</span> and JR-16 is dropping packets.</b> You&rsquo;re on call. Your only tool is the check that Google&rsquo;s Jupiter switches run on their own cables. Use it to find the five cables in the wrong ports.</p>
+      <p class="lead"><b>It&rsquo;s <span id="nowIL">03:12</span> and JR-16 is dropping packets.</b> You&rsquo;re on call. Your only tool is the check that Google&rsquo;s Jupiter switches run on their own cables.</p>
       <p class="fine">Three parts, in order:<br>
         <b>A</b> Read four short passages.<br>
         <b>B</b> Hunt the faults.<br>
         <b>C</b> Place Firepath, Google&rsquo;s control plane, on the SDN planes.<br>
-        One Submit, at the bottom of the page, sends B and C. It closes <b>Sunday, Nov 15, at 13:00</b>, and we go through the answers in class.<br>
-        Questions? Ask Shay Goldshmit or Alon Stolin.</p>
+        One Submit, at the bottom of the page, sends B and C. After the deadline this page shows which faults you found, and we go through the answers in class.
+      </p>
     </div>
     <!-- Decorative only: the five "?" are not placed on the network, so the picture gives nothing away about where the faults are. -->
     <figure class="brief-pic" aria-hidden="true">
@@ -91,7 +91,7 @@
         <div class="map-head"><b>The Plan:</b> <span class="fine">This map is the cluster config that every switch received as a static configuration (Section 5.3.1). Each line is a cable that <b><i>should</i></b> be there.</span></div>
         <div class="map-head"><b>Discovery Protocol:</b> <span class="fine">Open a switch to see what it really hears on the links (ND).</span></div>
         <div class="map-wrap"><svg id="map" viewBox="0 0 960 500" role="img" aria-label="Map of the JR-16 fabric"></svg></div>
-      <p class="fine swipe">Swipe the map sideways to see all of it.</p>
+        <p class="fine swipe"><button type="button" class="linkbtn" id="zoomBtn" aria-pressed="false">Zoom in</button> <span id="zoomNote">The whole fabric is shown. Pick a switch on the map or from the list below it.</span></p>
         <ul class="legend" id="legend">
           <li><i class="lg lg-unknown"></i>Not diagnosed</li>
           <li><i class="lg lg-half"></i>One end OK</li>
@@ -101,7 +101,7 @@
         </ul>
       </section>
 
-      <aside class="inspector" id="inspector" aria-live="polite">
+      <aside class="inspector" id="inspector">
         <!-- step 0: collect -->
         <div class="step" id="step0" hidden>
           <p class="step-k">Step 1 · Collect</p>
@@ -118,17 +118,19 @@
 
         <!-- step 1: inspect -->
         <div class="step" id="step1">
+          <!-- narrow screens only: every switch as a button, so nobody has to hit a small box on the map -->
+          <nav class="swpick" id="swPick" aria-label="Switches"></nav>
           <div class="empty" id="s1empty">
             <p class="step-k">Step 2 · Inspect</p>
             <h3>Pick a switch on the map</h3>
             <p>Each switch checks its cables with <b>Neighbor Discovery</b>: it knows from the plan who should be at the other end, and it listens for who really is.</p>
-            <p class="fine">Start anywhere. Spines are on top, ToR switches at the bottom.</p>
+            <p class="fine">Start anywhere. Spines are on top, ToR switches at the bottom (<code>u</code> = uplink to spine, <code>d</code> = downlink to ToR).</p>
           </div>
           <div id="s1dark" hidden>
             <p class="step-k">Step 2 · Inspect</p>
             <h3>T7 <span class="role">ToR switch</span></h3>
             <p class="mono term">&gt; ssh admin@T7.cpn<br>&gt; connection timed out<br>&gt; ping T7.cpn: 100% packet loss</p>
-            <p>This switch does not answer, so it has no port table. Open its neighbours (AG3, AG4) and look at the ports that face T7.</p>
+            <p>This switch does not answer, so it has no port table. Open its neighbors (AG3, AG4) and look at the ports that face T7.</p>
           </div>
           <div id="s1sw" hidden>
             <p class="step-k">Step 2 · Inspect</p>
@@ -152,10 +154,10 @@
                 <table class="how-tbl">
                   <thead><tr><th>If you see</th><th>Pick</th></tr></thead>
                   <tbody>
-                    <tr><td>PHY is DOWN</td><td><kbd>5</kbd><i style="--tc:#9AA7B2"></i>Link down</td></tr>
-                    <tr><td>PHY up, heard nothing</td><td><kbd>6</kbd><i style="--tc:#B58CFF"></i>Peer silent</td></tr>
+                    <tr><td>PHY is DOWN</td><td><kbd>5</kbd><i style="--tc:var(--c-down)"></i>Link down</td></tr>
+                    <tr><td>PHY up, heard nothing</td><td><kbd>6</kbd><i style="--tc:var(--c-silent)"></i>Peer silent</td></tr>
                     <tr><td>Heard a different port than the map</td><td><kbd>2</kbd><i style="--tc:var(--bad)"></i>Miswired</td></tr>
-                    <tr><td>Right peer, but it does not hear you</td><td><kbd>3</kbd><i style="--tc:#FF8C42"></i>One-way</td></tr>
+                    <tr><td>Right peer, but it does not hear you</td><td><kbd>3</kbd><i style="--tc:var(--c-oneway)"></i>One-way</td></tr>
                     <tr><td>Right peer both ways, high error rate</td><td><kbd>4</kbd><i style="--tc:var(--warn)"></i>High errors</td></tr>
                     <tr><td>None of these</td><td><kbd>1</kbd><i style="--tc:var(--ok)"></i>OK</td></tr>
                   </tbody>
@@ -176,7 +178,7 @@
           <h4 class="sub">Drained <span class="fine" id="drainCount"></span></h4>
           <ul class="flagged" id="drainList"></ul>
           <div class="row"><button class="btn" id="recomputeBtn" type="button">Recompute routes</button></div>
-          <div class="mres" id="masterRes" hidden></div>
+          <div class="mres" id="masterRes" aria-live="polite" hidden></div>
           <p class="fine">Draining a working link costs capacity. A broken link left in costs reliability, and a miswired one can cause forwarding loops (Section 5.2.1).</p>
         </div>
 
@@ -227,7 +229,7 @@
       <p class="fine">Your draft is saved in this browser while you type. You send it with the one <b>Submit</b> at the bottom of this page.</p>
       <form id="hwForm" novalidate>
         <div class="q" role="group" aria-labelledby="q1">
-          <p class="q-t" id="q1"><b>1.</b> Place each Firepath part on one SDN plane: data, control, management, or outside the SDN picture. All seven are described in Sections 5.1&ndash;5.3 of the paper.</p>
+          <p class="q-t" id="q1"><b>1.</b> Place each of the eight parts on one SDN plane: data, control or management. Pick &ldquo;Outside SDN&rdquo; for a part that does not fit any of the three. Some parts have more than one defensible answer: pick one and be ready to defend it in class. All eight appear in the four passages of Part A. The cluster border routers are the routers at the edge of the fabric that Section 5.2 mentions.</p>
           <div class="q1-wrap">
             <div class="hv hp" id="partsDiagram"></div>
             <div class="hw-grid" id="hwPlace"></div>
@@ -252,14 +254,34 @@
   <section class="part" id="partS" aria-labelledby="partSt">
     <div class="part-head"><span class="bpart-n" aria-hidden="true">&#10003;</span><h2 id="partSt">Submit</h2><span class="part-sub">Sends B and C together</span></div>
     <section class="card" id="submitCard" aria-label="Submit">
-      <p>One Submit sends the game and questions 1&ndash;3 together. It closes <b>Sunday, Nov 15, at 13:00</b>, and you can submit again to change things before then.</p>
+      <p>One Submit sends the game and questions 1&ndash;3 together. It closes <b>Sunday, Nov 15, at 13:00</b>, and you can submit again to change things before then. After it closes, your results appear below.</p>
       <ul class="done-list" id="doneList"></ul>
-      <div class="hw-row"><label for="hwName">Name</label><input id="hwName" type="text" maxlength="120" autocomplete="name"></div>
+      <div class="hw-row"><label for="hwName">Name</label><input id="hwName" type="text" maxlength="120" autocomplete="name" required></div>
       <div class="hw-row"><label for="nick">Email</label><input id="nick" type="email" maxlength="254" autocomplete="email" placeholder="name@example.com" required></div>
       <div class="hw-row"><label for="spent">Time spent</label><input id="spent" type="text" readonly tabindex="-1" aria-describedby="spentNote" value="less than 1 min"></div>
       <p class="fine" id="spentNote">The time you were active on this page. It is sent with your submission.</p>
       <div class="row"><button class="btn primary" id="submitBtn" type="button">Submit everything</button></div>
-      <p class="fine" id="submitMsg"></p>
+      <div class="resend" id="resend" role="group" aria-labelledby="resendT" tabindex="-1" hidden>
+        <p id="resendT"></p>
+        <ul id="resendList"></ul>
+        <div class="row"><button class="btn primary" id="resendYes" type="button">Replace my submission</button><button class="btn ghost" id="resendNo" type="button">Cancel</button></div>
+      </div>
+      <p class="fine" id="lastSent"></p>
+      <p class="fine" id="submitMsg" role="status"></p>
+    </section>
+  </section>
+
+  <!-- Shown only after REVEAL_AT in js/config.js (by default the deadline). Filled by js/student.js from the work saved in this browser. -->
+  <section class="part" id="partR" aria-labelledby="partRt" hidden>
+    <div class="part-head"><span class="bpart-n" aria-hidden="true">&#9733;</span><h2 id="partRt">Your results</h2><span class="part-sub">The five faults and what you did with them</span></div>
+    <section class="card" id="resultCard" aria-label="Your results">
+      <p class="fine">Computed in this browser from the work saved here. Questions 1&ndash;3 have no automatic check: we discuss them in class.</p>
+      <dl class="res-sum" id="resSum"></dl>
+      <ol class="res-faults" id="resFaults"></ol>
+      <h3 class="res-h">Routing</h3>
+      <ul class="res-list" id="resDrain"></ul>
+      <h3 class="res-h">Root-cause questions</h3>
+      <ul class="res-list" id="resRc"></ul>
     </section>
   </section>
 

@@ -11,12 +11,25 @@ The page has three parts and one Submit:
   1. **Collect**: the Firepath master gathers link state from every switch over the CPN.
   2. **Inspect**: open a switch, probe its ports (plan from the cluster config vs. what Neighbor
      Discovery heard, PHY state, error rate, whether the peer hears them) and give each port a diagnosis.
-  3. **Drain**: take broken links out of routing, recompute, and see how many equal-cost paths remain.
+  3. **Drain**: take broken links out of routing, recompute, and see what it costs: links and equal-cost
+     paths that remain, ToRs left with one uplink or none, and drains that do not match the student's own diagnoses.
   4. **Explain**: two root-cause questions (T7's software crashed; a one-way link).
 - **C. Questions 1-3**: place the parts of Firepath on the SDN planes and explain.
 
 The switch T7 is dark (its software crashed), so it has no port table: its neighbours' ports are the clue.
-The page gives no feedback while students play; the answers are discussed in class.
+Until `REVEAL_AT` in `site/js/config.js` (by default the deadline) the page gives no hint about what is right.
+After it, a **Your results** part appears under Submit: which of the five faults the student found, port by port,
+which broken links they left in routing and what each one does to traffic, which working links they drained, and
+the two root-cause answers. It is computed in the browser from the work saved there. Questions 1-3 are not checked.
+To keep the answers for the class, set `REVEAL_AT` to a later time.
+
+Pressing **Recompute routes** also plays traffic on the map: the master sends the new link state, then one packet
+takes each equal-cost path for three ToR pairs, so a drain visibly thins the paths. Before `REVEAL_AT` every packet
+follows the plan. After it, a packet that meets a broken link left in routing is dropped there (✕), or bounces
+between two switches if the link is miswired (↻). All motion is skipped under `prefers-reduced-motion`.
+
+On a phone the map fits the screen as an overview (**Zoom in** makes it wide and scrollable), and step 2 lists
+every switch as a button, so nothing depends on tapping a small box on the map.
 
 | Path | What it is |
 |---|---|
@@ -42,7 +55,10 @@ under `/preview/` for review before merging.
 
 - Work is kept in the browser (`localStorage`) while the student plays and types. One **Submit** at the
   bottom of the page sends the game (`submit_work`) and questions 1-3 (`submit_homework`) together,
-  with one name and email (the email is stored in the `nick` column of `submissions`).
+  with one name and email, both required (the email is stored in the `nick` column of `submissions`).
+- A second Submit replaces the first. The page shows when the last one was sent, and before sending again it
+  lists what changed since (fewer diagnoses, an answer that is now empty, a different email) and asks to confirm.
+  It compares with the copy kept in this browser, so it cannot warn about a submission made from another device.
 - The page keeps the student's **active time** (tab visible and some click, key or scroll in the last
   minute; summed over visits in `localStorage`). It is shown read-only as "Time spent" in the Submit card and
   sent in seconds as `answers.activeSec` of `submit_work`, so there is no database change. `instructor.html`
@@ -52,7 +68,11 @@ under `/preview/` for review before merging.
   `site/js/config.js` and the timestamp in both `supabase/*.sql` files, then run the SQL again.
 - Run `supabase/submissions.sql` and `supabase/homework.sql` in the Supabase SQL Editor (safe to run again).
 - `site/instructor.html` shows class results. It asks for the instructor key stored in `settings`
-  (`k = 'instructor_key'`).
+  (`k = 'instructor_key'`). `submissions.sql` creates that table; set the key once with the `insert` in its comment.
+  The page shows summary numbers, how many students found each fault, the Question 1 placements as a heat table
+  with an agreement column (low agreement marks a part worth discussing), which parts were named hardest in
+  Question 2, and one sortable Students table that matches the game and questions 1-3 by email and downloads as CSV.
+  It can reload itself every 30 seconds, and it remembers the key for the open tab only.
 - `site/homework.html` only redirects to the game.
 
 ## In class (suggested)

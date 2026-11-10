@@ -16,15 +16,19 @@
 <main>
   <section class="card">
     <h2>Class results</h2>
-    <form id="keyForm" class="join"><label for="key">Instructor key</label><input id="key" type="password" autocomplete="off" required><button class="btn primary" type="submit">Load</button><button class="btn" id="reload" type="button" hidden>Reload</button></form>
+    <form id="keyForm" class="join"><label for="key">Instructor key</label><input id="key" type="password" autocomplete="off" required><button class="btn primary" type="submit">Load</button><button class="btn" id="reload" type="button" hidden>Reload</button><label class="auto" id="autoWrap" hidden><input type="checkbox" id="auto"> Reload every 30 s</label></form>
     <p class="err" id="err" hidden></p>
     <p class="fine" id="sum"></p>
+    <dl class="res-sum six" id="tiles" hidden></dl>
   </section>
   <section class="card" id="hwCard" hidden>
     <h2>Homework: Jupiter and SDN</h2>
     <p class="fine" id="hwSum"></p>
     <h3>Question 1: how the class placed each part</h3>
     <div class="tbl-wrap"><table class="ports" id="hwPlaceTbl"></table></div>
+    <p class="fine">Darker cells have more students. &ldquo;Agreement&rdquo; is the share of the most popular choice: a low number is a part worth discussing.</p>
+    <h3>Question 2: which parts the class found hardest</h3>
+    <div id="hwHard"></div>
     <h3>All answers</h3>
     <div class="tbl-wrap"><table class="ports hwt" id="hwAnsTbl"></table></div>
   </section>
@@ -39,7 +43,7 @@
   <section class="card" id="wrongCard" hidden><h2>Ports students got wrong most often</h2><div class="tbl-wrap"><table class="ports" id="wrongTbl"></table></div></section>
   <section class="card" id="rcCard2" hidden><h2>Root cause answers</h2><div id="rcBars"></div></section>
   <section class="card" id="masterCard" hidden><h2>Firepath master: links drained</h2><p class="fine">Broken links are marked. A student drained everything correctly when exactly the 8 broken links are out.</p><div class="tbl-wrap"><table class="ports" id="drainTbl"></table></div></section>
-  <section class="card" id="studentsCard" hidden><h2>Students</h2><div class="tbl-wrap"><table class="ports" id="stuTbl"></table></div></section>
+  <section class="card" id="studentsCard" hidden><h2>Students</h2><p class="fine">The game and questions 1&ndash;3 are matched by email. Click a column heading to sort. <button class="linkbtn" id="csvBtn" type="button">Download as CSV</button></p><div class="tbl-wrap"><table class="ports" id="stuTbl"></table></div></section>
 </main>
 <script src="js/config.js"></script>
 <script src="js/api.js"></script>

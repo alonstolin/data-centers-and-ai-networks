@@ -1,6 +1,14 @@
 -- Miswire Hunt (single-player): store what each student submitted. The nick column holds the student's email.
 -- Run once in the Supabase SQL Editor. Students can only call submit_work();
 -- reading everything needs the instructor key (the 'instructor_key' row in the settings table).
+-- The instructor key lives in this table. Nobody can read it through the API: only the functions below look at it.
+-- Set the key once (pick your own long random value):
+--   insert into settings(k, v) values ('instructor_key', '...') on conflict (k) do update set v = excluded.v;
+-- Without that row every key is refused.
+create table if not exists settings (k text primary key, v text not null);
+alter table settings enable row level security;
+revoke all on settings from anon, authenticated;
+
 create table if not exists submissions (
   id text primary key,
   nick text,

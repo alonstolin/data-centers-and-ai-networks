@@ -4,9 +4,9 @@
 (function () {
   const $ = id => document.getElementById(id);
   const KEY = "mh-homework-v1";
-  const PARTS = ["Firepath master", "Firepath client", "Link State Database (LSD)", "Control Plane Network (CPN)", "Neighbor Discovery (ND)", "BGP at the cluster border routers (CBRs)", "Cluster config"];
+  const PARTS = ["Firepath master", "Firepath client", "Link State Database (LSD)", "Control Plane Network (CPN)", "Neighbor Discovery (ND)", "BGP at the cluster border routers (CBRs)", "Cluster config", "Forwarding table"];
   const DESC = ["The elected node that collects link state and redistributes it", "The process running on every fabric switch", "The versioned topology state the master sends to clients",
-    "The out-of-band network the master and clients talk over", "The liveness and peer-correctness check on each link", "Route exchange at the edge of the fabric", "The static topology of the whole fabric, loaded at startup"];
+    "The out-of-band network the master and clients talk over", "The liveness and peer-correctness check on each link", "Route exchange at the edge of the fabric", "The static topology of the whole fabric, loaded at startup", "The table in each switch that every packet is looked up in"];
   const SHORT = { data: "Data", control: "Control", management: "Management", outside: "Outside SDN" };
   const PLANES = [["", "Choose..."], ["data", "Data plane"], ["control", "Control plane"], ["management", "Management plane"], ["outside", "Outside the SDN picture"]];
   const store = { get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} } };
@@ -31,6 +31,8 @@
   $("hwForm").addEventListener("submit", e => e.preventDefault());
 
   window.MH_HW = {
+    // the current draft (placements, the two "hardest" answers, question 3, the name)
+    data: collect,
     // which of questions 1-3 still have no answer
     missing() {
       const o = collect(), m = [];

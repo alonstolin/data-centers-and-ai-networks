@@ -17,7 +17,7 @@
   const ORDER = { unknown: 0, half: 1, verified: 2, hidden: 3, suspect: 4, confirmed: 5, drained: 6 };
 
 
-  const PCOL = { OK: "var(--ok)", MISWIRED: "var(--bad)", ONE_WAY: "#FF8C42", HIGH_ERRORS: "var(--warn)", LINK_DOWN: "#9AA7B2", PEER_SILENT: "#B58CFF" };
+  const PCOL = { OK: "var(--ok)", MISWIRED: "var(--bad)", ONE_WAY: "var(--c-oneway)", HIGH_ERRORS: "var(--warn)", LINK_DOWN: "var(--c-down)", PEER_SILENT: "var(--c-silent)" };
   const SYM = { OK: "✓", MISWIRED: "≠", ONE_WAY: "→", HIGH_ERRORS: "!", LINK_DOWN: "✕", PEER_SILENT: "?" };
   const swOf = t => (t && t !== "-" ? t.split(" ")[0] : null);
 
@@ -91,7 +91,7 @@
     if (o.drained) o.drained.forEach(k => {
       const [a, b] = k.split("|"); if (!P[a] || !P[b]) return;
       const mx = (P[a][0] + P[b][0]) / 2, my = ((P[a][1] + 16) + (P[b][1] - (b.startsWith("T") ? 12 : 16))) / 2;
-      h += '<g class="cutmark"><circle cx="' + mx + '" cy="' + my + '" r="8"/><text x="' + mx + '" y="' + (my + 4) + '" text-anchor="middle">\u2715</text></g>';
+      h += '<g class="cutmark" data-cut="' + k + '"><circle cx="' + mx + '" cy="' + my + '" r="8"/><text x="' + mx + '" y="' + (my + 4) + '" text-anchor="middle">\u2715</text></g>';
     });
     if (o.master) {
       h += '<line class="cpn" x1="800" y1="52" x2="780" y2="52"/><g class="nd nd-master' + (o.masterSel ? " nd-me" : "") + '" data-sw="MASTER"><rect x="808" y="34" width="110" height="36" rx="5"/><text x="863" y="49" text-anchor="middle">MASTER</text><text class="sub" x="863" y="63" text-anchor="middle">Firepath</text></g>' +
