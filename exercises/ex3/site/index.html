@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Miswire Hunt</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" media="print" onload="this.media='all'" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%230A7F77%22/%3E%3Cpath d=%22M6 22V10l5 8 5-8v12M20 10h6M23 10v12%22 stroke=%22white%22 stroke-width=%223%22 fill=%22none%22/%3E%3C/svg%3E">
 <link rel="stylesheet" href="style.css">
 <script src="js/theme.js"></script>
@@ -14,7 +14,6 @@
 <div class="topbar">
   <div class="topbar-in">
     <span class="brand"><i class="led"></i>Miswire Hunt <small>JR-16 fabric bring-up</small></span>
-    <a class="pagelink" href="homework.html">Homework</a>
     <nav class="missions" id="missions" aria-label="Mission steps">
       <button type="button" class="ms" data-step="0"><span class="ms-n">1</span><span class="ms-t">Collect</span><span class="ms-v" id="m0v">0 / 16</span></button>
       <button type="button" class="ms" data-step="1"><span class="ms-n">2</span><span class="ms-t">Inspect</span><span class="ms-v" id="m1v">0 / 62</span></button>
@@ -28,7 +27,7 @@
 
 <main class="console-main">
   <div class="brief" id="brief">
-    <p><b>Five hidden faults</b> are somewhere in this 16-switch fabric. Work through the five steps above. There is no feedback while you play: your work is saved in this browser, you send it at step 5, and we go through the answers in class. <button type="button" class="linkbtn" id="paperBtn">What to read in the paper</button></p>
+    <p><b>Five hidden faults</b> are somewhere in this 16-switch fabric. Work through the five steps above. There is no feedback while you play: your work is saved in this browser, you send it at step 5, and we go through the answers in class. Then answer <a href="#part1">questions 1a&ndash;1c</a> below the game. <b>Both are due Sunday, Nov 15, at 13:00</b>, one hour before class. <button type="button" class="linkbtn" id="paperBtn">What to read in the paper</button></p>
   </div>
 
   <div class="console">
@@ -193,23 +192,54 @@
     <p class="fine">Clippings from A. Singh et al., SIGCOMM &rsquo;15 (pages 192-194). Highlights are ours.</p>
   </details>
 
-  <section class="card" id="planeCard">
-    <h2>Bonus: where does the control live?</h2>
-    <p class="fine" id="planeLock">Optional practice.</p>
-    <div id="planeBody" hidden>
-      <p>Software-defined networking (SDN) moves forwarding decisions out of the individual switches and into software that sees the whole network. It uses three terms, the <b>planes</b>:</p>
-      <ul class="pl-def">
-        <li><b>Data plane.</b> Forwards each packet by looking it up in a table in the switch hardware.</li>
-        <li><b>Control plane.</b> Decides what goes into those tables, for example by computing shortest paths.</li>
-        <li><b>Management plane.</b> Configures, monitors and upgrades the devices.</li>
-      </ul>
-      <p>Google built its own control plane, <b>Firepath</b>, long before &ldquo;SDN&rdquo; was a common term. Place each of its parts on a plane. You get an answer right away, and there is nothing to submit.</p>
-      <p class="fine" id="planeCount">0 of 7 placed</p>
-      <ol class="pl-list" id="planeList"></ol>
-      <div class="pl-done" id="planeDone" hidden>
-        <b>Look at the split.</b> The master holds the topology for the whole fabric, but each client computes its own forwarding table. In a textbook OpenFlow design the controller would do both and install ready-made entries. So Firepath is centralized in what it <i>knows</i> and distributed in what it <i>computes</i>. <span class="ref">(Section 5.2.2)</span>
-      </div>
-    </div>
+  <section class="card hw-in-game" id="part1">
+    <h2>Questions 1a&ndash;1c: Firepath on the SDN planes <span class="fine">(about 15 minutes, with their own Submit button)</span></h2>
+    <p>Software-defined networking (SDN) moves forwarding decisions out of the individual switches and into software that sees the whole network. It uses three terms, the <b>planes</b>:</p>
+    <ul class="pl-def">
+      <li><b>Data plane.</b> Forwards each packet by looking it up in a table in the switch hardware.</li>
+      <li><b>Control plane.</b> Decides what goes into those tables, for example by computing shortest paths.</li>
+      <li><b>Management plane.</b> Configures, monitors and upgrades the devices.</li>
+    </ul>
+    <p>Traditional networks run the control plane on every switch: each one discovers its neighbors, exchanges routing messages (OSPF, IS-IS, BGP) and computes its own tables. SDN, as OpenFlow defined it, moves the control plane to a logically centralized controller, which computes the forwarding entries and installs them in each switch&rsquo;s flow table. <span class="fine">(N. McKeown et al., &ldquo;OpenFlow: Enabling Innovation in Campus Networks,&rdquo; SIGCOMM CCR 38(2), 2008; reference 18 in Jupiter.)</span></p>
+    <p>Google built its own control plane, <b>Firepath</b>, long before &ldquo;SDN&rdquo; was a common term. You just played its master. Now place its parts on the planes.</p>
+    <p><b>1a.</b> Place each Firepath part on one SDN plane: data, control, management, or outside the SDN picture. All seven are described in Sections 5.1&ndash;5.3 of the paper.</p>
+    <div class="hv hp" id="partsDiagram"></div>
+    <div class="tbl-wrap"><table class="ports hwt" id="partsTable">
+      <thead><tr><th>#</th><th>Part</th><th>What the paper calls it</th></tr></thead>
+      <tbody>
+        <tr data-part="1"><td>1</td><td>Firepath master</td><td>The elected node that collects link state and redistributes it</td></tr>
+        <tr data-part="2"><td>2</td><td>Firepath client</td><td>The process running on every fabric switch</td></tr>
+        <tr data-part="3"><td>3</td><td>Link State Database (LSD)</td><td>The versioned topology state the master sends to clients</td></tr>
+        <tr data-part="4"><td>4</td><td>Control Plane Network (CPN)</td><td>The out-of-band network the master and clients talk over</td></tr>
+        <tr data-part="5"><td>5</td><td>Neighbor Discovery (ND)</td><td>The liveness and peer-correctness check on each link</td></tr>
+        <tr data-part="6"><td>6</td><td>BGP at the cluster border routers (CBRs)</td><td>Route exchange at the edge of the fabric</td></tr>
+        <tr data-part="7"><td>7</td><td>Cluster config</td><td>The static topology of the whole fabric, loaded at startup</td></tr>
+      </tbody>
+    </table></div>
+    <p><b>1b.</b> Pick the two placements you found hardest and explain each in one or two sentences.</p>
+    <p><b>1c.</b> Name one thing Firepath does that a textbook OpenFlow controller would not, and give the section number.</p>
+
+    <h3 class="sub">Your answers</h3>
+    <p class="fine">Your draft is saved in this browser while you type. Press <b>Submit</b> at the bottom. It closes <b>Sunday, Nov 15, at 13:00</b>. You can submit again to change your answers before then.</p>
+    <form id="hwForm" novalidate>
+      <fieldset><legend>You</legend>
+        <div class="hw-row"><label for="hwName">Name</label><input id="hwName" type="text" maxlength="120" autocomplete="name"></div>
+        <div class="hw-row"><label for="hwEmail">Email</label><input id="hwEmail" type="email" maxlength="254" autocomplete="email" placeholder="name@example.com" required></div>
+      </fieldset>
+      <fieldset><legend>1a. Place each part on one plane</legend>
+        <div class="hw-grid" id="hwPlace"></div>
+      </fieldset>
+      <fieldset><legend>1b. The two placements you found hardest</legend>
+        <div class="hw-hard">
+          <div class="hw-hcard"><div class="hw-hhead"><b>Hardest #1</b><select id="h1p1" aria-label="Part for hardest placement 1"></select></div><textarea id="h1t1" rows="3" maxlength="1500" placeholder="Why was it hard? One or two sentences."></textarea></div>
+          <div class="hw-hcard"><div class="hw-hhead"><b>Hardest #2</b><select id="h1p2" aria-label="Part for hardest placement 2"></select></div><textarea id="h1t2" rows="3" maxlength="1500" placeholder="Why was it hard? One or two sentences."></textarea></div>
+        </div>
+      </fieldset>
+      <fieldset><legend>1c. One thing Firepath does that a textbook OpenFlow controller would not (with the section number)</legend>
+        <textarea id="h1c" rows="3" maxlength="1500"></textarea>
+      </fieldset>
+      <div class="row"><button class="btn primary" id="hwSubmit" type="submit">Submit answers 1a&ndash;1c</button><span class="fine" id="hwMsg"></span></div>
+    </form>
   </section>
 
   <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
@@ -220,7 +250,8 @@
 <script src="js/puzzle.js"></script>
 <script src="js/topology.js"></script>
 <script src="js/map.js"></script>
-<script src="js/planes.js"></script>
+<script src="js/homework.js"></script>
+<script src="js/homework-form.js"></script>
 <script src="js/student.js"></script>
 </body>
 </html>

@@ -1,4 +1,5 @@
-// The homework answer form: the draft lives in localStorage, Submit sends it to Supabase (submit_homework).
+// Questions 1a-1c under the game: the draft lives in localStorage, Submit sends it to Supabase (submit_homework).
+// Part 2 (the A/B/C position) is done in class, so choice/why/change are no longer sent.
 (function () {
   const $ = id => document.getElementById(id);
   const KEY = "mh-homework-v1";
@@ -13,14 +14,13 @@
     PARTS.map((p, i) => '<div class="hwp-row" role="radiogroup" aria-label="' + p + '"><span class="hwp-name"><span class="hw-pn">' + (i + 1) + "</span>" + p + "</span>" +
       PLANES.slice(1).map(x => '<label class="hwp-cell" title="' + x[1] + '"><input type="radio" name="hp' + (i + 1) + '" value="' + x[0] + '"' + (d.place[i + 1] === x[0] ? " checked" : "") + '><span class="hwp-dot"></span></label>').join("") + "</div>").join("");
   ["h1p1", "h1p2"].forEach(id => { $(id).innerHTML = opt("", "Choose...", !d[id]) + PARTS.map((p, i) => opt(String(i + 1), (i + 1) + ". " + p, d[id] === String(i + 1))).join(""); });
-  const TEXT = ["hwName", "hwEmail", "h1t1", "h1t2", "h1c", "h2b", "h2c"];
+  const TEXT = ["hwName", "hwEmail", "h1t1", "h1t2", "h1c"];
   TEXT.forEach(id => { if (d[id]) $(id).value = d[id]; });
-  if (d.h2a) { const r = document.querySelector('input[name="h2a"][value="' + d.h2a + '"]'); if (r) r.checked = true; }
+  if (!d.hwEmail) { try { const g = JSON.parse(store.get("mh-solo-v2") || "{}"); if (g && g.nick) $("hwEmail").value = g.nick; } catch (e) {} }
   function collect() {
     const o = { place: {} };
     PARTS.forEach((p, i) => { const r = document.querySelector('input[name="hp' + (i + 1) + '"]:checked'); o.place[i + 1] = r ? r.value : ""; });
     ["h1p1", "h1p2"].concat(TEXT).forEach(id => { o[id] = $(id).value; });
-    const r = document.querySelector('input[name="h2a"]:checked'); o.h2a = r ? r.value : "";
     return o;
   }
   $("hwForm").addEventListener("input", () => { d = collect(); store.set(KEY, JSON.stringify(d)); $("hwMsg").textContent = ""; });
@@ -30,9 +30,8 @@
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { $("hwMsg").textContent = "Enter your email address first."; $("hwEmail").focus(); return; }
     const missing = [];
     if (PARTS.some((p, i) => !o.place[i + 1])) missing.push("1a");
-    if (!o.h2a) missing.push("2a");
     $("hwSubmit").disabled = true; $("hwMsg").textContent = "Sending...";
-    const answers = { place: o.place, hard: [{ part: o.h1p1, text: o.h1t1 }, { part: o.h1p2, text: o.h1t2 }], diff: o.h1c, choice: o.h2a, why: o.h2b, change: o.h2c };
+    const answers = { place: o.place, hard: [{ part: o.h1p1, text: o.h1t1 }, { part: o.h1p2, text: o.h1t2 }], diff: o.h1c };
     try {
       await window.MH.rpc("submit_homework", { p_email: email, p_name: o.hwName, p_answers: answers });
       $("hwMsg").textContent = "Sent at " + new Date().toTimeString().slice(0, 5) + (missing.length ? " (not answered yet: " + missing.join(", ") + ")" : "") + ". Thanks! You can change your answers and send again until the deadline.";

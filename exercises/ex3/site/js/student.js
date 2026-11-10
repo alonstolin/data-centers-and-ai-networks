@@ -205,7 +205,6 @@
     if (step === 2) renderDrain();
     if (step === 4) renderSubmit();
     renderMissions(); drawMap();
-    window.MH_PLANES.update(true, true);
   }
   function touch() { if (submittedAt) { submittedAt = null; $("submitMsg").textContent = ""; } persist(); }
   function goStep(n) { step = Math.max(0, Math.min(4, n)); persist(); refresh(); }

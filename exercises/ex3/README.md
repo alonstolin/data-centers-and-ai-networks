@@ -53,6 +53,6 @@ under `/preview/` for review before merging.
 
 The page is a console: the map on the left, an inspector on the right, and four mission steps in the top bar (Inspect, Drain, Explain, Submit). In Inspect, picking a diagnosis moves on to the next port of the open switch; keys 1-6 pick a diagnosis.
 
-## Homework page
+## Homework (questions 1a-1c)
 
-`site/homework.html` is the Unit 3 homework (Jupiter and SDN). It has two visuals (a diagram of the Firepath parts that reacts to the table, and an animation of what happens when a link fails under options A, B and C) and an answer form that replaces the Google Form. Answers go to Supabase (`supabase/homework.sql`, run once) and appear on `instructor.html`: the A/B/C tally (answers after Sun Nov 15, 13:00 Israel time are marked late and not counted), the 1a placements, and every written answer.
+The Unit 3 homework is the game plus questions 1a-1c, which sit in a card under the game in `site/index.html` (they replaced the instant-feedback "Bonus" planes card and `planes.js`). The card has a diagram of the Firepath parts that reacts to the table (`js/homework.js`) and an answer form (`js/homework-form.js`) with its own Submit button. Answers go to Supabase through `submit_homework` (`supabase/homework.sql`, run once) and appear on `instructor.html` (the 1a placements and the written answers). Part 2 (the A/B/C position) moved to the in-class page, so the A/B/C tally on `instructor.html` stays empty. `site/homework.html` now only redirects to the game.
