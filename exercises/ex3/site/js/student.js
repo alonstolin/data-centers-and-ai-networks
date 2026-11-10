@@ -65,6 +65,15 @@
     $("nextBtn").textContent = ["Next: inspect switches →", "Next: drain links →", "Next: explain →", "Next: questions 1–3 ↓"][step] || "";
   }
 
+  // ---------- intro ----------
+  // the little picture of the fabric next to the intro: the map's own drawing, without labels, racks or tags
+  (function introPicture() {
+    const svg = $("introMap");
+    render(svg, { latest: {}, reported: new Set(), confirmed: new Set(), flags: {}, myflags: [], me: null, flash: new Set(), selPair: null, probePair: null, panel: null, master: false, masterSel: false, drained: new Set() });
+    svg.setAttribute("viewBox", "70 22 850 340");
+    svg.querySelectorAll(".rack, .tier, .blk, .hit, title").forEach(e => e.remove());
+  })();
+
   // ---------- step 0: collect link state over the CPN ----------
   const portUp = r => r.phy === "UP" && r.discovered === r.expected && r.peer_hears === "yes";
   function endState(e) { const r = rowsOf(e.s).filter(x => x.port === e.p)[0]; return !P.views[e.s] ? "no report" : r && portUp(r) ? "UP" : "DOWN"; }

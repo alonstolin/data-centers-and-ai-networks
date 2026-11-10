@@ -24,7 +24,20 @@
 
 <main class="console-main">
   <header class="brief" id="brief">
-    <p class="fine">Do A, B and C in order. One Submit, at the bottom of the page, sends B and C. We go through the answers in class.</p>
+    <div class="brief-main">
+      <p class="lead"><b>It&rsquo;s <span id="nowIL">03:12</span> and JR-16 is dropping packets.</b> You&rsquo;re on call. Your only tool is the check that Google&rsquo;s Jupiter switches run on their own cables. Use it to find the five cables in the wrong ports.</p>
+      <p class="fine">Three parts, in order:<br>
+        <b>A</b> Read four short passages.<br>
+        <b>B</b> Hunt the faults.<br>
+        <b>C</b> Place Firepath, Google&rsquo;s control plane, on the SDN planes.<br>
+        One Submit, at the bottom of the page, sends B and C. It closes <b>Sunday, Nov 15, at 13:00</b>, and we go through the answers in class.<br>
+        Questions? Ask Shay Goldshmit or Alon Stolin.</p>
+    </div>
+    <!-- Decorative only: the five "?" are not placed on the network, so the picture gives nothing away about where the faults are. -->
+    <figure class="brief-pic" aria-hidden="true">
+      <svg id="introMap" viewBox="70 22 850 340"></svg>
+      <figcaption><span class="q5"><i>?</i><i>?</i><i>?</i><i>?</i><i>?</i></span>five hidden faults</figcaption>
+    </figure>
   </header>
 
   <details class="part" id="paperBox">
@@ -255,8 +268,22 @@
     <img id="clipModalImg" alt="">
     <p class="clip-cap" id="clipModalCap"></p>
   </dialog>
-  <footer class="fine">Based on A. Singh et al., <a href="https://github.com/shaygol/data-centers-and-ai-networks/blob/main/articles/Jupiter%20Rising%20-%20Decade%20of%20Clos%20Topologies%20in%20Google%20Datacenter%20Network_v2.pdf" target="_blank" rel="noopener">&ldquo;Jupiter Rising&rdquo;</a>, SIGCOMM &rsquo;15, Sections 5.2, 5.2.1, 5.2.2 and 5.3.1. The JR-16 fabric and its faults are made up for this exercise.</footer>
+  <footer class="fine">Exercise by Shay Goldshmit and Alon Stolin. Based on A. Singh et al., <a href="https://github.com/shaygol/data-centers-and-ai-networks/blob/main/articles/Jupiter%20Rising%20-%20Decade%20of%20Clos%20Topologies%20in%20Google%20Datacenter%20Network_v2.pdf" target="_blank" rel="noopener">&ldquo;Jupiter Rising&rdquo;</a>, SIGCOMM &rsquo;15, Sections 5.2, 5.2.1, 5.2.2 and 5.3.1. The JR-16 fabric and its faults are made up for this exercise.</footer>
 </main>
+<script>
+// Intro clock: current Israel time, hours and minutes only. Falls back to the static text.
+(function () {
+  var el = document.getElementById("nowIL");
+  if (!el) return;
+  function tick() {
+    try {
+      el.textContent = new Intl.DateTimeFormat("en-GB", { timeZone: "Asia/Jerusalem", hour: "2-digit", minute: "2-digit", hour12: false }).format(new Date());
+    } catch (e) {}
+  }
+  tick();
+  setInterval(tick, 15000);
+})();
+</script>
 <script src="js/config.js"></script>
 <script src="js/api.js"></script>
 <script src="js/puzzle.js"></script>

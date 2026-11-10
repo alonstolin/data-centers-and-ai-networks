@@ -867,3 +867,29 @@ details.part[open] .part-chev { transform: rotate(-135deg) translate(-2px, -2px)
 #submitCard input[readonly] { background: var(--panel2); color: var(--muted); border-style: dashed; cursor: default; }
 #submitCard input[readonly]:focus { outline: none; }
 #spentNote { margin: 2px 0 8px; }
+/* the intro at the top of the page: lead text and a small picture of the fabric */
+.brief { max-width: none; display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 14px 26px; align-items: center; }
+.brief-main { border-left: 4px solid var(--accent); padding: 2px 0 2px 14px; display: grid; gap: 6px; max-width: 75ch; }
+.brief .lead { font-size: 1.08rem; line-height: 1.5; color: var(--ink); }
+.brief .lead b { font-weight: 700; }
+.brief .fine { color: var(--soft); font-size: 0.9rem; }
+.brief .fine b { color: var(--ink); }
+.brief-pic { margin: 0; width: 330px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 8px 10px 7px; }
+.brief-pic svg { width: 100%; height: auto; display: block; pointer-events: none; }
+.brief-pic .nd text, .brief-pic .you { display: none; }
+.brief-pic figcaption { display: flex; align-items: center; gap: 8px; margin-top: 5px; font: 600 0.68rem var(--mono); letter-spacing: .07em; text-transform: uppercase; color: var(--muted); }
+.q5 { display: inline-flex; gap: 3px; }
+.q5 i { font-style: normal; width: 18px; height: 18px; border-radius: 50%; display: grid; place-items: center; font: 700 0.72rem var(--sans); background: var(--warn); color: var(--on-warn); animation: qpulse 2.4s ease-in-out infinite; }
+.q5 i:nth-child(2) { animation-delay: .25s; } .q5 i:nth-child(3) { animation-delay: .5s; } .q5 i:nth-child(4) { animation-delay: .75s; } .q5 i:nth-child(5) { animation-delay: 1s; }
+@keyframes qpulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.2); } }
+@media (prefers-reduced-motion: reduce) { .q5 i { animation: none; } }
+@media (max-width: 1000px) { .brief-pic { width: 260px; } }
+@media (max-width: 760px) {
+  .brief { grid-template-columns: minmax(0, 1fr); }
+  .brief-pic { display: none; }
+}
+/* the intro picture is drawn by the map's renderer, but the map's styles are scoped to #map: the few rules it needs, a bit bolder for the small size */
+#introMap .lk { stroke-width: 3; stroke-linecap: round; }
+#introMap .lk-unknown { stroke: var(--idle); }
+#introMap .nd rect { fill: var(--panel2); stroke: var(--muted); stroke-width: 3; }
+#introMap .nd-sp rect { stroke: var(--nd-sp); } #introMap .nd-ag rect { stroke: var(--nd-ag); }
