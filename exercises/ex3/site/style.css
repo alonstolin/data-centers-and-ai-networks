@@ -648,3 +648,9 @@ tr[data-part].lit { background: var(--glow); }
 @media (max-width: 860px) { .hw-hard { grid-template-columns: 1fr; } .hwp-head { display: none; } .hwp-row { grid-template-columns: 1fr 1fr; } .hwp-name { grid-column: 1 / -1; } }
 .hwp-cell { padding: 12px 4px; } .hwp-cell .hwp-dot { width: 16px; height: 16px; }
 .hwp-row:hover { background: var(--panel2); }
+
+/* Questions 1a-1c under the game */
+.hw-in-game table.hwt { min-width: 0; }
+.hw-in-game .tbl-wrap { overflow-x: visible; }
+.hw-in-game p { max-width: 75ch; }
+.hw-in-game #hwForm { margin-top: 10px; }
